@@ -32,6 +32,9 @@
       --card:#ffffff;
       --border:#ececf3;
       --shadow:0 2px 12px rgba(82,0,255,0.08);
+
+      /* Wordt in JS gesynchroniseerd met de echte topbar-hoogte */
+      --topbar-h:70px;
     }
 
     html, body{
@@ -148,25 +151,31 @@
       color:var(--brand-white);
     }
 
+    /* === PATCH: echte viewport-hoogte, geen "push-out" === */
     .main-layout{
-  display:flex;
-  flex-direction:row;
-  width:100%;
-  flex:1 1 auto;    
-  min-height:0;      
-  overflow:hidden;
-  background:var(--bg);
-} 
-    
+      display:flex;
+      flex-direction:row;
+      width:100vw;
+      flex:1 1 auto;
+      min-height:0;
+      overflow:hidden;
+      background:var(--bg);
+      height:calc(100dvh - var(--topbar-h, 70px));
+    }
+
+    /* === PATCH: editor-pane is géén grote scroller; onderdelen scrollen apart === */
     .editor-pane{
       flex:0 0 520px;
       min-width:320px;
-      min-height:0;
       background:var(--panel);
       border-radius:18px 0 0 18px;
       padding:1.1rem;
       box-sizing:border-box;
-      overflow:auto;
+
+      height:100%;
+      min-height:0;
+      overflow:hidden;
+
       display:flex;
       flex-direction:column;
       gap:0.9rem;
@@ -183,6 +192,8 @@
       display:flex;
       flex-direction:column;
       gap:0.7rem;
+      min-height:0;
+      height:100%;
     }
 
     .splitter{
@@ -193,10 +204,14 @@
       z-index:10;
       border-radius:7px;
       height:100%;
+      touch-action:none;
     }
     .splitter.dragging{
       background:linear-gradient(to right, #b7b7ff 0%, var(--brand-purple) 100%);
     }
+
+    body.is-splitting{ cursor:col-resize; }
+    body.is-splitting *{ cursor:col-resize !important; }
 
     .section-label{
       font-weight:900;
@@ -265,21 +280,25 @@
       display:block;
       margin:0.7rem 0;
     }
-    #md-render.md-box{
-  flex:0 1 auto;
-  max-height:clamp(140px, 32vh, 420px);
-  overflow:auto;
-}
 
+    /* === PATCH 2: Markdown mag niet de editor wegduwen === */
+    #md-render.md-box{
+      flex:0 1 auto;
+      max-height:clamp(140px, 32vh, 420px);
+      overflow:auto;
+    }
+
+    /* === PATCH 2: CodeMirror neemt de resterende ruimte === */
     #code-editor{
-  flex:1 1 auto;
-  min-height:260px;
-  height:auto;
-  border-radius:10px;
-  overflow:hidden;
-  border:1.5px solid var(--brand-purple);
-  background:#fff;
-}
+      flex:1 1 auto;
+      min-height:260px;
+      height:auto;
+      border-radius:10px;
+      overflow:hidden;
+      border:1.5px solid var(--brand-purple);
+      background:#fff;
+    }
+    #code-editor .CodeMirror{ height:100%; }
 
     .run-row{
       display:flex;
@@ -304,16 +323,21 @@
       color:var(--brand-purple);
     }
 
+    /* === PATCH: feedback blijft compact en scrollt intern === */
     #feedback{
       background:#161820;
       color:#fff;
-      min-height:56px;
       border-radius:10px;
       padding:0.65rem 1rem;
       font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       font-size:0.98em;
       white-space:pre-line;
       box-shadow:0 1px 4px rgba(0,0,0,0.08);
+
+      flex:0 1 auto;
+      max-height:clamp(90px, 18vh, 180px);
+      overflow:auto;
+      min-height:56px;
     }
 
     /* Pseudo tab title under preview label */
@@ -518,16 +542,12 @@
         min-width:0 !important;
         padding:0.9rem 0.6rem !important;
         border-radius:18px !important;
+        overflow:auto !important; /* mobiel: gewoon scrollen */
+        height:auto !important;
       }
       .splitter{ display:none !important; }
       .preview-frame{ min-height:520px; }
     }
-    #code-editor .CodeMirror{
-  height:100%;
-}
-    #md-render.md-box{ flex:0 1 auto; max-height:clamp(140px, 32vh, 420px); overflow:auto; }
-#code-editor{ flex:1 1 auto; min-height:260px; height:auto; border-radius:10px; overflow:hidden; border:1.5px solid var(--brand-purple); background:#fff; }
-#code-editor .CodeMirror{ height:100%; }
   </style>
 </head>
 
@@ -1336,6 +1356,19 @@ Zorg dat aanwezig is:
   let currentIdx = 0;
   let editor = null;
 
+  function refreshEditorSoon(){
+    if (!editor) return;
+    requestAnimationFrame(() => editor.refresh());
+    setTimeout(() => editor.refresh(), 60);
+  }
+
+  function syncTopbarHeight(){
+    const topbar = document.querySelector(".topbar");
+    const h = topbar ? topbar.getBoundingClientRect().height : 70;
+    document.documentElement.style.setProperty("--topbar-h", `${Math.round(h)}px`);
+    refreshEditorSoon();
+  }
+
   function clearFeedback(){ feedback.textContent = ""; }
   function logFeedback(line){
     feedback.textContent += (feedback.textContent ? "\n" : "") + String(line);
@@ -2042,7 +2075,8 @@ Zorg dat aanwezig is:
 
     resetWorkTimerState();
     startWorkTimer();
-    if (editor) refreshEditorSoon();
+    refreshEditorSoon();
+    syncTopbarHeight();
   }
 
   function switchExercise(idx){
@@ -2277,64 +2311,110 @@ Zorg dat aanwezig is:
   }
 
   /* =========================================================
-     14) Splitter
+     14) Splitter (PATCH: pointer capture + iframe safe + no artificial limits)
      ========================================================= */
 
   function setupSplitter(){
-    const splitter = document.getElementById("splitter");
-    const editorPane = document.getElementById("editor-pane");
+    const splitter    = document.getElementById("splitter");
+    const editorPane  = document.getElementById("editor-pane");
     const previewPane = document.getElementById("preview-pane");
-    const mainLayout = document.getElementById("main-layout");
+    const mainLayout  = document.getElementById("main-layout");
+    const previewEl   = document.getElementById("preview");
     if (!splitter || !editorPane || !previewPane || !mainLayout) return;
 
+    const MIN_EDITOR  = 320;
+    const MIN_PREVIEW = 320;
+
     let dragging = false;
+    let rafPending = false;
+    let lastClientX = 0;
 
-    splitter.addEventListener("mousedown", function(){
-      if (window.innerWidth < 980) return;
-      dragging = true;
-      splitter.classList.add("dragging");
-      document.body.style.userSelect = "none";
-    });
+    function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
 
-    document.addEventListener("mousemove", function(e){
-      if (!dragging || window.innerWidth < 980) return;
-
+    function applyWidth(clientX){
       const rect = mainLayout.getBoundingClientRect();
-      const minEditorWidth = 320;
-      const minPreviewWidth = 320;
-      const splitterWidth = splitter.offsetWidth;
-      const totalWidth = rect.width;
+      const total = rect.width;
 
-      let newEditorWidth = e.clientX - rect.left;
-      const maxEditorWidth = totalWidth - splitterWidth - minPreviewWidth;
-      newEditorWidth = Math.max(minEditorWidth, Math.min(maxEditorWidth, newEditorWidth));
+      const sw = splitter.getBoundingClientRect().width || splitter.offsetWidth || 8;
+      const maxEditor = Math.max(MIN_EDITOR, total - sw - MIN_PREVIEW);
 
-      editorPane.style.flex = `0 0 ${newEditorWidth}px`;
-      editorPane.style.width = `${newEditorWidth}px`;
+      const proposed = clientX - rect.left;
+      const w = clamp(proposed, MIN_EDITOR, maxEditor);
+
+      // Eén bron van waarheid: flex-basis (geen dubbele width writes)
+      editorPane.style.flex = `0 0 ${w}px`;
+      editorPane.style.flexBasis = `${w}px`;
+      editorPane.style.width = "";
+
       previewPane.style.flex = "1 1 0";
       previewPane.style.width = "";
-      if (editor) editor.refresh();
-    });
+    }
 
-    document.addEventListener("mouseup", function(){
+    function stopDrag(){
       if (!dragging) return;
       dragging = false;
       splitter.classList.remove("dragging");
       document.body.style.userSelect = "";
-      if (editor) refreshEditorSoon();
+      document.body.classList.remove("is-splitting");
+      if (previewEl) previewEl.style.pointerEvents = "";
+      refreshEditorSoon();
+    }
+
+    splitter.addEventListener("pointerdown", (e) => {
+      if (window.innerWidth < 980) return;
+
+      dragging = true;
+      splitter.classList.add("dragging");
+      document.body.style.userSelect = "none";
+      document.body.classList.add("is-splitting");
+
+      // Iframe slokt events op tijdens drag
+      if (previewEl) previewEl.style.pointerEvents = "none";
+
+      splitter.setPointerCapture(e.pointerId);
+
+      lastClientX = e.clientX;
+      applyWidth(lastClientX);
+      refreshEditorSoon();
     });
 
-    window.addEventListener("resize", function(){
+    splitter.addEventListener("pointermove", (e) => {
+      if (!dragging || window.innerWidth < 980) return;
+
+      lastClientX = e.clientX;
+      if (rafPending) return;
+      rafPending = true;
+
+      requestAnimationFrame(() => {
+        rafPending = false;
+        applyWidth(lastClientX);
+        refreshEditorSoon();
+      });
+    });
+
+    splitter.addEventListener("pointerup", stopDrag);
+    splitter.addEventListener("pointercancel", stopDrag);
+
+    window.addEventListener("resize", () => {
       if (window.innerWidth < 980){
         editorPane.style.flex = "";
+        editorPane.style.flexBasis = "";
         editorPane.style.width = "";
         previewPane.style.flex = "";
         previewPane.style.width = "";
         splitter.style.display = "none";
       } else {
         splitter.style.display = "block";
+
+        // Clamp bestaande basis op nieuwe constraints
+        const basis = parseFloat(getComputedStyle(editorPane).flexBasis || "0");
+        if (basis > 0){
+          const rect = mainLayout.getBoundingClientRect();
+          applyWidth(rect.left + basis);
+        }
       }
-      if (editor) refreshEditorSoon();
+      refreshEditorSoon();
+      syncTopbarHeight();
     });
   }
 
@@ -2351,19 +2431,11 @@ Zorg dat aanwezig is:
       tabSize:2,
       autofocus:true
     });
-    
-    function refreshEditorSoon(){
-  if (!editor) return;
-  requestAnimationFrame(() => editor.refresh());
-  setTimeout(() => editor.refresh(), 60);
-}
 
-window.addEventListener("resize", refreshEditorSoon);
-refreshEditorSoon();
-    
+    window.addEventListener("resize", refreshEditorSoon);
+    window.addEventListener("resize", syncTopbarHeight);
 
     editor.on("change", function(){
-      // start timing when they work
       startWorkTimer();
       try{
         localStorage.setItem(codeKey(currentIdx), editor.getValue());
@@ -2376,6 +2448,7 @@ refreshEditorSoon();
 
     document.getElementById("toggle-theme").onclick = () => {
       document.body.classList.toggle("dark");
+      syncTopbarHeight();
     };
 
     document.getElementById("export-batch").onclick = exportBatchPdfToday;
@@ -2383,6 +2456,7 @@ refreshEditorSoon();
 
     setupSplitter();
     renderProgress();
+    syncTopbarHeight();
     loadExercise();
   });
   </script>
