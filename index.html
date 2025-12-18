@@ -17,6 +17,8 @@
   <!-- jsPDF (single PDF batch export) -->
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 
+  <!-- html lint for evaluation -->
+  <script src="https://cdn.jsdelivr.net/npm/htmlhint@1.8.0/dist/htmlhint.min.js"></script>
   <style>
     :root{
       --brand-purple:#5200FF;
@@ -1342,6 +1344,57 @@ Zorg dat aanwezig is:
     }
   ];
 
+// =========================================================
+// Linting (HTMLHint) 
+// =========================================================
+
+const DEFAULT_LINT_RULES = {
+  "tagname-lowercase": true,
+  "attr-lowercase": true,
+  "attr-value-double-quotes": true,
+  "doctype-first": true,
+  "tag-pair": true,                 // catches unclosed tags
+  "tag-self-close": false,          // don't force <img />
+  "spec-char-escape": false,        // avoid pedantry for beginners
+  "id-unique": true,
+  "title-require": false            // you already evaluate title in exercises where needed
+};
+
+function lintRulesForExercise(ex){
+  return Object.assign({}, DEFAULT_LINT_RULES, ex?.lintRules || {});
+}
+
+function runHtmlLint(raw, rules){
+  // If HTMLHint is not loaded, fail open (do not block students).
+  if (!window.HTMLHint || typeof window.HTMLHint.verify !== "function"){
+    return { ok:true, errors:[], warnings:[], info:"(HTMLHint niet geladen)" };
+  }
+
+  let messages = [];
+  try{
+    messages = window.HTMLHint.verify(String(raw || ""), rules || DEFAULT_LINT_RULES) || [];
+  }catch(e){
+    return { ok:true, errors:[], warnings:[], info:"(Lint crash: genegeerd)" };
+  }
+
+  const errors = messages.filter(m => m && m.type === "error");
+  const warnings = messages.filter(m => m && m.type === "warning");
+  return { ok: errors.length === 0, errors, warnings, info:"" };
+}
+
+function formatLintMessages(lint, max=6){
+  const pick = (lint.errors || []).slice(0, max);
+  if (!pick.length) return "";
+
+  return pick.map((m, i) => {
+    const line = m.line ?? "?";
+    const col  = m.col ?? "?";
+    const rule = m.rule?.id ? ` (${m.rule.id})` : "";
+    return `${i+1}. L${line}:${col} — ${m.message}${rule}`;
+  }).join("\n");
+}    
+    
+    
   /* =========================================================
      2) UI state + CodeMirror + progress
      ========================================================= */
@@ -1534,6 +1587,15 @@ Zorg dat aanwezig is:
     const htmlEl = doc.documentElement ? doc.documentElement.outerHTML : raw;
     return "<!DOCTYPE html>\n" + htmlEl;
   }
+    
+  function previewLintErrorPage(text){
+  const safe = String(text || "").replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+  return `<!doctype html><html><head><meta charset="utf-8"><title>Fout</title></head>
+  <body style="font-family:Arial;padding:16px">
+    <h2>HTML-fout</h2>
+    <pre>${safe}</pre>
+  </body></html>`;
+}
 
   let _renderTimer = null;
   function renderPreviewDebounced(){
@@ -1583,10 +1645,21 @@ Zorg dat aanwezig is:
 
   function evaluateCurrent(){
     const ex = EXERCISES[currentIdx];
-    const cfg = ex.eval;
-    if (!cfg || !Array.isArray(cfg.checks)) return { ok:true, info:"Geen evaluatie ingesteld." };
+  const cfg = ex.eval;
+  if (!cfg || !Array.isArray(cfg.checks)) return { ok:true, info:"Geen evaluatie ingesteld." };
 
-    const raw = editor.getValue();
+  const raw = editor.getValue();
+
+  // 1) HARD GATE: lint pass (syntax/structure)
+  const lint = runHtmlLint(raw, lintRulesForExercise(ex));
+  if (!lint.ok){
+    return {
+      ok:false,
+      kind:"lint",
+      info:"HTML-syntax / structuurfout:\n" + formatLintMessages(lint)
+    };
+  }
+
     const doc = _parseDom(raw);
     if (!doc) return { ok:false, info:"Kan HTML niet parsen. Controleer je tags." };
 
@@ -2176,6 +2249,9 @@ Zorg dat aanwezig is:
     preview.srcdoc = makePreviewHtml(code);
 
     const res = evaluateCurrent();
+    if (!res.ok && res.kind === "lint"){
+      preview.srcdoc = previewLintErrorPage(res.info);
+}
 
     if (res.ok){
       try{ localStorage.setItem(doneKey(currentIdx), "1"); }catch(e){}
@@ -2216,8 +2292,14 @@ Zorg dat aanwezig is:
     }
 
     const msg = res.info || "Niet correct. Controleer je HTML-structuur.";
-    logFeedback("Niet correct:");
-    logFeedback(msg);
+logFeedback("Niet correct:");
+logFeedback(msg);
+
+// If it’s lint, also show a short actionable hint line
+if (res.kind === "lint"){
+  logFeedback("");
+  logFeedback("Tip: zoek de eerste fout (Lx:y). Die veroorzaakt vaak de rest.");
+}
     showToast(msg, false);
 
     startWorkTimer();
