@@ -1,0 +1,2362 @@
+<!--Auteur: Robbe Wulgaert / aiindeklas.be-->
+<!-- Copyright 2025 - Gebruik vrij voor educatie -->
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HTML in de Klas</title>
+
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,900&display=swap">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.65.14/lib/codemirror.min.css">
+
+  <!-- Marked (Markdown renderer) -->
+  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+
+  <!-- jsPDF (single PDF batch export) -->
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+  <style>
+    :root{
+      --brand-purple:#5200FF;
+      --brand-purple-dark:#3700B3;
+      --brand-aqua:#3dffd0;
+      --brand-white:#ffffff;
+
+      --bg:#f3f5f8;
+      --panel:#f7f8fa;
+      --ink:#23272e;
+      --muted:#9aa3b2;
+
+      --card:#ffffff;
+      --border:#ececf3;
+      --shadow:0 2px 12px rgba(82,0,255,0.08);
+    }
+
+    html, body{
+      height:100%;
+      margin:0;
+      padding:0;
+      background:#fff;
+      color:var(--ink);
+      font-family:'Roboto', Arial, Helvetica, sans-serif;
+      min-height:100vh;
+    }
+
+    body{
+      display:flex;
+      flex-direction:column;
+      min-height:100vh;
+    }
+
+    .topbar, .editor-pane, .preview-pane, .main-layout,
+    .modal-content, .modal-box,
+    .toolbar button, .exercise-btn,
+    #feedback, #code-editor, .splitter,
+    .md-box, .preview-frame, .preview-tab, .preview-tabbar {
+      transition: background 0.25s, color 0.25s, border-color 0.25s, box-shadow 0.25s;
+    }
+
+    .topbar{
+      width:100%;
+      box-sizing:border-box;
+      background:#fff;
+      border-bottom:1.5px solid #eee;
+      padding:0.8rem 1.2rem;
+      display:flex;
+      gap:1rem;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+    }
+
+    .brand{
+      display:flex;
+      align-items:baseline;
+      gap:0.6rem;
+      min-width:220px;
+    }
+    .brand .title{
+      font-weight:900;
+      color:var(--brand-purple);
+      font-size:1.12rem;
+      letter-spacing:0.2px;
+    }
+    .brand .subtitle{
+      font-weight:700;
+      color:var(--muted);
+      font-size:0.95rem;
+    }
+
+    .exercise-progress{
+      display:flex;
+      align-items:center;
+      justify-content:flex-start;
+      gap:0.55em;
+      padding-left:2px;
+      flex:1 1 auto;
+      min-width:220px;
+      flex-wrap:wrap;
+    }
+
+    .exercise-btn{
+      width:32px;
+      height:32px;
+      border-radius:50%;
+      background:var(--brand-purple);
+      color:#fff;
+      font-size:1.05em;
+      font-weight:900;
+      border:none;
+      cursor:pointer;
+      box-shadow:0 1px 6px rgba(82,0,255,0.08);
+      opacity:0.72;
+      position:relative;
+    }
+    .exercise-btn.current{
+      background:#fff;
+      color:var(--brand-purple);
+      border:2px solid var(--brand-purple);
+      box-shadow:0 0 0 3px #ece6fa;
+      transform:scale(1.13);
+      opacity:1;
+      z-index:2;
+    }
+
+    .toolbar{
+      display:flex;
+      gap:0.6rem;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:flex-end;
+    }
+
+    .brand-btn{
+      background:var(--brand-purple);
+      color:var(--brand-white);
+      border:none;
+      border-radius:8px;
+      padding:0.7em 1.1em;
+      font-size:1.02em;
+      font-weight:900;
+      cursor:pointer;
+      box-shadow:0 2px 8px rgba(82,0,255,0.10);
+    }
+    .brand-btn:hover, .brand-btn:focus{
+      background:var(--brand-purple-dark);
+      color:var(--brand-white);
+    }
+
+    .main-layout{
+      display:flex;
+      flex-direction:row;
+      width:100vw;
+      height:calc(100vh - 70px);
+      min-height:0;
+      overflow:hidden;
+      background:var(--bg);
+    }
+
+    .editor-pane{
+      flex:0 0 520px;
+      min-width:320px;
+      background:var(--panel);
+      border-radius:18px 0 0 18px;
+      padding:1.1rem;
+      box-sizing:border-box;
+      overflow:auto;
+      display:flex;
+      flex-direction:column;
+      gap:0.9rem;
+    }
+
+    .preview-pane{
+      flex:1 1 0;
+      min-width:320px;
+      background:var(--panel);
+      border-radius:0 18px 18px 0;
+      padding:1.1rem;
+      box-sizing:border-box;
+      overflow:auto;
+      display:flex;
+      flex-direction:column;
+      gap:0.7rem;
+    }
+
+    .splitter{
+      width:8px;
+      min-width:8px;
+      cursor:col-resize;
+      background:linear-gradient(to right, #eee 0%, #ddd 100%);
+      z-index:10;
+      border-radius:7px;
+      height:100%;
+    }
+    .splitter.dragging{
+      background:linear-gradient(to right, #b7b7ff 0%, var(--brand-purple) 100%);
+    }
+
+    .section-label{
+      font-weight:900;
+      font-size:1.08em;
+      color:var(--brand-purple);
+      margin:0;
+    }
+
+    .md-box{
+      background:#fff;
+      border:1.5px solid var(--border);
+      border-radius:12px;
+      padding:0.9rem 1rem;
+      box-shadow:var(--shadow);
+    }
+
+    /* Markdown content defaults */
+    .md-box h1, .md-box h2, .md-box h3{
+      color:var(--brand-purple);
+      margin:0.2rem 0 0.6rem;
+      line-height:1.2;
+    }
+    .md-box h1{ font-size:1.15rem; }
+    .md-box h2{ font-size:1.05rem; }
+    .md-box h3{ font-size:1.00rem; }
+
+    .md-box p, .md-box li{
+      font-size:1.03rem;
+      line-height:1.5;
+      margin:0.35rem 0;
+    }
+    .md-box ul, .md-box ol{ padding-left:1.25rem; margin:0.35rem 0; }
+    .md-box code{
+      background:#f2f0fd;
+      padding:2px 6px;
+      border-radius:6px;
+      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size:0.95em;
+    }
+    .md-box pre{
+      background:#161820;
+      color:#fff;
+      padding:0.85rem 0.9rem;
+      border-radius:10px;
+      overflow:auto;
+      box-shadow:0 1px 4px rgba(0,0,0,0.08);
+      margin:0.6rem 0;
+    }
+    .md-box pre code{
+      background:transparent;
+      padding:0;
+      color:inherit;
+    }
+    .md-box blockquote{
+      margin:0.75rem 0;
+      padding:0.7rem 0.85rem;
+      border-left:5px solid var(--brand-purple);
+      background:#f7f5ff;
+      border-radius:10px;
+    }
+    .md-box img{
+      max-width:100%;
+      border-radius:12px;
+      border:1px solid #eee;
+      box-shadow:0 1px 10px rgba(0,0,0,0.06);
+      display:block;
+      margin:0.7rem 0;
+    }
+
+    #code-editor{
+      height:340px;
+      border-radius:10px;
+      overflow:hidden;
+      border:1.5px solid var(--brand-purple);
+      background:#fff;
+    }
+
+    .run-row{
+      display:flex;
+      gap:0.7rem;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .run-btn{ width:180px; }
+    .small-btn{
+      background:#fff;
+      color:var(--brand-purple);
+      border:1.5px solid var(--brand-purple);
+      border-radius:8px;
+      padding:0.7em 1.1em;
+      font-size:1.02em;
+      font-weight:900;
+      cursor:pointer;
+    }
+    .small-btn:hover{
+      background:var(--brand-aqua);
+      border-color:var(--brand-aqua);
+      color:var(--brand-purple);
+    }
+
+    #feedback{
+      background:#161820;
+      color:#fff;
+      min-height:56px;
+      border-radius:10px;
+      padding:0.65rem 1rem;
+      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size:0.98em;
+      white-space:pre-line;
+      box-shadow:0 1px 4px rgba(0,0,0,0.08);
+    }
+
+    /* Pseudo tab title under preview label */
+    .preview-tabbar{
+      display:flex;
+      align-items:flex-end;
+      gap:0.5rem;
+      margin-top:0.15rem;
+      margin-bottom:0.15rem;
+    }
+    .preview-tab{
+      background:#fff;
+      border:2px solid var(--brand-purple);
+      border-bottom:none;
+      border-radius:12px 12px 0 0;
+      padding:0.55rem 0.85rem;
+      font-weight:900;
+      color:var(--brand-purple);
+      max-width:100%;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+      box-shadow:var(--shadow);
+    }
+    .preview-tab::before{
+      content:"";
+      display:inline-block;
+      width:10px;
+      height:10px;
+      border-radius:50%;
+      background:#ff5f57;
+      margin-right:46px;
+      box-shadow:
+        16px 0 0 #febc2e,
+        32px 0 0 #28c840;
+      vertical-align:middle;
+    }
+
+    .preview-frame{
+      flex:1 1 auto;
+      width:100%;
+      min-height:520px;
+      border:2px solid var(--brand-purple);
+      border-radius:12px;
+      background:#fff;
+      box-shadow:var(--shadow);
+    }
+
+    /* Modals */
+    .modal{
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.3);
+      z-index:10000;
+      justify-content:center;
+      align-items:center;
+      padding:1rem;
+    }
+    .modal[style*="flex"]{ display:flex !important; }
+
+    .modal-content, .modal-box{
+      background:var(--brand-white);
+      color:var(--ink);
+      border-radius:14px;
+      padding:2em 2em 1.5em 2em;
+      min-width:320px;
+      max-width:94vw;
+      box-shadow:0 8px 32px rgba(0,0,0,0.16);
+      position:relative;
+      font-size:1.09em;
+      border:none;
+    }
+
+    .modal-actions{
+      display:flex;
+      justify-content:center;
+      gap:1rem;
+      margin-top:1.6em;
+      flex-wrap:wrap;
+    }
+
+    .modal-message{
+      white-space:pre-line;
+      font-weight:800;
+      margin-bottom:0.6em;
+    }
+
+    .modal-extra{
+      margin-top:0.8em;
+      font-size:0.95em;
+      line-height:1.45;
+    }
+
+    .modal-btn{
+      background:var(--brand-purple);
+      color:var(--brand-white);
+      border:none;
+      border-radius:8px;
+      padding:0.7em 1.5em;
+      font-size:1.07em;
+      cursor:pointer;
+      font-weight:900;
+    }
+    .modal-btn:hover{
+      background:var(--brand-aqua);
+      color:var(--brand-purple);
+    }
+
+    .modal-btn-secondary{
+      background:var(--brand-white);
+      color:var(--brand-purple);
+      border:1.5px solid var(--brand-purple);
+    }
+    .modal-btn-secondary:hover{
+      background:var(--brand-aqua);
+      color:var(--brand-purple);
+      border-color:var(--brand-aqua);
+    }
+
+    .field{
+      display:flex;
+      flex-direction:column;
+      gap:0.35rem;
+      margin-top:0.75rem;
+    }
+    .field label{
+      font-weight:900;
+      color:var(--brand-purple);
+      font-size:0.98rem;
+    }
+    .field input{
+      font-size:1.05rem;
+      padding:0.65rem 0.75rem;
+      border-radius:10px;
+      border:1.5px solid #ddd;
+      outline:none;
+    }
+    .field input:focus{
+      border-color:var(--brand-purple);
+      box-shadow:0 0 0 3px rgba(82,0,255,0.10);
+    }
+
+    /* Toast */
+    #eval-toast{
+      position:fixed;
+      bottom:26px;
+      left:50%;
+      transform:translateX(-50%);
+      padding:0.95em 1.4em;
+      font-size:1.06em;
+      font-weight:900;
+      border-radius:12px;
+      z-index:9999;
+      box-shadow:0 4px 16px rgba(0,0,0,0.16);
+      max-width:85vw;
+      display:none;
+      white-space:pre-line;
+    }
+
+    /* Dark theme */
+    body.dark{
+      background:#161820;
+      color:#fff;
+    }
+    body.dark .main-layout{ background:#23272e; }
+    body.dark .topbar{ background:#23272e !important; border-bottom:1.5px solid #333; }
+    body.dark .editor-pane, body.dark .preview-pane{ background:#23272e; color:#fff; }
+    body.dark .md-box{ background:#23272e; border-color:#3a3f4d; box-shadow:none; }
+    body.dark .md-box blockquote{ background:#2b2f3c; border-left-color:var(--brand-aqua); }
+    body.dark .md-box code{ background:#363c4a; color:#fff; border:1px solid #444; }
+    body.dark #feedback{ background:#fff !important; color:#23272e !important; }
+    body.dark .brand-btn{
+      background:var(--brand-white);
+      color:var(--brand-purple);
+      border:1.5px solid var(--brand-purple);
+    }
+    body.dark .brand-btn:hover{
+      background:var(--brand-aqua);
+      color:var(--brand-purple);
+      border-color:var(--brand-aqua);
+    }
+    body.dark .exercise-btn{ opacity:0.8; }
+    body.dark .exercise-btn.current{
+      background:#23272e;
+      color:var(--brand-aqua);
+      border-color:var(--brand-aqua);
+      box-shadow:0 0 0 3px rgba(61,255,208,0.18);
+    }
+    body.dark .preview-tab{
+      background:#23272e;
+      border-color:var(--brand-aqua);
+      color:var(--brand-aqua);
+      box-shadow:none;
+    }
+    body.dark .preview-frame{ border-color:var(--brand-aqua); background:#fff; }
+
+    @media (max-width:980px){
+      .main-layout{ flex-direction:column; height:auto; }
+      .editor-pane, .preview-pane{
+        width:98vw !important;
+        min-width:0 !important;
+        padding:0.9rem 0.6rem !important;
+        border-radius:18px !important;
+      }
+      .splitter{ display:none !important; }
+      .preview-frame{ min-height:520px; }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="title">HTML in de Klas</span>
+      <span class="subtitle" id="exercise-title-top">—</span>
+    </div>
+
+    <div class="exercise-progress" id="exercise-progress"></div>
+
+    <div class="toolbar">
+      <button class="brand-btn" id="toggle-theme" title="Donkere/lichte modus">🌙/☀️</button>
+      <button class="brand-btn" id="export-batch">Reeks exporteren naar PDF</button>
+      <button class="brand-btn" id="reset-progress">Vooruitgang wissen</button>
+    </div>
+  </header>
+
+  <main class="main-layout" id="main-layout">
+    <section class="editor-pane" id="editor-pane">
+      <div class="section-label">Oefening</div>
+      <div class="md-box" id="md-render"></div>
+
+      <div class="section-label">Code-editor</div>
+      <div id="code-editor"></div>
+
+      <div class="run-row">
+        <button id="run-code" class="brand-btn run-btn">Render website</button>
+        <button id="save-html-file" class="small-btn">Exporteer jouw HTML</button>
+      </div>
+
+      <div class="section-label">Feedback</div>
+      <div id="feedback"></div>
+    </section>
+
+    <div class="splitter" id="splitter"></div>
+
+    <section class="preview-pane" id="preview-pane">
+      <div class="section-label">Live preview</div>
+      <div class="preview-tabbar">
+        <div class="preview-tab" id="preview-tab-title">Zonder titel</div>
+      </div>
+      <iframe id="preview" class="preview-frame" title="Live HTML preview"></iframe>
+    </section>
+  </main>
+
+  <!-- Confirm modal -->
+  <div id="confirm-modal" class="modal">
+    <div class="modal-box">
+      <div id="confirm-modal-msg" class="modal-message"></div>
+      <div id="confirm-modal-extra" class="modal-extra"></div>
+      <div class="modal-actions">
+        <button id="confirm-modal-ok" class="modal-btn">OK</button>
+        <button id="confirm-modal-cancel" class="modal-btn modal-btn-secondary">Annuleren</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Export modal (name/class) -->
+  <div id="export-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-message">Gegevens voor export</div>
+
+      <div class="field">
+        <label for="student-name">Naam</label>
+        <input id="student-name" type="text" autocomplete="off">
+      </div>
+
+      <div class="field">
+        <label for="student-class">Klas</label>
+        <input id="student-class" type="text" autocomplete="off">
+      </div>
+
+      <div class="modal-actions">
+        <button id="export-modal-ok" class="modal-btn">Doorgaan</button>
+        <button id="export-modal-cancel" class="modal-btn modal-btn-secondary">Annuleren</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reset modal -->
+  <div id="reset-modal" class="modal">
+    <div class="modal-box">
+      <div class="modal-message">Reset</div>
+      <div class="modal-extra">Kies wat je wil wissen.</div>
+      <div class="modal-actions">
+        <button id="reset-current" class="modal-btn">Alleen huidige oefening</button>
+        <button id="reset-all" class="modal-btn modal-btn-secondary">Volledige reeks</button>
+        <button id="reset-cancel" class="modal-btn modal-btn-secondary">Annuleren</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="eval-toast"></div>
+
+  <!-- CodeMirror -->
+  <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.14/lib/codemirror.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.14/mode/xml/xml.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/codemirror@5.65.14/mode/htmlmixed/htmlmixed.min.js"></script>
+
+  <script>
+  /* =========================================================
+     0) Course + storage IDs
+     ========================================================= */
+
+  const COURSE_ID = "htmlk-18-12-2025";
+
+  function _dateKeyLocal(d = new Date()){
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,'0');
+    const day = String(d.getDate()).padStart(2,'0');
+    return `${y}-${m}-${day}`;
+  }
+
+  const _SAVE_PREFIX = `htmlk-saved-${COURSE_ID}`;
+  const _SAVE_INDEX_KEY = `${_SAVE_PREFIX}-index`;
+  const _STUDENT_NAME_KEY  = `htmlk-student-name-${COURSE_ID}`;
+  const _STUDENT_CLASS_KEY = `htmlk-student-class-${COURSE_ID}`;
+
+  function codeKey(idx){ return `htmlk-code-${COURSE_ID}-${idx}`; }
+  function doneKey(idx){ return `htmlk-done-${COURSE_ID}-${idx}`; }  // stored but not shown on UI
+
+  // Metrics keys (pogingen + tijd)
+  function attemptsKey(idx){ return `htmlk-attempts-${COURSE_ID}-${idx}`; }
+  function timeKey(idx){ return `htmlk-timeMs-${COURSE_ID}-${idx}`; }
+
+  function _loadSaveIndex(){
+    try{
+      const raw = localStorage.getItem(_SAVE_INDEX_KEY);
+      const arr = raw ? JSON.parse(raw) : [];
+      return Array.isArray(arr) ? arr : [];
+    } catch(e){
+      return [];
+    }
+  }
+  function _writeSaveIndex(keys){
+    try{ localStorage.setItem(_SAVE_INDEX_KEY, JSON.stringify(keys)); } catch(e){}
+  }
+  function _upsertIndexKey(key){
+    const keys = _loadSaveIndex();
+    const i = keys.indexOf(key);
+    if (i !== -1) keys.splice(i, 1);
+    keys.push(key);
+    _writeSaveIndex(keys);
+  }
+
+  function _sanitizeFilePart(s){
+    return String(s || "")
+      .normalize("NFKD")
+      .replace(/[^\w\-]+/g, "_")
+      .replace(/_+/g, "_")
+      .replace(/^_+|_+$/g, "")
+      .slice(0, 80) || "onbekend";
+  }
+
+  function _verificatieId(){
+    const r = Math.random().toString(36).slice(2, 6);
+    return `${Date.now()}-${r}`;
+  }
+
+  /* =========================================================
+     1) Exercises (markdown + starter + eval config)
+     ========================================================= */
+
+  const EXERCISES = [
+    {
+      title: "Oefening 1 — Basisstructuur HTML",
+      markdown: `
+# Basisstructuur HTML
+
+## Gegeven
+Wanneer we een basiswebpagina willen maken, schrijven we eerst de **basisstructuur** neer van onze HTML-code.
+
+Een basis-HTML-pagina bestaat uit volgende **elementen**:
+- \`<!DOCTYPE html>\`
+- \`<html>\`
+- \`<head>\`
+- \`<body>\`
+- afsluitende \`</html>\`
+
+## Gevraagd
+- Schrijf hieronder de basisstructuur van een HTML-pagina.
+- Voeg deze onderdelen toe: doctype, html, head, body, afsluitende html-tag.
+
+> **Tips**
+> - Openen: \`<tag>\`
+> - Sluiten: \`</tag>\`
+      `.trim(),
+      starter: `<!DOCTYPE html>
+<html lang="nl">
+<head>
+</head>
+<body>
+
+</body>
+</html>`,
+      eval: {
+        enforceText: false,
+        checks: [
+          { kind:"doctype" },
+          { kind:"tag", selector:"html" },
+          { kind:"tag", selector:"head" },
+          { kind:"tag", selector:"body" }
+        ]
+      }
+    },
+    {
+      title: "Oefening 2 — Hallo wereld, hallo HTML!",
+      markdown: `
+# Hallo wereld, hallo HTML!
+
+## Gegeven
+"Hello world" is vaak de eerste output in een nieuwe taal.
+
+## Gevraagd
+- Schrijf de basisstructuur van een HTML-pagina.
+- Voeg in de body de tekst **Hallo Wereld!** toe.
+
+\`\`\`
+<!DOCTYPE html>
+...
+<body>
+Hallo Wereld!
+</body>
+...
+\`\`\`
+
+> Tip: juiste openingstags en sluitingstags.
+      `.trim(),
+      starter: `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <title>Hallo Wereld</title>
+</head>
+<body>
+  Hallo Wereld!
+</body>
+</html>`,
+      eval: {
+        enforceText: true,
+        checks: [
+          { kind:"doctype" },
+          { kind:"tag", selector:"html" },
+          { kind:"tag", selector:"head" },
+          { kind:"tag", selector:"body" },
+          { kind:"textContains", selector:"body", text:"Hallo Wereld", textCheck:true }
+        ]
+      }
+    },
+    {
+      title: "Oefening 3 — Een Goede Titel",
+      markdown: `
+# Een Goede Titel
+
+De \`<title>\` staat in de **head** en verschijnt op het tabblad. Dat is niet hetzelfde als een kop (\`h1\`) op je pagina.
+
+## Gevraagd
+- Schrijf een HTML-pagina voor jouw favoriete gerecht.
+- Gebruik de basisstructuur.
+- Zet in de head: \`<title>Mijn Favoriete Gerecht</title>\`
+- In de body: zet de tekst **Vegetarisch Kapsalon**.
+
+> Tip: juiste openingstags en sluitingstags.
+      `.trim(),
+      starter: `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <title>Mijn Favoriete Gerecht</title>
+</head>
+<body>
+  Vegetarisch Kapsalon
+</body>
+</html>`,
+      eval: {
+        enforceText: true,
+        checks: [
+          { kind:"doctype" },
+          { kind:"tag", selector:"title" },
+          { kind:"titleEquals", value:"Mijn Favoriete Gerecht", textCheck:true },
+          { kind:"textContains", selector:"body", text:"Vegetarisch Kapsalon", textCheck:true }
+        ]
+      }
+    },
+    {
+      title: "Oefening 4 — Koppen in HTML",
+      markdown: `
+# Koppen in HTML: Leren van Boeken en Kranten
+
+Koppen structureren je pagina: \`h1\` (hoofdkop), \`h2\` (subkop), ...
+
+## Gevraagd
+- Maak een pagina over jouw favoriete gerecht.
+- \`<title>Mijn Favoriete Gerecht</title>\`
+- In de body:
+  - \`<h1>\` met de naam van het gerecht
+  - \`<h2>\` met een subtitel (bv. "Waarom dit mijn favoriet is")
+
+\`\`\`
+<body>
+  <h1>Vegetarisch Kapsalon</h1>
+  <h2>Waarom dit mijn favoriet is</h2>
+</body>
+\`\`\`
+      `.trim(),
+      starter: `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <title>Mijn Favoriete Gerecht</title>
+</head>
+<body>
+  <h1></h1>
+  <h2></h2>
+</body>
+</html>`,
+      eval: {
+        enforceText: false,
+        checks: [
+          { kind:"doctype" },
+          { kind:"tag", selector:"title" },
+          { kind:"tag", selector:"h1" },
+          { kind:"tag", selector:"h2" },
+          { kind:"nonEmpty", selector:"h1" },
+          { kind:"nonEmpty", selector:"h2" }
+        ]
+      }
+    },
+    {
+      title: "Oefening 5 — Alinea's in HTML",
+      markdown: `
+# Alinea's in HTML: Vertel het Verhaal van je Gerecht
+
+Alinea's maak je met \`<p>\`.
+
+## Gevraagd
+- Maak een HTML-pagina over **Vegetarisch Kapsalon**.
+- \`<title>Het Verhaal van achter het Kapsalon</title>\`
+- In de body:
+  - \`<h1>Vegetarisch Kapsalon</h1>\`
+  - \`<h2>De Geschiedenis</h2>\`
+  - minstens 1 alinea (\`p\`) met een korte uitleg.
+      `.trim(),
+      starter: `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <title>Het Verhaal van achter het Kapsalon</title>
+</head>
+<body>
+  <h1>Vegetarisch Kapsalon</h1>
+  <h2>De Geschiedenis</h2>
+  <p></p>
+</body>
+</html>`,
+      eval: {
+        enforceText: true,
+        checks: [
+          { kind:"titleEquals", value:"Het Verhaal van achter het Kapsalon", textCheck:true },
+          { kind:"textEquals", selector:"h1", value:"Vegetarisch Kapsalon", textCheck:true },
+          { kind:"textEquals", selector:"h2", value:"De Geschiedenis", textCheck:true },
+          { kind:"tag", selector:"p" },
+          { kind:"minTextLength", selector:"p", n:20 }
+        ]
+      }
+    },
+    {
+      title: "Oefening 6 — Afbeeldingen in HTML",
+      markdown: `
+# Afbeeldingen in HTML: Breng je Gerecht tot Leven
+
+Gebruik \`<img>\` met \`src\`, \`alt\` en \`width\`.
+
+## Gevraagd
+- Maak een pagina over **Kapsalon**.
+- \`<title>Het Verhaal van Kapsalon</title>\`
+- In de body:
+  - \`<h1>Kapsalon</h1>\`
+  - \`<h2>De Geschiedenis</h2>\`
+  - een alinea
+  - een afbeelding met \`src\`, \`alt\`, \`width\`
+      `.trim(),
+      starter: `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <title>Het Verhaal van Kapsalon</title>
+</head>
+<body>
+  <h1>Kapsalon</h1>
+  <h2>De Geschiedenis</h2>
+  <p></p>
+
+  <img src="" alt="Afbeelding van een schotel Kapsalon" width="50%">
+</body>
+</html>`,
+      eval: {
+        enforceText: true,
+        checks: [
+          { kind:"titleEquals", value:"Het Verhaal van Kapsalon", textCheck:true },
+          { kind:"textEquals", selector:"h1", value:"Kapsalon", textCheck:true },
+          { kind:"textEquals", selector:"h2", value:"De Geschiedenis", textCheck:true },
+          { kind:"tag", selector:"p" },
+          { kind:"minTextLength", selector:"p", n:20 },
+          { kind:"tag", selector:"img" },
+          { kind:"attrPresent", selector:"img", attr:"src" },
+          { kind:"attrPresent", selector:"img", attr:"alt" },
+          { kind:"attrPresent", selector:"img", attr:"width" }
+        ]
+      }
+    },
+    {
+      title: "Oefening 7 — Geordende lijsten (ol)",
+      markdown: `
+# Geordende Lijsten in HTML: Stap-voor-stap Recepten
+
+Gebruik \`<ol>\` met \`<li>\` items.
+
+## Gevraagd
+- Maak een pagina over **Vegetarisch Kapsalon**.
+- \`<title>Het Verhaal van Kapsalon</title>\`
+- In de body: \`h1\`, \`h2\` ("Het Recept"), alinea, afbeelding, en een **geordende lijst** met de stappen.
+      `.trim(),
+      starter: `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <title>Het Verhaal van Kapsalon</title>
+</head>
+<body>
+  <h1>Kapsalon</h1>
+  <h2>Het Recept</h2>
+  <p></p>
+
+  <img src="" alt="Afbeelding van een schotel Kapsalon" width="50%">
+
+  <ol>
+    <li></li>
+  </ol>
+</body>
+</html>`,
+      eval: {
+        enforceText: false,
+        checks: [
+          { kind:"tag", selector:"ol" },
+          { kind:"minCount", selector:"ol li", n:7 },
+          { kind:"tag", selector:"img" },
+          { kind:"attrPresent", selector:"img", attr:"src" },
+          { kind:"attrPresent", selector:"img", attr:"alt" },
+          { kind:"attrPresent", selector:"img", attr:"width" }
+        ]
+      }
+    },
+    {
+      title: "Oefening 8 — Ongeordende lijsten (ul)",
+      markdown: `
+# Ongeordende Lijsten in HTML: Boodschappenlijstje
+
+Gebruik \`<ul>\` met \`<li>\`.
+
+## Gevraagd
+- Maak een pagina over **Vegetarisch Kapsalon**.
+- Gebruik: title, h1, h2, img, **ol** (stappen), **ul** (ingrediënten).
+- Voor de ul: minstens 6 ingrediënten.
+      `.trim(),
+      starter: `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <title>Het Verhaal van Kapsalon</title>
+</head>
+<body>
+  <h1>Kapsalon</h1>
+  <h2>Het Recept</h2>
+  <p></p>
+
+  <img src="" alt="Afbeelding van een schotel Kapsalon" width="50%">
+
+  <ol>
+    <li></li>
+  </ol>
+
+  <ul>
+    <li></li>
+  </ul>
+</body>
+</html>`,
+      eval: {
+        enforceText: false,
+        checks: [
+          { kind:"tag", selector:"ol" },
+          { kind:"minCount", selector:"ol li", n:3 },
+          { kind:"tag", selector:"ul" },
+          { kind:"minCount", selector:"ul li", n:6 },
+          { kind:"tag", selector:"img" },
+          { kind:"attrPresent", selector:"img", attr:"src" },
+          { kind:"attrPresent", selector:"img", attr:"alt" },
+          { kind:"attrPresent", selector:"img", attr:"width" }
+        ]
+      }
+    },
+    {
+      title: "Oefening 9 — Video toevoegen (iframe)",
+      markdown: `
+# Video Toevoegen aan Jouw Webpagina
+
+Gebruik een ingesloten video via \`<iframe>\` (bv. YouTube embed).
+
+## Gevraagd
+- Werk verder op je pagina van de vorige oefeningen.
+- Voeg een relevante video toe met \`<iframe>\`.
+      `.trim(),
+      starter: `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <title>Het Verhaal van Kapsalon</title>
+</head>
+<body>
+  <h1>Kapsalon</h1>
+  <h2>Het Recept</h2>
+  <p></p>
+
+  <img src="" alt="Afbeelding van een schotel Kapsalon" width="50%">
+
+  <ol>
+    <li></li>
+  </ol>
+
+  <ul>
+    <li></li>
+  </ul>
+
+  <iframe width="560" height="315" src="" title="Video" frameborder="0" allowfullscreen></iframe>
+</body>
+</html>`,
+      eval: {
+        enforceText: false,
+        checks: [
+          { kind:"tag", selector:"iframe" },
+          { kind:"attrPresent", selector:"iframe", attr:"src" }
+        ]
+      }
+    },
+    {
+      title: "Creatieve oefening 10 — Synthese: Favoriete gerecht",
+      markdown: `
+# Synthese - Jouw Eigen Favoriete Gerecht
+
+## Gevraagd
+Maak een HTML-pagina voor jouw eigen favoriete gerecht.
+
+Zorg dat deze elementen aanwezig zijn:
+- \`title\`
+- \`h1\`, \`h2\`
+- minstens 1 \`p\`
+- \`img\` (src + alt + width)
+- \`ol\` (minstens 3 items)
+- \`ul\` (minstens 3 items)
+- \`iframe\` (met src)
+      `.trim(),
+      starter: `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <title>Mijn Favoriete Gerecht</title>
+</head>
+<body>
+  <h1></h1>
+  <h2></h2>
+
+  <p></p>
+
+  <img src="" alt="" width="50%">
+
+  <ol>
+    <li></li>
+  </ol>
+
+  <ul>
+    <li></li>
+  </ul>
+
+  <iframe width="560" height="315" src="" title="Video" frameborder="0" allowfullscreen></iframe>
+</body>
+</html>`,
+      eval: {
+        enforceText: false,
+        checks: [
+          { kind:"tag", selector:"title" },
+          { kind:"tag", selector:"h1" },
+          { kind:"tag", selector:"h2" },
+          { kind:"minCount", selector:"p", n:1 },
+          { kind:"tag", selector:"img" },
+          { kind:"attrPresent", selector:"img", attr:"src" },
+          { kind:"attrPresent", selector:"img", attr:"alt" },
+          { kind:"attrPresent", selector:"img", attr:"width" },
+          { kind:"tag", selector:"ol" },
+          { kind:"minCount", selector:"ol li", n:3 },
+          { kind:"tag", selector:"ul" },
+          { kind:"minCount", selector:"ul li", n:3 },
+          { kind:"tag", selector:"iframe" },
+          { kind:"attrPresent", selector:"iframe", attr:"src" }
+        ]
+      }
+    },
+    {
+      title: "Creatieve oefening 11 — Synthese: Favoriete artiest",
+      markdown: `
+# Synthese - Jouw Favoriete Artiest
+
+## Gevraagd
+Maak een HTML-pagina voor jouw favoriete artiest.
+
+Zorg dat aanwezig is:
+- \`title\` (tabblad)
+- \`h1\` hoofdtitel
+- minstens 2 subtitels (\`h2\`)
+- minstens 2 alinea's (\`p\`)
+- minstens 1 vet woord (\`<b>\` of \`<strong>\`)
+- minstens 1 schuingedrukt woord (\`<i>\` of \`<em>\`)
+- \`img\`
+- \`iframe\`
+- een lijst met albums (ol of ul) met minstens 3 items
+      `.trim(),
+      starter: `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <title></title>
+</head>
+<body>
+  <h1></h1>
+
+  <h2></h2>
+  <p></p>
+
+  <h2></h2>
+  <p></p>
+
+  <p>Voorbeeld: <strong></strong> en <em></em></p>
+
+  <img src="" alt="" width="50%">
+
+  <iframe width="560" height="315" src="" title="Video" frameborder="0" allowfullscreen></iframe>
+
+  <ul>
+    <li></li>
+  </ul>
+</body>
+</html>`,
+      eval: {
+        enforceText: false,
+        checks: [
+          { kind:"tag", selector:"title" },
+          { kind:"nonEmpty", selector:"title" },
+          { kind:"tag", selector:"h1" },
+          { kind:"nonEmpty", selector:"h1" },
+          { kind:"minCount", selector:"h2", n:2 },
+          { kind:"minCount", selector:"p", n:2 },
+          { kind:"anySelector", selectors:["b","strong"] },
+          { kind:"anySelector", selectors:["i","em"] },
+          { kind:"tag", selector:"img" },
+          { kind:"attrPresent", selector:"img", attr:"src" },
+          { kind:"attrPresent", selector:"img", attr:"alt" },
+          { kind:"tag", selector:"iframe" },
+          { kind:"attrPresent", selector:"iframe", attr:"src" },
+          { kind:"anySelector", selectors:["ol","ul"] },
+          { kind:"minCountEitherList", n:3 }
+        ]
+      }
+    },
+    {
+      title: "Creatieve opdracht 12 — Synthese: Favoriete film",
+      markdown: `
+# Synthese - Jouw Favoriete Film
+
+## Gevraagd
+Maak een HTML-pagina voor jouw favoriete film.
+
+Zorg dat aanwezig is:
+- \`title\`
+- \`h1\`
+- minstens 2 subtitels (\`h2\`)
+- minstens 2 alinea's (\`p\`)
+- minstens 1 vet en 1 schuingedrukt woord
+- \`img\`
+- \`iframe\`
+- lijst met minstens 5 acteurs (ol of ul)
+      `.trim(),
+      starter: `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <title></title>
+</head>
+<body>
+  <h1></h1>
+
+  <h2></h2>
+  <p></p>
+
+  <h2></h2>
+  <p></p>
+
+  <p>Voorbeeld: <strong></strong> en <em></em></p>
+
+  <img src="" alt="" width="50%">
+
+  <iframe width="560" height="315" src="" title="Trailer" frameborder="0" allowfullscreen></iframe>
+
+  <ol>
+    <li></li>
+  </ol>
+</body>
+</html>`,
+      eval: {
+        enforceText: false,
+        checks: [
+          { kind:"tag", selector:"title" },
+          { kind:"nonEmpty", selector:"title" },
+          { kind:"tag", selector:"h1" },
+          { kind:"nonEmpty", selector:"h1" },
+          { kind:"minCount", selector:"h2", n:2 },
+          { kind:"minCount", selector:"p", n:2 },
+          { kind:"anySelector", selectors:["b","strong"] },
+          { kind:"anySelector", selectors:["i","em"] },
+          { kind:"tag", selector:"img" },
+          { kind:"attrPresent", selector:"img", attr:"src" },
+          { kind:"attrPresent", selector:"img", attr:"alt" },
+          { kind:"tag", selector:"iframe" },
+          { kind:"attrPresent", selector:"iframe", attr:"src" },
+          { kind:"anySelector", selectors:["ol","ul"] },
+          { kind:"minCountEitherList", n:5 }
+        ]
+      }
+    },
+    {
+      title: "Creatieve opdracht 13 — Synthese: Favoriete dier",
+      markdown: `
+# Synthese - Jouw Favoriete Dier
+
+## Gevraagd
+Maak een HTML-pagina voor jouw favoriete dier.
+
+Zorg dat aanwezig is:
+- \`title\`
+- \`h1\`
+- minstens 2 subtitels (\`h2\`)
+- minstens 2 alinea's (\`p\`)
+- minstens 1 vet en 1 schuingedrukt woord
+- \`img\`
+- \`iframe\`
+- lijst met 5 naamvoorstellen (ol of ul)
+      `.trim(),
+      starter: `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <title></title>
+</head>
+<body>
+  <h1></h1>
+
+  <h2></h2>
+  <p></p>
+
+  <h2></h2>
+  <p></p>
+
+  <p>Voorbeeld: <strong></strong> en <em></em></p>
+
+  <img src="" alt="" width="50%">
+
+  <iframe width="560" height="315" src="" title="Video" frameborder="0" allowfullscreen></iframe>
+
+  <ul>
+    <li></li>
+  </ul>
+</body>
+</html>`,
+      eval: {
+        enforceText: false,
+        checks: [
+          { kind:"tag", selector:"title" },
+          { kind:"nonEmpty", selector:"title" },
+          { kind:"tag", selector:"h1" },
+          { kind:"nonEmpty", selector:"h1" },
+          { kind:"minCount", selector:"h2", n:2 },
+          { kind:"minCount", selector:"p", n:2 },
+          { kind:"anySelector", selectors:["b","strong"] },
+          { kind:"anySelector", selectors:["i","em"] },
+          { kind:"tag", selector:"img" },
+          { kind:"attrPresent", selector:"img", attr:"src" },
+          { kind:"attrPresent", selector:"img", attr:"alt" },
+          { kind:"tag", selector:"iframe" },
+          { kind:"attrPresent", selector:"iframe", attr:"src" },
+          { kind:"anySelector", selectors:["ol","ul"] },
+          { kind:"minCountEitherList", n:5 }
+        ]
+      }
+    }
+  ];
+
+  /* =========================================================
+     2) UI state + CodeMirror + progress
+     ========================================================= */
+
+  const progressBar = document.getElementById("exercise-progress");
+  const mdRender = document.getElementById("md-render");
+  const feedback = document.getElementById("feedback");
+  const preview = document.getElementById("preview");
+  const topTitle = document.getElementById("exercise-title-top");
+  const previewTabTitle = document.getElementById("preview-tab-title");
+
+  let currentIdx = 0;
+  let editor = null;
+
+  function clearFeedback(){ feedback.textContent = ""; }
+  function logFeedback(line){
+    feedback.textContent += (feedback.textContent ? "\n" : "") + String(line);
+  }
+
+  function renderProgress(){
+    progressBar.innerHTML = "";
+    EXERCISES.forEach((ex, idx) => {
+      const btn = document.createElement("button");
+      btn.className = "exercise-btn" + (idx === currentIdx ? " current" : "");
+      btn.textContent = idx + 1;
+      btn.type = "button";
+      btn.title = ex.title;
+      btn.onclick = () => switchExercise(idx);
+      progressBar.appendChild(btn);
+    });
+  }
+
+  function renderMarkdown(ex){
+    const md = ex?.markdown || "";
+    try{
+      mdRender.innerHTML = marked.parse(md, { breaks:true, gfm:true });
+    }catch(e){
+      mdRender.textContent = md;
+    }
+  }
+
+  /* =========================================================
+     3) DOM helpers (used by title tab, evaluator, etc.)
+     ========================================================= */
+
+  function _parseDom(raw){
+    try{
+      const parser = new DOMParser();
+      return parser.parseFromString(String(raw || ""), "text/html");
+    }catch(e){
+      return null;
+    }
+  }
+  function _textOf(doc, selector){
+    const el = doc.querySelector(selector);
+    return el ? (el.textContent || "").trim() : "";
+  }
+
+  function updatePreviewTitle(raw){
+    const doc = _parseDom(raw);
+    let t = doc ? _textOf(doc, "title") : "";
+    t = t || "Zonder titel";
+    previewTabTitle.textContent = t;
+    return t;
+  }
+
+  /* =========================================================
+     4) Metrics: pogingen + tijd (per oefening)
+     ========================================================= */
+
+  const _workTimer = { running:false, lastStart:0 };
+
+  function _getAttempts(idx){
+    return parseInt(localStorage.getItem(attemptsKey(idx)) || "0", 10);
+  }
+  function _incAttempts(idx){
+    const n = _getAttempts(idx) + 1;
+    try{ localStorage.setItem(attemptsKey(idx), String(n)); }catch(e){}
+    return n;
+  }
+
+  function _getTimeMs(idx){
+    return parseInt(localStorage.getItem(timeKey(idx)) || "0", 10);
+  }
+  function _setTimeMs(idx, ms){
+    try{ localStorage.setItem(timeKey(idx), String(ms)); }catch(e){}
+  }
+  function _addTimeMs(idx, ms){
+    _setTimeMs(idx, _getTimeMs(idx) + ms);
+  }
+
+  function _formatDuur(ms){
+    const s = Math.max(0, Math.floor(ms / 1000));
+    const m = Math.floor(s / 60);
+    const r = s % 60;
+    return (m > 0 ? `${m}m ` : "") + `${r}s`;
+  }
+
+  function startWorkTimer(){
+    if (_workTimer.running) return;
+    _workTimer.running = true;
+    _workTimer.lastStart = Date.now();
+  }
+
+  function stopWorkTimer(){
+    if (!_workTimer.running) return;
+    const nu = Date.now();
+    _addTimeMs(currentIdx, nu - _workTimer.lastStart);
+    _workTimer.running = false;
+    _workTimer.lastStart = 0;
+  }
+
+  function resetWorkTimerState(){
+    _workTimer.running = false;
+    _workTimer.lastStart = 0;
+  }
+
+  window.addEventListener("blur", stopWorkTimer);
+  window.addEventListener("beforeunload", stopWorkTimer);
+  document.addEventListener("visibilitychange", () => { if (document.hidden) stopWorkTimer(); });
+  window.addEventListener("focus", () => { if (!document.hidden) startWorkTimer(); });
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) startWorkTimer(); });
+
+  function metricsSummaryHtml(){
+    const attempts = _getAttempts(currentIdx);
+    const tMs = _getTimeMs(currentIdx);
+    return `<p><strong>Statistiek</strong><br>Pogingen: ${attempts}<br>Tijd: ${_formatDuur(tMs)}</p>`;
+  }
+
+  /* =========================================================
+     5) Preview rendering (sanitised, scriptless)
+     ========================================================= */
+
+  function stripScriptsAndInlineHandlers(doc){
+    const scripts = Array.from(doc.querySelectorAll("script"));
+    scripts.forEach(s => s.remove());
+
+    const all = Array.from(doc.querySelectorAll("*"));
+    for (const el of all){
+      const attrs = Array.from(el.attributes || []);
+      for (const a of attrs){
+        if (/^on/i.test(a.name)){
+          try{ el.removeAttribute(a.name); }catch(e){}
+        }
+      }
+    }
+  }
+
+  function ensureCspMeta(doc){
+    let head = doc.querySelector("head");
+    if (!head){
+      head = doc.createElement("head");
+      const html = doc.querySelector("html");
+      if (html) html.insertBefore(head, html.firstChild);
+    }
+
+    const existing = head.querySelector('meta[http-equiv="Content-Security-Policy"]');
+    if (existing) return;
+
+    const meta = doc.createElement("meta");
+    meta.setAttribute("http-equiv", "Content-Security-Policy");
+    meta.setAttribute(
+      "content",
+      "default-src 'self' https: data:; img-src https: data:; media-src https: data:; frame-src https:; object-src 'none'; script-src 'none'; connect-src 'none'; base-uri 'none';"
+    );
+    head.insertBefore(meta, head.firstChild);
+  }
+
+  function makePreviewHtml(userCode){
+    const raw = String(userCode || "");
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(raw, "text/html");
+
+    stripScriptsAndInlineHandlers(doc);
+    ensureCspMeta(doc);
+
+    const htmlEl = doc.documentElement ? doc.documentElement.outerHTML : raw;
+    return "<!DOCTYPE html>\n" + htmlEl;
+  }
+
+  let _renderTimer = null;
+  function renderPreviewDebounced(){
+    if (_renderTimer) clearTimeout(_renderTimer);
+    _renderTimer = setTimeout(() => {
+      const code = editor.getValue();
+      updatePreviewTitle(code);
+      preview.srcdoc = makePreviewHtml(code);
+    }, 220);
+  }
+
+  /* =========================================================
+     6) Evaluator (scaffolded checks per exercise)
+     ========================================================= */
+
+  function _hasDoctype(raw){
+    return /<!doctype\s+html\s*>/i.test(String(raw || ""));
+  }
+  function _hasTag(doc, selector){
+    return !!doc.querySelector(selector);
+  }
+  function _count(doc, selector){
+    return doc.querySelectorAll(selector).length;
+  }
+  function _attrPresent(doc, selector, attr){
+    const el = doc.querySelector(selector);
+    if (!el) return false;
+    const v = el.getAttribute(attr);
+    return v !== null && String(v).trim().length > 0;
+  }
+  function _containsText(doc, selector, needle){
+    const el = doc.querySelector(selector);
+    if (!el) return false;
+    const t = (el.textContent || "").replace(/\s+/g, " ").trim().toLowerCase();
+    return t.includes(String(needle || "").toLowerCase());
+  }
+  function _anySelector(doc, selectors){
+    return (selectors || []).some(sel => _hasTag(doc, sel));
+  }
+  function _minCountEitherList(doc, n){
+    const ol = doc.querySelector("ol");
+    const ul = doc.querySelector("ul");
+    const c1 = ol ? ol.querySelectorAll("li").length : 0;
+    const c2 = ul ? ul.querySelectorAll("li").length : 0;
+    return Math.max(c1, c2) >= n;
+  }
+
+  function evaluateCurrent(){
+    const ex = EXERCISES[currentIdx];
+    const cfg = ex.eval;
+    if (!cfg || !Array.isArray(cfg.checks)) return { ok:true, info:"Geen evaluatie ingesteld." };
+
+    const raw = editor.getValue();
+    const doc = _parseDom(raw);
+    if (!doc) return { ok:false, info:"Kan HTML niet parsen. Controleer je tags." };
+
+    const enforceText = !!cfg.enforceText;
+
+    for (const check of cfg.checks){
+      if (check.textCheck === true && !enforceText) continue;
+
+      if (check.kind === "doctype"){
+        if (!_hasDoctype(raw)) return { ok:false, info:"DOCTYPE ontbreekt: voeg <!DOCTYPE html> toe bovenaan." };
+        continue;
+      }
+
+      if (check.kind === "tag"){
+        if (!_hasTag(doc, check.selector)) return { ok:false, info:`Tag ontbreekt: <${check.selector}>.` };
+        continue;
+      }
+
+      if (check.kind === "nonEmpty"){
+        const t = _textOf(doc, check.selector);
+        if (!t) return { ok:false, info:`Lege inhoud: ${check.selector} mag niet leeg zijn.` };
+        continue;
+      }
+
+      if (check.kind === "titleEquals"){
+        const t = _textOf(doc, "title");
+        if (t !== String(check.value || "")) return { ok:false, info:`Title klopt niet. Verwacht: "${check.value}".` };
+        continue;
+      }
+
+      if (check.kind === "textEquals"){
+        const t = _textOf(doc, check.selector);
+        if (t !== String(check.value || "")) return { ok:false, info:`Tekst in ${check.selector} klopt niet. Verwacht: "${check.value}".` };
+        continue;
+      }
+
+      if (check.kind === "textContains"){
+        if (!_containsText(doc, check.selector, check.text)) return { ok:false, info:`Tekst ontbreekt in ${check.selector}: "${check.text}".` };
+        continue;
+      }
+
+      if (check.kind === "minCount"){
+        const c = _count(doc, check.selector);
+        if (c < (check.n || 0)) return { ok:false, info:`Te weinig items: "${check.selector}" moet minstens ${check.n} keer voorkomen.` };
+        continue;
+      }
+
+      if (check.kind === "minTextLength"){
+        const el = doc.querySelector(check.selector);
+        const t = el ? (el.textContent || "").trim() : "";
+        if (t.length < (check.n || 0)) return { ok:false, info:`Te korte tekst in ${check.selector}. Schrijf minstens ${check.n} tekens.` };
+        continue;
+      }
+
+      if (check.kind === "attrPresent"){
+        if (!_attrPresent(doc, check.selector, check.attr)) return { ok:false, info:`Attribuut ontbreekt: ${check.selector} heeft "${check.attr}" nodig.` };
+        continue;
+      }
+
+      if (check.kind === "anySelector"){
+        if (!_anySelector(doc, check.selectors)) return { ok:false, info:`Minstens één van deze tags ontbreekt: ${check.selectors.join(", ")}.` };
+        continue;
+      }
+
+      if (check.kind === "minCountEitherList"){
+        if (!_minCountEitherList(doc, check.n || 0)) return { ok:false, info:`Lijst te kort. Maak minstens ${check.n} <li>-items in ol of ul.` };
+        continue;
+      }
+    }
+
+    return { ok:true, info:"Structuur ok." };
+  }
+
+  /* =========================================================
+     7) Snapshots for PDF batch export (single PDF)
+     ========================================================= */
+
+  function saveSnapshot(status /* "success" | "fail" */){
+    const dateKey = _dateKeyLocal(new Date());
+    const storageKey = `${_SAVE_PREFIX}-${dateKey}-${currentIdx}-${status}-latest`;
+
+    const code = editor.getValue();
+    const previewTitle = updatePreviewTitle(code);
+
+    const rec = {
+      version: 2,
+      verificatieId: _verificatieId(),
+      courseId: COURSE_ID,
+      dateKey,
+      savedAt: new Date().toISOString(),
+      exerciseIdx: currentIdx,
+      exerciseTitle: EXERCISES[currentIdx]?.title || "",
+      status,
+      html: code,
+      previewTitle,
+      pogingen: _getAttempts(currentIdx),
+      tijdMs: _getTimeMs(currentIdx),
+      pageUrl: window.location.href,
+      userAgent: navigator.userAgent || ""
+    };
+
+    try{
+      localStorage.setItem(storageKey, JSON.stringify(rec));
+      _upsertIndexKey(storageKey);
+      return { ok:true, key:storageKey };
+    }catch(e){
+      return { ok:false, reason:"quota" };
+    }
+  }
+
+  function getSavedForDate(dateKey){
+    const keys = _loadSaveIndex();
+    const picked = new Map();
+
+    for (const k of keys){
+      if (!k.startsWith(`${_SAVE_PREFIX}-${dateKey}-`)) continue;
+      try{
+        const rec = JSON.parse(localStorage.getItem(k) || "null");
+        if (!rec) continue;
+
+        const id = String(rec.exerciseIdx);
+        const prev = picked.get(id);
+
+        if (!prev){
+          picked.set(id, rec);
+          continue;
+        }
+
+        if (prev.status !== "success" && rec.status === "success"){
+          picked.set(id, rec);
+          continue;
+        }
+
+        if (String(rec.savedAt||"") > String(prev.savedAt||"")){
+          picked.set(id, rec);
+        }
+      }catch(e){}
+    }
+
+    const out = Array.from(picked.values());
+    out.sort((a,b) => (a.exerciseIdx ?? 0) - (b.exerciseIdx ?? 0));
+    return out;
+  }
+
+  function getStudentInfo(){
+    return {
+      name: localStorage.getItem(_STUDENT_NAME_KEY) || "",
+      klas: localStorage.getItem(_STUDENT_CLASS_KEY) || ""
+    };
+  }
+
+  function setStudentInfo(name, klas){
+    try{
+      localStorage.setItem(_STUDENT_NAME_KEY, String(name || "").trim());
+      localStorage.setItem(_STUDENT_CLASS_KEY, String(klas || "").trim());
+    }catch(e){}
+  }
+
+  function ensureStudentInfo(){
+    return new Promise((resolve) => {
+      const modal = document.getElementById("export-modal");
+      const inName = document.getElementById("student-name");
+      const inClass = document.getElementById("student-class");
+      const ok = document.getElementById("export-modal-ok");
+      const cancel = document.getElementById("export-modal-cancel");
+
+      const cur = getStudentInfo();
+      inName.value = cur.name;
+      inClass.value = cur.klas;
+
+      modal.style.display = "flex";
+      inName.focus();
+
+      function cleanup(result){
+        modal.style.display = "none";
+        ok.removeEventListener("click", onOk);
+        cancel.removeEventListener("click", onCancel);
+        modal.onclick = null;
+        resolve(result);
+      }
+
+      function onOk(){
+        const name = inName.value.trim();
+        const klas = inClass.value.trim();
+        if (!name || !klas){
+          showToast("Vul naam en klas in.", false);
+          return;
+        }
+        setStudentInfo(name, klas);
+        cleanup(true);
+      }
+
+      function onCancel(){ cleanup(false); }
+
+      ok.addEventListener("click", onOk);
+      cancel.addEventListener("click", onCancel);
+      modal.onclick = (e) => { if (e.target === modal) cleanup(false); };
+    });
+  }
+
+  /* =========================================================
+     8) Student HTML file export (.html)
+     ========================================================= */
+
+  function downloadTextFile(filename, content, mime="text/html;charset=utf-8"){
+    const blob = new Blob([content], { type:mime });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+      a.remove();
+    }, 0);
+  }
+
+  async function trySaveWithFilePicker(filename, content){
+    if (!("showSaveFilePicker" in window)) return false;
+    try{
+      const handle = await window.showSaveFilePicker({
+        suggestedName: filename,
+        types: [
+          { description:"HTML-bestand", accept: { "text/html": [".html"] } }
+        ]
+      });
+      const writable = await handle.createWritable();
+      await writable.write(content);
+      await writable.close();
+      return true;
+    }catch(e){
+      return false;
+    }
+  }
+
+  function suggestedStudentFilename(){
+    const code = editor.getValue();
+    const doc = _parseDom(code);
+    const title = doc ? _textOf(doc, "title") : "";
+    const base = title ? _sanitizeFilePart(title) : _sanitizeFilePart(EXERCISES[currentIdx]?.title || "pagina");
+    return `${String(currentIdx+1).padStart(2,"0")}-${base}.html`;
+  }
+
+  async function saveCurrentHtmlForStudent(){
+    const filename = suggestedStudentFilename();
+    const content = editor.getValue();
+
+    const saved = await trySaveWithFilePicker(filename, content);
+    if (!saved){
+      downloadTextFile(filename, content);
+    }
+    showToast("HTML-bestand opgeslagen.", true);
+  }
+
+  /* =========================================================
+     9) PDF export (single exercise + batch)
+     ========================================================= */
+
+  function _pdfBreakLongTokens(text, chunk=80){
+    return String(text ?? "")
+      .split("\n")
+      .map(line =>
+        line.replace(new RegExp(`\\S{${chunk},}`, "g"), m =>
+          (m.match(new RegExp(`.{1,${chunk}}`, "g")) || [m]).join(" ")
+        )
+      )
+      .join("\n");
+  }
+
+  function _pdfAddBlock(pdf, label, text, opts){
+    const margin = opts.margin;
+    const contentWidth = opts.contentWidth;
+    const pageHeight = opts.pageHeight;
+    let y = opts.y;
+
+    const setLabel = opts.setLabel;
+    const setBody = opts.setBody;
+    const setCode = opts.setCode;
+
+    function ensureRoom(h){
+      if (y + h > pageHeight - margin){
+        pdf.addPage();
+        y = margin;
+      }
+    }
+
+    setLabel();
+    ensureRoom(22);
+    pdf.text(label, margin, y);
+    y += 16;
+
+    const isCode = !!opts.isCode;
+    (isCode ? setCode : setBody)();
+
+    const safe = _pdfBreakLongTokens(text, 80);
+    const lines = pdf.splitTextToSize(safe, contentWidth);
+    const lh = isCode ? 13 : 14;
+
+    let i = 0;
+    while (i < lines.length){
+      let fit = Math.floor((pageHeight - y - margin) / lh);
+      if (fit < 1){
+        pdf.addPage();
+        y = margin;
+        continue;
+      }
+      const chunk = lines.slice(i, i + fit);
+      pdf.text(chunk, margin, y);
+      y += chunk.length * lh;
+      i += fit;
+      if (i < lines.length){
+        pdf.addPage();
+        y = margin;
+      }
+    }
+    y += 10;
+    return y;
+  }
+
+  async function exportCurrentExerciseToPdf(){
+    const ok = await ensureStudentInfo();
+    if (!ok) return;
+
+    const { name, klas } = getStudentInfo();
+    const ex = EXERCISES[currentIdx];
+
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ orientation:"portrait", unit:"pt", format:"a4" });
+
+    const pageHeight = pdf.internal.pageSize.height;
+    const margin = 36;
+    const contentWidth = 520;
+    let y = margin;
+
+    const PURPLE = [82,0,255];
+
+    function setBody(){ pdf.setFont("helvetica","normal"); pdf.setFontSize(12); pdf.setTextColor(0,0,0); }
+    function setH(){ pdf.setFont("helvetica","bold"); pdf.setFontSize(18); pdf.setTextColor(PURPLE[0],PURPLE[1],PURPLE[2]); }
+    function setLabel(){ pdf.setFont("helvetica","bold"); pdf.setFontSize(13); pdf.setTextColor(PURPLE[0],PURPLE[1],PURPLE[2]); }
+    function setCode(){ pdf.setFont("courier","normal"); pdf.setFontSize(10); pdf.setTextColor(0,0,0); }
+
+    setH();
+    pdf.text("HTML in de Klas – Oefening", margin, y);
+    y += 28;
+
+    setBody();
+    pdf.text(`Naam: ${name}`, margin, y); y += 18;
+    pdf.text(`Klas: ${klas}`, margin, y); y += 18;
+    pdf.text(`Oefening: ${ex.title}`, margin, y); y += 22;
+
+    const code = editor.getValue();
+    const tabTitle = updatePreviewTitle(code);
+
+    y = _pdfAddBlock(pdf, "Tabtitel (title):", tabTitle, {
+      y, margin, contentWidth, pageHeight, setLabel, setBody, setCode, isCode:false
+    });
+
+    y = _pdfAddBlock(pdf, "HTML-code:", code, {
+      y, margin, contentWidth, pageHeight, setLabel, setBody, setCode, isCode:true
+    });
+
+    setLabel();
+    pdf.text("Statistiek:", margin, y); y += 16;
+    setBody();
+    pdf.text(`Pogingen: ${_getAttempts(currentIdx)}`, margin, y); y += 16;
+    pdf.text(`Tijd besteed: ${_formatDuur(_getTimeMs(currentIdx))}`, margin, y); y += 18;
+
+    setLabel();
+    pdf.text("Verificatiegegevens:", margin, y); y += 16;
+    pdf.setFont("helvetica","normal"); pdf.setFontSize(9); pdf.setTextColor(0,0,0);
+    const now = new Date();
+    pdf.text(`Genereerd op: ${now.toLocaleString("nl-BE")}`, margin, y); y += 12;
+    pdf.text(`Pagina-URL: ${window.location.href}`, margin, y); y += 12;
+    pdf.text(`Browser: ${navigator.userAgent || ""}`, margin, y); y += 12;
+
+    const fname = `${_sanitizeFilePart(name)}-${_sanitizeFilePart(klas)}-${String(currentIdx+1).padStart(2,"0")}-OEFENING.pdf`;
+    pdf.save(fname);
+  }
+
+  async function exportBatchPdfToday(){
+    const ok = await ensureStudentInfo();
+    if (!ok) return;
+
+    const { name, klas } = getStudentInfo();
+    const today = _dateKeyLocal(new Date());
+    const records = getSavedForDate(today);
+
+    if (!records.length){
+      showToast("Geen bewaarde oefeningen gevonden voor vandaag.", false);
+      return;
+    }
+
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ orientation:"portrait", unit:"pt", format:"a4" });
+
+    const pageHeight = pdf.internal.pageSize.height;
+    const margin = 36;
+    const contentWidth = 520;
+    let y = margin;
+
+    const PURPLE = [82,0,255];
+
+    function setBody(){ pdf.setFont("helvetica","normal"); pdf.setFontSize(12); pdf.setTextColor(0,0,0); }
+    function setH(){ pdf.setFont("helvetica","bold"); pdf.setFontSize(18); pdf.setTextColor(PURPLE[0],PURPLE[1],PURPLE[2]); }
+    function setLabel(){ pdf.setFont("helvetica","bold"); pdf.setFontSize(13); pdf.setTextColor(PURPLE[0],PURPLE[1],PURPLE[2]); }
+    function setCode(){ pdf.setFont("courier","normal"); pdf.setFontSize(10); pdf.setTextColor(0,0,0); }
+
+    // Cover
+    setH();
+    pdf.text("HTML in de Klas – Gebundelde export", margin, y);
+    y += 28;
+
+    setBody();
+    pdf.text(`Naam: ${name}`, margin, y); y += 18;
+    pdf.text(`Klas: ${klas}`, margin, y); y += 18;
+    pdf.text(`Datum: ${today}`, margin, y); y += 24;
+
+    setLabel();
+    pdf.text("Inhoud:", margin, y); y += 16;
+    setBody();
+    const tocLines = records.map((r, idx) => `${idx+1}. ${(r.exerciseTitle || `Oefening ${Number(r.exerciseIdx||0)+1}`).trim()}`);
+    const tocText = tocLines.join("\n");
+    const tocWrapped = pdf.splitTextToSize(tocText, contentWidth);
+    pdf.text(tocWrapped, margin, y);
+
+    // Exercises
+    for (let i = 0; i < records.length; i++){
+      const r = records[i];
+      pdf.addPage();
+      y = margin;
+
+      setH();
+      pdf.text(`Oefening ${i+1} / ${records.length}`, margin, y);
+      y += 24;
+
+      setBody();
+      const title = (r.exerciseTitle || "").trim();
+      if (title){
+        pdf.text(title, margin, y);
+        y += 18;
+      }
+
+      const status = r.status === "success" ? "Correct" : (r.status === "fail" ? "Niet correct" : "Onbekend");
+      pdf.text(`Status: ${status}`, margin, y); y += 16;
+      pdf.text(`Pogingen: ${r.pogingen ?? ""}  |  Tijd: ${_formatDuur(r.tijdMs || 0)}`, margin, y); y += 22;
+
+      y = _pdfAddBlock(pdf, "Tabtitel (title):", r.previewTitle || "Zonder titel", {
+        y, margin, contentWidth, pageHeight, setLabel, setBody, setCode, isCode:false
+      });
+
+      y = _pdfAddBlock(pdf, "HTML-code:", r.html || "", {
+        y, margin, contentWidth, pageHeight, setLabel, setBody, setCode, isCode:true
+      });
+
+      setLabel();
+      pdf.text("Verificatiegegevens:", margin, y); y += 16;
+      pdf.setFont("helvetica","normal"); pdf.setFontSize(9); pdf.setTextColor(0,0,0);
+      pdf.text(`Opgeslagen op: ${r.savedAt || ""}`, margin, y); y += 12;
+      pdf.text(`Verificatie-ID: ${r.verificatieId || ""}`, margin, y); y += 12;
+      pdf.text(`Pagina-URL: ${r.pageUrl || ""}`, margin, y); y += 12;
+      pdf.text(`Browser: ${r.userAgent || ""}`, margin, y); y += 12;
+    }
+
+    const fname = `${_sanitizeFilePart(name)}-${_sanitizeFilePart(klas)}-${today}-ALLE_OEFENINGEN.pdf`;
+    pdf.save(fname);
+  }
+
+  /* =========================================================
+     10) Load/switch exercise
+     ========================================================= */
+
+  function loadExercise(){
+    const ex = EXERCISES[currentIdx];
+    topTitle.textContent = ex.title;
+
+    renderMarkdown(ex);
+
+    const saved = localStorage.getItem(codeKey(currentIdx));
+    editor.setValue(saved !== null ? saved : ex.starter);
+
+    clearFeedback();
+    logFeedback("Jouw feedback verschijnt hier.");
+
+    renderPreviewDebounced();
+
+    resetWorkTimerState();
+    startWorkTimer();
+  }
+
+  function switchExercise(idx){
+    stopWorkTimer();
+    currentIdx = idx;
+    renderProgress();
+    loadExercise();
+  }
+
+  /* =========================================================
+     11) Confirm modal + toast
+     ========================================================= */
+
+  function showToast(message, success){
+    const toast = document.getElementById("eval-toast");
+    toast.textContent = message;
+    toast.style.background = success ? "#e6fff8" : "#fff0f0";
+    toast.style.color = success ? "#04695c" : "#c81c1c";
+    toast.style.display = "block";
+    clearTimeout(window.evalToastTimeout);
+    window.evalToastTimeout = setTimeout(() => { toast.style.display = "none"; }, 4200);
+  }
+
+  window.confirmModal = function(message, options = {}) {
+    return new Promise((resolve) => {
+      const modal    = document.getElementById("confirm-modal");
+      const msgDiv   = document.getElementById("confirm-modal-msg");
+      const extraDiv = document.getElementById("confirm-modal-extra");
+      const okBtn    = document.getElementById("confirm-modal-ok");
+      const cancelBtn= document.getElementById("confirm-modal-cancel");
+
+      okBtn.textContent     = options.okLabel     || "OK";
+      cancelBtn.textContent = options.cancelLabel || "Annuleren";
+
+      msgDiv.textContent = message;
+
+      if (extraDiv) {
+        if (options.extraHTML) {
+          extraDiv.innerHTML = options.extraHTML;
+          extraDiv.style.display = "block";
+        } else {
+          extraDiv.innerHTML = "";
+          extraDiv.style.display = "none";
+        }
+      }
+
+      modal.style.display = "flex";
+
+      function cleanup(result){
+        modal.style.display = "none";
+        okBtn.removeEventListener("click", onOk);
+        cancelBtn.removeEventListener("click", onCancel);
+        document.removeEventListener("keydown", onKeyDown);
+        modal.onclick = null;
+        resolve(result);
+      }
+
+      function onOk(){ cleanup(true); }
+      function onCancel(){ cleanup(false); }
+
+      okBtn.addEventListener("click", onOk);
+      cancelBtn.addEventListener("click", onCancel);
+
+      function onKeyDown(e){
+        if (e.key === "Escape") cleanup(false);
+        if (e.key === "Enter") cleanup(true);
+      }
+      document.addEventListener("keydown", onKeyDown);
+
+      modal.onclick = function(e){
+        if (e.target === modal) cleanup(false);
+      };
+    });
+  };
+
+  /* =========================================================
+     12) Run pipeline: render + evaluate + metrics + snapshot + flow
+     ========================================================= */
+
+  function goNext(){
+    if (currentIdx < EXERCISES.length - 1){
+      switchExercise(currentIdx + 1);
+      return;
+    }
+    showToast("Laatste oefening bereikt.", true);
+  }
+
+  async function runAndCheck(){
+    clearFeedback();
+
+    // Attempt + stop timer for stable snapshot
+    _incAttempts(currentIdx);
+    stopWorkTimer();
+
+    const code = editor.getValue();
+    updatePreviewTitle(code);
+    preview.srcdoc = makePreviewHtml(code);
+
+    const res = evaluateCurrent();
+
+    if (res.ok){
+      try{ localStorage.setItem(doneKey(currentIdx), "1"); }catch(e){}
+
+      const saved = saveSnapshot("success");
+      if (!saved.ok && saved.reason === "quota"){
+        showToast("Opslaan mislukt: localStorage is vol. Doe batch export.", false);
+      }
+
+      const extraHtml = `
+        ${metricsSummaryHtml()}
+        <ul>
+          <li>PDF export bevat code, verificatiegegevens, pogingen en tijd.</li>
+          <li>Je kan ook je HTML opslaan als bestand via "Exporteer jouw HTML".</li>
+        </ul>
+      `;
+
+      const doPdf = await window.confirmModal(
+        "Correct. Kies wat je nu doet:",
+        { okLabel:"Exporteer oefening (PDF)", cancelLabel:"Bewaar en ga verder", extraHTML: extraHtml }
+      );
+
+      if (doPdf){
+        await exportCurrentExerciseToPdf();
+        startWorkTimer();
+        return;
+      }
+
+      goNext();
+      return;
+    }
+
+    try{ localStorage.removeItem(doneKey(currentIdx)); }catch(e){}
+
+    const saved = saveSnapshot("fail");
+    if (!saved.ok && saved.reason === "quota"){
+      showToast("Opslaan mislukt: localStorage is vol. Doe batch export.", false);
+    }
+
+    const msg = res.info || "Niet correct. Controleer je HTML-structuur.";
+    logFeedback("Niet correct:");
+    logFeedback(msg);
+    showToast(msg, false);
+
+    startWorkTimer();
+  }
+
+  /* =========================================================
+     13) Reset
+     ========================================================= */
+
+  function resetChoiceModal(){
+    return new Promise((resolve) => {
+      const modal = document.getElementById("reset-modal");
+      const btnCurrent = document.getElementById("reset-current");
+      const btnAll = document.getElementById("reset-all");
+      const btnCancel = document.getElementById("reset-cancel");
+
+      modal.style.display = "flex";
+
+      function cleanup(choice){
+        modal.style.display = "none";
+        btnCurrent.removeEventListener("click", onCurrent);
+        btnAll.removeEventListener("click", onAll);
+        btnCancel.removeEventListener("click", onCancel);
+        document.removeEventListener("keydown", onKey);
+        modal.onclick = null;
+        resolve(choice);
+      }
+
+      function onCurrent(){ cleanup("current"); }
+      function onAll(){ cleanup("all"); }
+      function onCancel(){ cleanup(null); }
+
+      function onKey(e){
+        if (e.key === "Escape") cleanup(null);
+      }
+
+      btnCurrent.addEventListener("click", onCurrent);
+      btnAll.addEventListener("click", onAll);
+      btnCancel.addEventListener("click", onCancel);
+      document.addEventListener("keydown", onKey);
+
+      modal.onclick = (e) => { if (e.target === modal) cleanup(null); };
+    });
+  }
+
+  async function handleReset(){
+    const choice = await resetChoiceModal();
+    if (!choice) return;
+
+    stopWorkTimer();
+
+    if (choice === "current"){
+      try{
+        localStorage.removeItem(codeKey(currentIdx));
+        localStorage.removeItem(doneKey(currentIdx));
+        localStorage.removeItem(attemptsKey(currentIdx));
+        localStorage.removeItem(timeKey(currentIdx));
+      }catch(e){}
+
+      const today = _dateKeyLocal(new Date());
+      const s1 = `${_SAVE_PREFIX}-${today}-${currentIdx}-success-latest`;
+      const s2 = `${_SAVE_PREFIX}-${today}-${currentIdx}-fail-latest`;
+      try{ localStorage.removeItem(s1); }catch(e){}
+      try{ localStorage.removeItem(s2); }catch(e){}
+
+      try{
+        const keys = _loadSaveIndex().filter(k => k !== s1 && k !== s2);
+        _writeSaveIndex(keys);
+      }catch(e){}
+
+      loadExercise();
+      return;
+    }
+
+    if (choice === "all"){
+      const keys = Object.keys(localStorage);
+      for (const k of keys){
+        if (k.startsWith(`htmlk-code-${COURSE_ID}-`)) localStorage.removeItem(k);
+        if (k.startsWith(`htmlk-done-${COURSE_ID}-`)) localStorage.removeItem(k);
+        if (k.startsWith(`htmlk-attempts-${COURSE_ID}-`)) localStorage.removeItem(k);
+        if (k.startsWith(`htmlk-timeMs-${COURSE_ID}-`)) localStorage.removeItem(k);
+        if (k.startsWith(_SAVE_PREFIX)) localStorage.removeItem(k);
+        if (k === _SAVE_INDEX_KEY) localStorage.removeItem(k);
+        if (k === _STUDENT_NAME_KEY || k === _STUDENT_CLASS_KEY) localStorage.removeItem(k);
+      }
+      switchExercise(0);
+      return;
+    }
+
+    startWorkTimer();
+  }
+
+  /* =========================================================
+     14) Splitter
+     ========================================================= */
+
+  function setupSplitter(){
+    const splitter = document.getElementById("splitter");
+    const editorPane = document.getElementById("editor-pane");
+    const previewPane = document.getElementById("preview-pane");
+    const mainLayout = document.getElementById("main-layout");
+    if (!splitter || !editorPane || !previewPane || !mainLayout) return;
+
+    let dragging = false;
+
+    splitter.addEventListener("mousedown", function(){
+      if (window.innerWidth < 980) return;
+      dragging = true;
+      splitter.classList.add("dragging");
+      document.body.style.userSelect = "none";
+    });
+
+    document.addEventListener("mousemove", function(e){
+      if (!dragging || window.innerWidth < 980) return;
+
+      const rect = mainLayout.getBoundingClientRect();
+      const minEditorWidth = 320;
+      const minPreviewWidth = 320;
+      const splitterWidth = splitter.offsetWidth;
+      const totalWidth = rect.width;
+
+      let newEditorWidth = e.clientX - rect.left;
+      const maxEditorWidth = totalWidth - splitterWidth - minPreviewWidth;
+      newEditorWidth = Math.max(minEditorWidth, Math.min(maxEditorWidth, newEditorWidth));
+
+      editorPane.style.flex = `0 0 ${newEditorWidth}px`;
+      editorPane.style.width = `${newEditorWidth}px`;
+      previewPane.style.flex = "1 1 0";
+      previewPane.style.width = "";
+    });
+
+    document.addEventListener("mouseup", function(){
+      if (!dragging) return;
+      dragging = false;
+      splitter.classList.remove("dragging");
+      document.body.style.userSelect = "";
+    });
+
+    window.addEventListener("resize", function(){
+      if (window.innerWidth < 980){
+        editorPane.style.flex = "";
+        editorPane.style.width = "";
+        previewPane.style.flex = "";
+        previewPane.style.width = "";
+        splitter.style.display = "none";
+      } else {
+        splitter.style.display = "block";
+      }
+    });
+  }
+
+  /* =========================================================
+     15) Boot + bindings
+     ========================================================= */
+
+  document.addEventListener("DOMContentLoaded", function(){
+    editor = CodeMirror(document.getElementById("code-editor"), {
+      value: EXERCISES[0].starter,
+      mode:"htmlmixed",
+      lineNumbers:true,
+      theme:"default",
+      tabSize:2,
+      autofocus:true
+    });
+
+    editor.on("change", function(){
+      // start timing when they work
+      startWorkTimer();
+      try{
+        localStorage.setItem(codeKey(currentIdx), editor.getValue());
+      }catch(e){}
+      renderPreviewDebounced();
+    });
+
+    document.getElementById("run-code").onclick = runAndCheck;
+    document.getElementById("save-html-file").onclick = saveCurrentHtmlForStudent;
+
+    document.getElementById("toggle-theme").onclick = () => {
+      document.body.classList.toggle("dark");
+    };
+
+    document.getElementById("export-batch").onclick = exportBatchPdfToday;
+    document.getElementById("reset-progress").onclick = handleReset;
+
+    setupSplitter();
+    renderProgress();
+    loadExercise();
+  });
+  </script>
+</body>
+</html>
