@@ -149,18 +149,19 @@
     }
 
     .main-layout{
-      display:flex;
-      flex-direction:row;
-      width:100vw;
-      height:calc(100vh - 70px);
-      min-height:0;
-      overflow:hidden;
-      background:var(--bg);
-    }
-
+  display:flex;
+  flex-direction:row;
+  width:100%;
+  flex:1 1 auto;    
+  min-height:0;      
+  overflow:hidden;
+  background:var(--bg);
+} 
+    
     .editor-pane{
       flex:0 0 520px;
       min-width:320px;
+      min-height:0;
       background:var(--panel);
       border-radius:18px 0 0 18px;
       padding:1.1rem;
@@ -264,14 +265,21 @@
       display:block;
       margin:0.7rem 0;
     }
+    #md-render.md-box{
+  flex:0 1 auto;
+  max-height:clamp(140px, 32vh, 420px);
+  overflow:auto;
+}
 
     #code-editor{
-      height:340px;
-      border-radius:10px;
-      overflow:hidden;
-      border:1.5px solid var(--brand-purple);
-      background:#fff;
-    }
+  flex:1 1 auto;
+  min-height:260px;
+  height:auto;
+  border-radius:10px;
+  overflow:hidden;
+  border:1.5px solid var(--brand-purple);
+  background:#fff;
+}
 
     .run-row{
       display:flex;
@@ -347,7 +355,7 @@
     .preview-frame{
       flex:1 1 auto;
       width:100%;
-      min-height:520px;
+      min-height:clamp(320px, 55vh, 720px);
       border:2px solid var(--brand-purple);
       border-radius:12px;
       background:#fff;
@@ -514,6 +522,12 @@
       .splitter{ display:none !important; }
       .preview-frame{ min-height:520px; }
     }
+    #code-editor .CodeMirror{
+  height:100%;
+}
+    #md-render.md-box{ flex:0 1 auto; max-height:clamp(140px, 32vh, 420px); overflow:auto; }
+#code-editor{ flex:1 1 auto; min-height:260px; height:auto; border-radius:10px; overflow:hidden; border:1.5px solid var(--brand-purple); background:#fff; }
+#code-editor .CodeMirror{ height:100%; }
   </style>
 </head>
 
@@ -2028,6 +2042,7 @@ Zorg dat aanwezig is:
 
     resetWorkTimerState();
     startWorkTimer();
+    if (editor) refreshEditorSoon();
   }
 
   function switchExercise(idx){
@@ -2298,6 +2313,7 @@ Zorg dat aanwezig is:
       editorPane.style.width = `${newEditorWidth}px`;
       previewPane.style.flex = "1 1 0";
       previewPane.style.width = "";
+      if (editor) editor.refresh();
     });
 
     document.addEventListener("mouseup", function(){
@@ -2305,6 +2321,7 @@ Zorg dat aanwezig is:
       dragging = false;
       splitter.classList.remove("dragging");
       document.body.style.userSelect = "";
+      if (editor) refreshEditorSoon();
     });
 
     window.addEventListener("resize", function(){
@@ -2317,6 +2334,7 @@ Zorg dat aanwezig is:
       } else {
         splitter.style.display = "block";
       }
+      if (editor) refreshEditorSoon();
     });
   }
 
@@ -2333,6 +2351,16 @@ Zorg dat aanwezig is:
       tabSize:2,
       autofocus:true
     });
+    
+    function refreshEditorSoon(){
+  if (!editor) return;
+  requestAnimationFrame(() => editor.refresh());
+  setTimeout(() => editor.refresh(), 60);
+}
+
+window.addEventListener("resize", refreshEditorSoon);
+refreshEditorSoon();
+    
 
     editor.on("change", function(){
       // start timing when they work
