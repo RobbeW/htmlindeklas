@@ -1,5 +1,5 @@
 <!--Auteur: Robbe Wulgaert / aiindeklas.be-->
-<!-- Copyright 2025 - Vrij gebruik voor educatie mits expliciete naamsvermelding -->
+<!-- Copyright 2025 - Gebruik vrij voor educatie mits expliciete naamsvermelding -->
 <!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -128,6 +128,36 @@
       opacity:1;
       z-index:2;
     }
+    
+    /* ===== Progress status colours (top circular exercise buttons) ===== */
+:root{
+  --ok:#19a974;     /* green */
+  --bad:#d64545;    /* red */
+}
+
+.exercise-btn.done{
+  background:var(--ok);
+  opacity:0.92;
+}
+.exercise-btn.fail{
+  background:var(--bad);
+  opacity:0.92;
+}
+
+/* Keep "current" look, but recolour border/text based on status */
+.exercise-btn.current.done{
+  background:#fff;
+  color:var(--ok);
+  border-color:var(--ok);
+  box-shadow:0 0 0 3px rgba(25,169,116,0.18);
+}
+.exercise-btn.current.fail{
+  background:#fff;
+  color:var(--bad);
+  border-color:var(--bad);
+  box-shadow:0 0 0 3px rgba(214,69,69,0.18);
+}
+
 
     .toolbar{
       display:flex;
@@ -676,6 +706,7 @@
   // Metrics keys (pogingen + tijd)
   function attemptsKey(idx){ return `htmlk-attempts-${COURSE_ID}-${idx}`; }
   function timeKey(idx){ return `htmlk-timeMs-${COURSE_ID}-${idx}`; }
+  function resultKey(idx){ return `htmlk-lastResult-${COURSE_ID}-${idx}`; }
 
   function _loadSaveIndex(){
     try{
@@ -1316,17 +1347,31 @@ function formatLintMessages(lint, max=6){
   }
 
   function renderProgress(){
-    progressBar.innerHTML = "";
-    EXERCISES.forEach((ex, idx) => {
-      const btn = document.createElement("button");
-      btn.className = "exercise-btn" + (idx === currentIdx ? " current" : "");
-      btn.textContent = idx + 1;
-      btn.type = "button";
-      btn.title = ex.title;
-      btn.onclick = () => switchExercise(idx);
-      progressBar.appendChild(btn);
-    });
-  }
+  progressBar.innerHTML = "";
+  EXERCISES.forEach((ex, idx) => {
+    const btn = document.createElement("button");
+
+    const isCurrent = idx === currentIdx;
+    const isDone = (localStorage.getItem(doneKey(idx)) === "1");
+    const last = localStorage.getItem(resultKey(idx)) || ""; 
+
+    let cls = "exercise-btn";
+    if (isCurrent) cls += " current";
+    if (isDone || last === "success") cls += " done";
+    else if (last === "fail") cls += " fail";
+
+    btn.className = cls;
+    btn.textContent = idx + 1;
+    btn.type = "button";
+
+    const statusLabel = (isDone || last === "success") ? "Correct" : (last === "fail" ? "Niet correct" : "Nog niet ingediend");
+    btn.title = `${ex.title} — ${statusLabel}`;
+
+    btn.onclick = () => switchExercise(idx);
+    progressBar.appendChild(btn);
+  });
+}
+
 
   function renderMarkdown(ex){
     const md = ex?.markdown || "";
@@ -2177,6 +2222,11 @@ if (_srcHasPlaceholderDots(raw)){
 
     if (res.ok){
       try{ localStorage.setItem(doneKey(currentIdx), "1"); }catch(e){}
+      try{
+        localStorage.setItem(doneKey(currentIdx), "1");
+        localStorage.setItem(resultKey(currentIdx), "success");
+      }catch(e){}
+      renderProgress();
 
       const saved = saveSnapshot("success");
       if (!saved.ok && saved.reason === "quota"){
@@ -2206,7 +2256,11 @@ if (_srcHasPlaceholderDots(raw)){
       return;
     }
 
-    try{ localStorage.removeItem(doneKey(currentIdx)); }catch(e){}
+    try{
+  localStorage.setItem(resultKey(currentIdx), "fail");
+}catch(e){}
+renderProgress();
+
 
     const saved = saveSnapshot("fail");
     if (!saved.ok && saved.reason === "quota"){
@@ -2286,6 +2340,7 @@ if (res.kind === "lint"){
       const s2 = `${_SAVE_PREFIX}-${today}-${currentIdx}-fail-latest`;
       try{ localStorage.removeItem(s1); }catch(e){}
       try{ localStorage.removeItem(s2); }catch(e){}
+      try{ localStorage.removeItem(resultKey(currentIdx)); }catch(e){}
 
       try{
         const keys = _loadSaveIndex().filter(k => k !== s1 && k !== s2);
@@ -2294,6 +2349,8 @@ if (res.kind === "lint"){
 
       loadExercise();
       return;
+      
+
     }
 
     if (choice === "all"){
@@ -2306,6 +2363,8 @@ if (res.kind === "lint"){
         if (k.startsWith(_SAVE_PREFIX)) localStorage.removeItem(k);
         if (k === _SAVE_INDEX_KEY) localStorage.removeItem(k);
         if (k === _STUDENT_NAME_KEY || k === _STUDENT_CLASS_KEY) localStorage.removeItem(k);
+        if (k.startsWith(`htmlk-lastResult-${COURSE_ID}-`)) localStorage.removeItem(k);
+
       }
       switchExercise(0);
       return;
