@@ -1,5 +1,5 @@
 <!--Auteur: Robbe Wulgaert / aiindeklas.be-->
-<!-- Copyright 2025 - Gebruik vrij voor educatie mits expliciete naamsvermelding -->
+<!-- Copyright 2025 - Vrij gebruik voor educatie mits expliciete naamsvermelding -->
 <!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -716,9 +716,9 @@
      ========================================================= */
 
   const EXERCISES = [
-    {
-      title: "Oefening 1 — Basisstructuur HTML",
-      markdown: `
+  {
+    title: "Oefening 1 — Basisstructuur HTML",
+    markdown: `
 # Basisstructuur HTML
 
 ## Gegeven
@@ -738,25 +738,26 @@ Een basis-HTML-pagina bestaat uit volgende **elementen**:
 > **Tips**
 > - Openen: \`<tag>\`
 > - Sluiten: \`</tag>\`
-      `.trim(),
-      starter: `<!DOCTYPE html>
+    `.trim(),
+    starter: `<!DOCTYPE html>
 <...>
 
 
 </...>`,
-      eval: {
-        enforceText: false,
-        checks: [
-          { kind:"doctype" },
-          { kind:"tag", selector:"html" },
-          { kind:"tag", selector:"head" },
-          { kind:"tag", selector:"body" }
-        ]
-      }
-    },
-    {
-      title: "Oefening 2 — Hallo wereld, hallo HTML!",
-      markdown: `
+    eval: {
+      enforceText: false,
+      checks: [
+        { kind:"doctype" },
+        { kind:"tag", selector:"html", sourceRequired:true },
+        { kind:"tag", selector:"head", sourceRequired:true },
+        { kind:"tag", selector:"body", sourceRequired:true }
+      ]
+    }
+  },
+
+  {
+    title: "Oefening 2 — Hallo wereld, hallo HTML!",
+    markdown: `
 # Hallo wereld, hallo HTML!
 
 ## Gegeven
@@ -775,23 +776,24 @@ Hallo Wereld!
 \`\`\`
 
 > Tip: juiste openingstags en sluitingstags.
-      `.trim(),
-      starter: `<!DOCTYPE html>
+    `.trim(),
+    starter: `<!DOCTYPE html>
 <html lang="nl">`,
-      eval: {
-        enforceText: true,
-        checks: [
-          { kind:"doctype" },
-          { kind:"tag", selector:"html" },
-          { kind:"tag", selector:"head" },
-          { kind:"tag", selector:"body" },
-          { kind:"textContains", selector:"body", text:"Hallo Wereld", textCheck:true }
-        ]
-      }
-    },
-    {
-      title: "Oefening 3 — Een Goede Titel",
-      markdown: `
+    eval: {
+      enforceText: true,
+      checks: [
+        { kind:"doctype" },
+        { kind:"tag", selector:"html", sourceRequired:true },
+        { kind:"tag", selector:"head", sourceRequired:true },
+        { kind:"tag", selector:"body", sourceRequired:true },
+        { kind:"textContains", selector:"body", text:"Hallo Wereld", textCheck:true }
+      ]
+    }
+  },
+
+  {
+    title: "Oefening 3 — Een Goede Titel",
+    markdown: `
 # Een Goede Titel
 
 De \`<title>\` staat in de **head** en verschijnt op het tabblad. Dat is niet hetzelfde als een kop (\`h1\`) op je pagina.
@@ -803,21 +805,26 @@ De \`<title>\` staat in de **head** en verschijnt op het tabblad. Dat is niet he
 - In de body: zet de tekst **Vegetarisch Kapsalon**.
 
 > Tip: juiste openingstags en sluitingstags.
-      `.trim(),
-      starter: `<!DOCTYPE html>`,
-      eval: {
-        enforceText: true,
-        checks: [
-          { kind:"doctype" },
-          { kind:"tag", selector:"title" },
-          { kind:"titleEquals", value:"Mijn Favoriete Gerecht", textCheck:true },
-          { kind:"textContains", selector:"body", text:"Vegetarisch Kapsalon", textCheck:true }
-        ]
-      }
-    },
-    {
-      title: "Oefening 4 — Koppen in HTML",
-      markdown: `
+    `.trim(),
+    starter: `<!DOCTYPE html>`,
+    eval: {
+      enforceText: true,
+      checks: [
+        { kind:"doctype" },
+        { kind:"tag", selector:"html", sourceRequired:true },
+        { kind:"tag", selector:"head", sourceRequired:true },
+        { kind:"tag", selector:"body", sourceRequired:true },
+
+        { kind:"tag", selector:"title" },
+        { kind:"titleEquals", value:"Mijn Favoriete Gerecht", textCheck:true },
+        { kind:"textContains", selector:"body", text:"Vegetarisch Kapsalon", textCheck:true }
+      ]
+    }
+  },
+
+  {
+    title: "Oefening 4 — Koppen in HTML",
+    markdown: `
 # Koppen in HTML: Leren van Boeken en Kranten
 
 Koppen structureren je pagina: \`h1\` (hoofdkop), \`h2\` (subkop), ...
@@ -835,23 +842,28 @@ Koppen structureren je pagina: \`h1\` (hoofdkop), \`h2\` (subkop), ...
   <h2>Waarom dit mijn favoriet is</h2>
 </body>
 \`\`\`
-      `.trim(),
-      starter: `<!DOCTYPE html>`,
-      eval: {
-        enforceText: false,
-        checks: [
-          { kind:"doctype" },
-          { kind:"tag", selector:"title" },
-          { kind:"tag", selector:"h1" },
-          { kind:"tag", selector:"h2" },
-          { kind:"nonEmpty", selector:"h1" },
-          { kind:"nonEmpty", selector:"h2" }
-        ]
-      }
-    },
-    {
-      title: "Oefening 5 — Alinea's in HTML",
-      markdown: `
+    `.trim(),
+    starter: `<!DOCTYPE html>`,
+    eval: {
+      enforceText: false,
+      checks: [
+        { kind:"doctype" },
+        { kind:"tag", selector:"html", sourceRequired:true },
+        { kind:"tag", selector:"head", sourceRequired:true },
+        { kind:"tag", selector:"body", sourceRequired:true },
+
+        { kind:"tag", selector:"title" },
+        { kind:"tag", selector:"h1" },
+        { kind:"tag", selector:"h2" },
+        { kind:"nonEmpty", selector:"h1" },
+        { kind:"nonEmpty", selector:"h2" }
+      ]
+    }
+  },
+
+  {
+    title: "Oefening 5 — Alinea's in HTML",
+    markdown: `
 # Alinea's in HTML: Vertel het Verhaal van je Gerecht
 
 Alinea's maak je met \`<p>\`.
@@ -863,22 +875,28 @@ Alinea's maak je met \`<p>\`.
   - \`<h1>Vegetarisch Kapsalon</h1>\`
   - \`<h2>De Geschiedenis</h2>\`
   - minstens 1 alinea (\`p\`) met een korte uitleg.
-      `.trim(),
-      starter: `<!DOCTYPE html>`,
-      eval: {
-        enforceText: true,
-        checks: [
-          { kind:"titleEquals", value:"Het Verhaal van achter het Kapsalon", textCheck:true },
-          { kind:"textEquals", selector:"h1", value:"Vegetarisch Kapsalon", textCheck:true },
-          { kind:"textEquals", selector:"h2", value:"De Geschiedenis", textCheck:true },
-          { kind:"tag", selector:"p" },
-          { kind:"minTextLength", selector:"p", n:20 }
-        ]
-      }
-    },
-    {
-      title: "Oefening 6 — Afbeeldingen in HTML",
-      markdown: `
+    `.trim(),
+    starter: `<!DOCTYPE html>`,
+    eval: {
+      enforceText: true,
+      checks: [
+        { kind:"doctype" },
+        { kind:"tag", selector:"html", sourceRequired:true },
+        { kind:"tag", selector:"head", sourceRequired:true },
+        { kind:"tag", selector:"body", sourceRequired:true },
+
+        { kind:"titleEquals", value:"Het Verhaal van achter het Kapsalon", textCheck:true },
+        { kind:"textEquals", selector:"h1", value:"Vegetarisch Kapsalon", textCheck:true },
+        { kind:"textEquals", selector:"h2", value:"De Geschiedenis", textCheck:true },
+        { kind:"tag", selector:"p" },
+        { kind:"minTextLength", selector:"p", n:20 }
+      ]
+    }
+  },
+
+  {
+    title: "Oefening 6 — Afbeeldingen in HTML",
+    markdown: `
 # Afbeeldingen in HTML: Breng je Gerecht tot Leven
 
 Gebruik \`<img>\` met \`src\`, \`alt\` en \`width\`.
@@ -891,30 +909,36 @@ Gebruik \`<img>\` met \`src\`, \`alt\` en \`width\`.
   - \`<h2>De Geschiedenis</h2>\`
   - een alinea
   - een afbeelding met \`src\`, \`alt\`, \`width\`
-      `.trim(),
-      starter: `<!DOCTYPE html>
+    `.trim(),
+    starter: `<!DOCTYPE html>
 ...
 
   <img src="" alt="Afbeelding van een schotel Kapsalon" width="50%">
 ...`,
-      eval: {
-        enforceText: true,
-        checks: [
-          { kind:"titleEquals", value:"Het Verhaal van Kapsalon", textCheck:true },
-          { kind:"textEquals", selector:"h1", value:"Kapsalon", textCheck:true },
-          { kind:"textEquals", selector:"h2", value:"De Geschiedenis", textCheck:true },
-          { kind:"tag", selector:"p" },
-          { kind:"minTextLength", selector:"p", n:20 },
-          { kind:"tag", selector:"img" },
-          { kind:"attrPresent", selector:"img", attr:"src" },
-          { kind:"attrPresent", selector:"img", attr:"alt" },
-          { kind:"attrPresent", selector:"img", attr:"width" }
-        ]
-      }
-    },
-    {
-      title: "Oefening 7 — Geordende lijsten (ol)",
-      markdown: `
+    eval: {
+      enforceText: true,
+      checks: [
+        { kind:"doctype" },
+        { kind:"tag", selector:"html", sourceRequired:true },
+        { kind:"tag", selector:"head", sourceRequired:true },
+        { kind:"tag", selector:"body", sourceRequired:true },
+
+        { kind:"titleEquals", value:"Het Verhaal van Kapsalon", textCheck:true },
+        { kind:"textEquals", selector:"h1", value:"Kapsalon", textCheck:true },
+        { kind:"textEquals", selector:"h2", value:"De Geschiedenis", textCheck:true },
+        { kind:"tag", selector:"p" },
+        { kind:"minTextLength", selector:"p", n:20 },
+        { kind:"tag", selector:"img" },
+        { kind:"attrPresent", selector:"img", attr:"src" },
+        { kind:"attrPresent", selector:"img", attr:"alt" },
+        { kind:"attrPresent", selector:"img", attr:"width" }
+      ]
+    }
+  },
+
+  {
+    title: "Oefening 7 — Geordende lijsten (ol)",
+    markdown: `
 # Geordende Lijsten in HTML: Stap-voor-stap Recepten
 
 Gebruik \`<ol>\` met \`<li>\` items.
@@ -923,8 +947,8 @@ Gebruik \`<ol>\` met \`<li>\` items.
 - Maak een pagina over **Vegetarisch Kapsalon**.
 - \`<title>Het Verhaal van Kapsalon</title>\`
 - In de body: \`h1\`, \`h2\` ("Het Recept"), alinea, afbeelding, en een **geordende lijst** met de stappen van het recept.
-      `.trim(),
-      starter: `<!DOCTYPE html>
+    `.trim(),
+    starter: `<!DOCTYPE html>
 ...
 
   <img src="" alt="Afbeelding van een schotel Kapsalon" width="50%">
@@ -932,24 +956,29 @@ Gebruik \`<ol>\` met \`<li>\` items.
   <ol>
     <li></li>
   </ol>
-  
 
 ...`,
-      eval: {
-        enforceText: false,
-        checks: [
-          { kind:"tag", selector:"ol" },
-          { kind:"minCount", selector:"ol li", n:7 },
-          { kind:"tag", selector:"img" },
-          { kind:"attrPresent", selector:"img", attr:"src" },
-          { kind:"attrPresent", selector:"img", attr:"alt" },
-          { kind:"attrPresent", selector:"img", attr:"width" }
-        ]
-      }
-    },
-    {
-      title: "Oefening 8 — Ongeordende lijsten (ul)",
-      markdown: `
+    eval: {
+      enforceText: false,
+      checks: [
+        { kind:"doctype" },
+        { kind:"tag", selector:"html", sourceRequired:true },
+        { kind:"tag", selector:"head", sourceRequired:true },
+        { kind:"tag", selector:"body", sourceRequired:true },
+
+        { kind:"tag", selector:"ol" },
+        { kind:"minCount", selector:"ol li", n:7 },
+        { kind:"tag", selector:"img" },
+        { kind:"attrPresent", selector:"img", attr:"src" },
+        { kind:"attrPresent", selector:"img", attr:"alt" },
+        { kind:"attrPresent", selector:"img", attr:"width" }
+      ]
+    }
+  },
+
+  {
+    title: "Oefening 8 — Ongeordende lijsten (ul)",
+    markdown: `
 # Ongeordende Lijsten in HTML: Boodschappenlijstje
 
 Gebruik \`<ul>\` met \`<li>\`.
@@ -959,8 +988,8 @@ Gebruik \`<ul>\` met \`<li>\`.
 - Op deze pagina beschrijven we de items van ons boodschappenlijstje.
 - Gebruik: title, h1, h2, img, **ol** (stappen), **ul** (ingrediënten).
 - Voor de ul: minstens 6 ingrediënten.
-      `.trim(),
-      starter: `<!DOCTYPE html>
+    `.trim(),
+    starter: `<!DOCTYPE html>
 ...
   <ol>
     <li></li>
@@ -969,25 +998,31 @@ Gebruik \`<ul>\` met \`<li>\`.
   <ul>
     <li></li>
   </ul>
-  
+
 ...`,
-      eval: {
-        enforceText: false,
-        checks: [
-          { kind:"tag", selector:"ol" },
-          { kind:"minCount", selector:"ol li", n:3 },
-          { kind:"tag", selector:"ul" },
-          { kind:"minCount", selector:"ul li", n:6 },
-          { kind:"tag", selector:"img" },
-          { kind:"attrPresent", selector:"img", attr:"src" },
-          { kind:"attrPresent", selector:"img", attr:"alt" },
-          { kind:"attrPresent", selector:"img", attr:"width" }
-        ]
-      }
-    },
-    {
-      title: "Oefening 9 — Video toevoegen",
-      markdown: `
+    eval: {
+      enforceText: false,
+      checks: [
+        { kind:"doctype" },
+        { kind:"tag", selector:"html", sourceRequired:true },
+        { kind:"tag", selector:"head", sourceRequired:true },
+        { kind:"tag", selector:"body", sourceRequired:true },
+
+        { kind:"tag", selector:"ol" },
+        { kind:"minCount", selector:"ol li", n:3 },
+        { kind:"tag", selector:"ul" },
+        { kind:"minCount", selector:"ul li", n:6 },
+        { kind:"tag", selector:"img" },
+        { kind:"attrPresent", selector:"img", attr:"src" },
+        { kind:"attrPresent", selector:"img", attr:"alt" },
+        { kind:"attrPresent", selector:"img", attr:"width" }
+      ]
+    }
+  },
+
+  {
+    title: "Oefening 9 — Video toevoegen",
+    markdown: `
 # Video Toevoegen aan Jouw Webpagina
 
 Gebruik een ingesloten video via \`<iframe>\` (bv. YouTube embed).
@@ -995,20 +1030,26 @@ Gebruik een ingesloten video via \`<iframe>\` (bv. YouTube embed).
 ## Gevraagd
 - Werk verder op je pagina van de vorige oefeningen.
 - Voeg een relevante video toe met \`<iframe>\`.
-      `.trim(),
-      starter: `
-      Start met de code van jouw vorige oefening.`,
-      eval: {
-        enforceText: false,
-        checks: [
-          { kind:"tag", selector:"iframe" },
-          { kind:"attrPresent", selector:"iframe", attr:"src" }
-        ]
-      }
-    },
-    {
-      title: "Creatieve oefening 10 — Synthese: Favoriete gerecht",
-      markdown: `
+    `.trim(),
+    starter: `
+Start met de code van jouw vorige oefening.`,
+    eval: {
+      enforceText: false,
+      checks: [
+        { kind:"doctype" },
+        { kind:"tag", selector:"html", sourceRequired:true },
+        { kind:"tag", selector:"head", sourceRequired:true },
+        { kind:"tag", selector:"body", sourceRequired:true },
+
+        { kind:"tag", selector:"iframe" },
+        { kind:"attrPresent", selector:"iframe", attr:"src" }
+      ]
+    }
+  },
+
+  {
+    title: "Creatieve oefening 10 — Synthese: Favoriete gerecht",
+    markdown: `
 # Synthese - Jouw Eigen Favoriete Gerecht
 
 ## Gevraagd
@@ -1022,33 +1063,38 @@ Zorg dat deze elementen aanwezig zijn:
 - \`ol\` (minstens 3 items)
 - \`ul\` (minstens 3 items)
 - \`iframe\` (met src)
-      `.trim(),
-      starter: `
-      ...
-      `,
-      eval: {
-        enforceText: false,
-        checks: [
-          { kind:"tag", selector:"title" },
-          { kind:"tag", selector:"h1" },
-          { kind:"tag", selector:"h2" },
-          { kind:"minCount", selector:"p", n:1 },
-          { kind:"tag", selector:"img" },
-          { kind:"attrPresent", selector:"img", attr:"src" },
-          { kind:"attrPresent", selector:"img", attr:"alt" },
-          { kind:"attrPresent", selector:"img", attr:"width" },
-          { kind:"tag", selector:"ol" },
-          { kind:"minCount", selector:"ol li", n:3 },
-          { kind:"tag", selector:"ul" },
-          { kind:"minCount", selector:"ul li", n:3 },
-          { kind:"tag", selector:"iframe" },
-          { kind:"attrPresent", selector:"iframe", attr:"src" }
-        ]
-      }
-    },
-    {
-      title: "Creatieve oefening 11 — Synthese: Favoriete artiest",
-      markdown: `
+    `.trim(),
+    starter: `
+...`,
+    eval: {
+      enforceText: false,
+      checks: [
+        { kind:"doctype" },
+        { kind:"tag", selector:"html", sourceRequired:true },
+        { kind:"tag", selector:"head", sourceRequired:true },
+        { kind:"tag", selector:"body", sourceRequired:true },
+
+        { kind:"tag", selector:"title" },
+        { kind:"tag", selector:"h1" },
+        { kind:"tag", selector:"h2" },
+        { kind:"minCount", selector:"p", n:1 },
+        { kind:"tag", selector:"img" },
+        { kind:"attrPresent", selector:"img", attr:"src" },
+        { kind:"attrPresent", selector:"img", attr:"alt" },
+        { kind:"attrPresent", selector:"img", attr:"width" },
+        { kind:"tag", selector:"ol" },
+        { kind:"minCount", selector:"ol li", n:3 },
+        { kind:"tag", selector:"ul" },
+        { kind:"minCount", selector:"ul li", n:3 },
+        { kind:"tag", selector:"iframe" },
+        { kind:"attrPresent", selector:"iframe", attr:"src" }
+      ]
+    }
+  },
+
+  {
+    title: "Creatieve oefening 11 — Synthese: Favoriete artiest",
+    markdown: `
 # Synthese - Jouw Favoriete Artiest
 
 ## Gevraagd
@@ -1064,34 +1110,39 @@ Zorg dat aanwezig is:
 - \`img\`
 - \`iframe\`
 - een lijst met albums (ol of ul) met minstens 3 items
-      `.trim(),
-      starter: `
-      ...
-      `,
-      eval: {
-        enforceText: false,
-        checks: [
-          { kind:"tag", selector:"title" },
-          { kind:"nonEmpty", selector:"title" },
-          { kind:"tag", selector:"h1" },
-          { kind:"nonEmpty", selector:"h1" },
-          { kind:"minCount", selector:"h2", n:2 },
-          { kind:"minCount", selector:"p", n:2 },
-          { kind:"anySelector", selectors:["b","strong"] },
-          { kind:"anySelector", selectors:["i","em"] },
-          { kind:"tag", selector:"img" },
-          { kind:"attrPresent", selector:"img", attr:"src" },
-          { kind:"attrPresent", selector:"img", attr:"alt" },
-          { kind:"tag", selector:"iframe" },
-          { kind:"attrPresent", selector:"iframe", attr:"src" },
-          { kind:"anySelector", selectors:["ol","ul"] },
-          { kind:"minCountEitherList", n:3 }
-        ]
-      }
-    },
-    {
-      title: "Creatieve opdracht 12 — Synthese: Favoriete film",
-      markdown: `
+    `.trim(),
+    starter: `
+...`,
+    eval: {
+      enforceText: false,
+      checks: [
+        { kind:"doctype" },
+        { kind:"tag", selector:"html", sourceRequired:true },
+        { kind:"tag", selector:"head", sourceRequired:true },
+        { kind:"tag", selector:"body", sourceRequired:true },
+
+        { kind:"tag", selector:"title" },
+        { kind:"nonEmpty", selector:"title" },
+        { kind:"tag", selector:"h1" },
+        { kind:"nonEmpty", selector:"h1" },
+        { kind:"minCount", selector:"h2", n:2 },
+        { kind:"minCount", selector:"p", n:2 },
+        { kind:"anySelector", selectors:["b","strong"] },
+        { kind:"anySelector", selectors:["i","em"] },
+        { kind:"tag", selector:"img" },
+        { kind:"attrPresent", selector:"img", attr:"src" },
+        { kind:"attrPresent", selector:"img", attr:"alt" },
+        { kind:"tag", selector:"iframe" },
+        { kind:"attrPresent", selector:"iframe", attr:"src" },
+        { kind:"anySelector", selectors:["ol","ul"] },
+        { kind:"minCountEitherList", n:3 }
+      ]
+    }
+  },
+
+  {
+    title: "Creatieve opdracht 12 — Synthese: Favoriete film",
+    markdown: `
 # Synthese - Jouw Favoriete Film
 
 ## Gevraagd
@@ -1106,34 +1157,39 @@ Zorg dat aanwezig is:
 - \`img\`
 - \`iframe\`
 - lijst met minstens 5 acteurs (ol of ul)
-      `.trim(),
-      starter: `
-      ...
-      `,
-      eval: {
-        enforceText: false,
-        checks: [
-          { kind:"tag", selector:"title" },
-          { kind:"nonEmpty", selector:"title" },
-          { kind:"tag", selector:"h1" },
-          { kind:"nonEmpty", selector:"h1" },
-          { kind:"minCount", selector:"h2", n:2 },
-          { kind:"minCount", selector:"p", n:2 },
-          { kind:"anySelector", selectors:["b","strong"] },
-          { kind:"anySelector", selectors:["i","em"] },
-          { kind:"tag", selector:"img" },
-          { kind:"attrPresent", selector:"img", attr:"src" },
-          { kind:"attrPresent", selector:"img", attr:"alt" },
-          { kind:"tag", selector:"iframe" },
-          { kind:"attrPresent", selector:"iframe", attr:"src" },
-          { kind:"anySelector", selectors:["ol","ul"] },
-          { kind:"minCountEitherList", n:5 }
-        ]
-      }
-    },
-    {
-      title: "Creatieve opdracht 13 — Synthese: Favoriete dier",
-      markdown: `
+    `.trim(),
+    starter: `
+...`,
+    eval: {
+      enforceText: false,
+      checks: [
+        { kind:"doctype" },
+        { kind:"tag", selector:"html", sourceRequired:true },
+        { kind:"tag", selector:"head", sourceRequired:true },
+        { kind:"tag", selector:"body", sourceRequired:true },
+
+        { kind:"tag", selector:"title" },
+        { kind:"nonEmpty", selector:"title" },
+        { kind:"tag", selector:"h1" },
+        { kind:"nonEmpty", selector:"h1" },
+        { kind:"minCount", selector:"h2", n:2 },
+        { kind:"minCount", selector:"p", n:2 },
+        { kind:"anySelector", selectors:["b","strong"] },
+        { kind:"anySelector", selectors:["i","em"] },
+        { kind:"tag", selector:"img" },
+        { kind:"attrPresent", selector:"img", attr:"src" },
+        { kind:"attrPresent", selector:"img", attr:"alt" },
+        { kind:"tag", selector:"iframe" },
+        { kind:"attrPresent", selector:"iframe", attr:"src" },
+        { kind:"anySelector", selectors:["ol","ul"] },
+        { kind:"minCountEitherList", n:5 }
+      ]
+    }
+  },
+
+  {
+    title: "Creatieve opdracht 13 — Synthese: Favoriete dier",
+    markdown: `
 # Synthese - Jouw Favoriete Dier
 
 ## Gevraagd
@@ -1148,47 +1204,49 @@ Zorg dat aanwezig is:
 - \`img\`
 - \`iframe\`
 - lijst met 5 naamvoorstellen (ol of ul)
-      `.trim(),
-      starter: `
-      ...
-      `,
-      eval: {
-        enforceText: false,
-        checks: [
-          { kind:"tag", selector:"title" },
-          { kind:"nonEmpty", selector:"title" },
-          { kind:"tag", selector:"h1" },
-          { kind:"nonEmpty", selector:"h1" },
-          { kind:"minCount", selector:"h2", n:2 },
-          { kind:"minCount", selector:"p", n:2 },
-          { kind:"anySelector", selectors:["b","strong"] },
-          { kind:"anySelector", selectors:["i","em"] },
-          { kind:"tag", selector:"img" },
-          { kind:"attrPresent", selector:"img", attr:"src" },
-          { kind:"attrPresent", selector:"img", attr:"alt" },
-          { kind:"tag", selector:"iframe" },
-          { kind:"attrPresent", selector:"iframe", attr:"src" },
-          { kind:"anySelector", selectors:["ol","ul"] },
-          { kind:"minCountEitherList", n:5 }
-        ]
-      }
-    }
-  ];
+    `.trim(),
+    starter: `
+...`,
+    eval: {
+      enforceText: false,
+      checks: [
+        { kind:"doctype" },
+        { kind:"tag", selector:"html", sourceRequired:true },
+        { kind:"tag", selector:"head", sourceRequired:true },
+        { kind:"tag", selector:"body", sourceRequired:true },
 
-// =========================================================
-// Linting (HTMLHint) 
-// =========================================================
+        { kind:"tag", selector:"title" },
+        { kind:"nonEmpty", selector:"title" },
+        { kind:"tag", selector:"h1" },
+        { kind:"nonEmpty", selector:"h1" },
+        { kind:"minCount", selector:"h2", n:2 },
+        { kind:"minCount", selector:"p", n:2 },
+        { kind:"anySelector", selectors:["b","strong"] },
+        { kind:"anySelector", selectors:["i","em"] },
+        { kind:"tag", selector:"img" },
+        { kind:"attrPresent", selector:"img", attr:"src" },
+        { kind:"attrPresent", selector:"img", attr:"alt" },
+        { kind:"tag", selector:"iframe" },
+        { kind:"attrPresent", selector:"iframe", attr:"src" },
+        { kind:"anySelector", selectors:["ol","ul"] },
+        { kind:"minCountEitherList", n:5 }
+      ]
+    }
+  }
+];
+
+
 
 const DEFAULT_LINT_RULES = {
   "tagname-lowercase": true,
   "attr-lowercase": true,
   "attr-value-double-quotes": true,
   "doctype-first": true,
-  "tag-pair": true,                 // catches unclosed tags
-  "tag-self-close": false,          // don't force <img />
-  "spec-char-escape": false,        // avoid pedantry for beginners
+  "tag-pair": true,                 
+  "tag-self-close": false,          
+  "spec-char-escape": false,        
   "id-unique": true,
-  "title-require": false            // you already evaluate title in exercises where needed
+  "title-require": false            
 };
 
 function lintRulesForExercise(ex){
@@ -1196,7 +1254,6 @@ function lintRulesForExercise(ex){
 }
 
 function runHtmlLint(raw, rules){
-  // If HTMLHint is not loaded, fail open (do not block students).
   if (!window.HTMLHint || typeof window.HTMLHint.verify !== "function"){
     return { ok:true, errors:[], warnings:[], info:"(HTMLHint niet geladen)" };
   }
@@ -1227,7 +1284,7 @@ function formatLintMessages(lint, max=6){
     
     
   /* =========================================================
-     2) UI state + CodeMirror + progress
+     2) UI 
      ========================================================= */
 
   const progressBar = document.getElementById("exercise-progress");
@@ -1281,7 +1338,7 @@ function formatLintMessages(lint, max=6){
   }
 
   /* =========================================================
-     3) DOM helpers (used by title tab, evaluator, etc.)
+     3) DOM helpers 
      ========================================================= */
 
   function _parseDom(raw){
@@ -1306,7 +1363,7 @@ function formatLintMessages(lint, max=6){
   }
 
   /* =========================================================
-     4) Metrics: pogingen + tijd (per oefening)
+     4) Metrics: pogingen + tijd 
      ========================================================= */
 
   const _workTimer = { running:false, lastStart:0 };
@@ -1369,7 +1426,7 @@ function formatLintMessages(lint, max=6){
   }
 
   /* =========================================================
-     5) Preview rendering (sanitised, scriptless)
+     5) Preview rendering 
      ========================================================= */
 
   function stripScriptsAndInlineHandlers(doc){
@@ -1439,7 +1496,7 @@ function formatLintMessages(lint, max=6){
   }
 
   /* =========================================================
-     6) Evaluator (scaffolded checks per exercise)
+     6) Evaluator 
      ========================================================= */
 
   function _hasDoctype(raw){
@@ -1473,6 +1530,19 @@ function formatLintMessages(lint, max=6){
     const c2 = ul ? ul.querySelectorAll("li").length : 0;
     return Math.max(c1, c2) >= n;
   }
+    
+  function _srcHasOpenTag(raw, tag){
+  const r = String(raw || "");
+  return new RegExp(`<\\s*${tag}(\\s[^>]*)?>`, "i").test(r);
+}
+function _srcHasCloseTag(raw, tag){
+  const r = String(raw || "");
+  return new RegExp(`<\\s*/\\s*${tag}\\s*>`, "i").test(r);
+}
+function _srcHasPlaceholderDots(raw){
+  return /<\s*\.{3}\s*>|<\s*\/\s*\.{3}\s*>/i.test(String(raw || ""));
+}
+
 
   function evaluateCurrent(){
     const ex = EXERCISES[currentIdx];
@@ -1481,7 +1551,7 @@ function formatLintMessages(lint, max=6){
 
   const raw = editor.getValue();
 
-  // 1) HARD GATE: lint pass (syntax/structure)
+
   const lint = runHtmlLint(raw, lintRulesForExercise(ex));
   if (!lint.ok){
     return {
@@ -1490,6 +1560,13 @@ function formatLintMessages(lint, max=6){
       info:"HTML-syntax / structuurfout:\n" + formatLintMessages(lint)
     };
   }
+if (_srcHasPlaceholderDots(raw)){
+  return {
+    ok:false,
+    kind:"lint",
+    info:'Je code bevat nog "<...>" of "</...>". Vervang dit door echte tags zoals <html>, <head>, <body>.'
+  };
+}
 
     const doc = _parseDom(raw);
     if (!doc) return { ok:false, info:"Kan HTML niet parsen. Controleer je tags." };
@@ -1505,9 +1582,23 @@ function formatLintMessages(lint, max=6){
       }
 
       if (check.kind === "tag"){
-        if (!_hasTag(doc, check.selector)) return { ok:false, info:`Tag ontbreekt: <${check.selector}>.` };
-        continue;
-      }
+  const sel = String(check.selector || "").trim();
+
+  const requireSource =
+    !!check.sourceRequired || ["html","head","body"].includes(sel.toLowerCase());
+
+  if (requireSource){
+    if (!_srcHasOpenTag(raw, sel) || !_srcHasCloseTag(raw, sel)){
+      return { ok:false, info:`Tag ontbreekt in je code: <${sel}> ... </${sel}>.` };
+    }
+  } else {
+    if (!_hasTag(doc, sel)){
+      return { ok:false, info:`Tag ontbreekt: <${sel}>.` };
+    }
+  }
+  continue;
+}
+
 
       if (check.kind === "nonEmpty"){
         const t = _textOf(doc, check.selector);
@@ -1565,7 +1656,7 @@ function formatLintMessages(lint, max=6){
   }
 
   /* =========================================================
-     7) Snapshots for PDF batch export (single PDF)
+     7) Snapshots for PDF batch export 
      ========================================================= */
 
   function saveSnapshot(status /* "success" | "fail" */){
@@ -1692,7 +1783,7 @@ function formatLintMessages(lint, max=6){
   }
 
   /* =========================================================
-     8) Student HTML file export (.html)
+     8) Student HTML file export
      ========================================================= */
 
   function downloadTextFile(filename, content, mime="text/html;charset=utf-8"){
@@ -1747,7 +1838,7 @@ function formatLintMessages(lint, max=6){
   }
 
   /* =========================================================
-     9) PDF export (single exercise + batch)
+     9) PDF export 
      ========================================================= */
 
   function _pdfBreakLongTokens(text, chunk=80){
@@ -2057,7 +2148,7 @@ function formatLintMessages(lint, max=6){
   };
 
   /* =========================================================
-     12) Run pipeline: render + evaluate + metrics + snapshot + flow
+     12) Run pipeline
      ========================================================= */
 
   function goNext(){
@@ -2224,7 +2315,7 @@ if (res.kind === "lint"){
   }
 
   /* =========================================================
-     14) Splitter (PATCH: pointer capture + iframe safe + no artificial limits)
+     14) Splitter
      ========================================================= */
 
   function setupSplitter(){
@@ -2332,7 +2423,7 @@ if (res.kind === "lint"){
   }
 
   /* =========================================================
-     15) Boot + bindings
+     15) Boot 
      ========================================================= */
 
   document.addEventListener("DOMContentLoaded", function(){
