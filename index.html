@@ -1,5 +1,5 @@
 <!--Auteur: Robbe Wulgaert / aiindeklas.be-->
-<!-- Copyright 2025 - Gebruik vrij voor educatie -->
+<!-- Copyright 2025 - Gebruik vrij voor educatie mits expliciete naamsvermelding -->
 <!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -740,13 +740,10 @@ Een basis-HTML-pagina bestaat uit volgende **elementen**:
 > - Sluiten: \`</tag>\`
       `.trim(),
       starter: `<!DOCTYPE html>
-<html lang="nl">
-<head>
-</head>
-<body>
+<...>
 
-</body>
-</html>`,
+
+</...>`,
       eval: {
         enforceText: false,
         checks: [
@@ -770,7 +767,6 @@ Een basis-HTML-pagina bestaat uit volgende **elementen**:
 - Voeg in de body de tekst **Hallo Wereld!** toe.
 
 \`\`\`
-<!DOCTYPE html>
 ...
 <body>
 Hallo Wereld!
@@ -781,14 +777,7 @@ Hallo Wereld!
 > Tip: juiste openingstags en sluitingstags.
       `.trim(),
       starter: `<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <title>Hallo Wereld</title>
-</head>
-<body>
-  Hallo Wereld!
-</body>
-</html>`,
+<html lang="nl">`,
       eval: {
         enforceText: true,
         checks: [
@@ -815,15 +804,7 @@ De \`<title>\` staat in de **head** en verschijnt op het tabblad. Dat is niet he
 
 > Tip: juiste openingstags en sluitingstags.
       `.trim(),
-      starter: `<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <title>Mijn Favoriete Gerecht</title>
-</head>
-<body>
-  Vegetarisch Kapsalon
-</body>
-</html>`,
+      starter: `<!DOCTYPE html>`,
       eval: {
         enforceText: true,
         checks: [
@@ -855,16 +836,7 @@ Koppen structureren je pagina: \`h1\` (hoofdkop), \`h2\` (subkop), ...
 </body>
 \`\`\`
       `.trim(),
-      starter: `<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <title>Mijn Favoriete Gerecht</title>
-</head>
-<body>
-  <h1></h1>
-  <h2></h2>
-</body>
-</html>`,
+      starter: `<!DOCTYPE html>`,
       eval: {
         enforceText: false,
         checks: [
@@ -892,17 +864,7 @@ Alinea's maak je met \`<p>\`.
   - \`<h2>De Geschiedenis</h2>\`
   - minstens 1 alinea (\`p\`) met een korte uitleg.
       `.trim(),
-      starter: `<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <title>Het Verhaal van achter het Kapsalon</title>
-</head>
-<body>
-  <h1>Vegetarisch Kapsalon</h1>
-  <h2>De Geschiedenis</h2>
-  <p></p>
-</body>
-</html>`,
+      starter: `<!DOCTYPE html>`,
       eval: {
         enforceText: true,
         checks: [
@@ -931,18 +893,10 @@ Gebruik \`<img>\` met \`src\`, \`alt\` en \`width\`.
   - een afbeelding met \`src\`, \`alt\`, \`width\`
       `.trim(),
       starter: `<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <title>Het Verhaal van Kapsalon</title>
-</head>
-<body>
-  <h1>Kapsalon</h1>
-  <h2>De Geschiedenis</h2>
-  <p></p>
+...
 
   <img src="" alt="Afbeelding van een schotel Kapsalon" width="50%">
-</body>
-</html>`,
+...`,
       eval: {
         enforceText: true,
         checks: [
@@ -968,25 +922,19 @@ Gebruik \`<ol>\` met \`<li>\` items.
 ## Gevraagd
 - Maak een pagina over **Vegetarisch Kapsalon**.
 - \`<title>Het Verhaal van Kapsalon</title>\`
-- In de body: \`h1\`, \`h2\` ("Het Recept"), alinea, afbeelding, en een **geordende lijst** met de stappen.
+- In de body: \`h1\`, \`h2\` ("Het Recept"), alinea, afbeelding, en een **geordende lijst** met de stappen van het recept.
       `.trim(),
       starter: `<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <title>Het Verhaal van Kapsalon</title>
-</head>
-<body>
-  <h1>Kapsalon</h1>
-  <h2>Het Recept</h2>
-  <p></p>
+...
 
   <img src="" alt="Afbeelding van een schotel Kapsalon" width="50%">
 
   <ol>
     <li></li>
   </ol>
-</body>
-</html>`,
+  
+
+...`,
       eval: {
         enforceText: false,
         checks: [
@@ -1008,21 +956,12 @@ Gebruik \`<ul>\` met \`<li>\`.
 
 ## Gevraagd
 - Maak een pagina over **Vegetarisch Kapsalon**.
+- Op deze pagina beschrijven we de items van ons boodschappenlijstje.
 - Gebruik: title, h1, h2, img, **ol** (stappen), **ul** (ingrediënten).
 - Voor de ul: minstens 6 ingrediënten.
       `.trim(),
       starter: `<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <title>Het Verhaal van Kapsalon</title>
-</head>
-<body>
-  <h1>Kapsalon</h1>
-  <h2>Het Recept</h2>
-  <p></p>
-
-  <img src="" alt="Afbeelding van een schotel Kapsalon" width="50%">
-
+...
   <ol>
     <li></li>
   </ol>
@@ -1030,8 +969,8 @@ Gebruik \`<ul>\` met \`<li>\`.
   <ul>
     <li></li>
   </ul>
-</body>
-</html>`,
+  
+...`,
       eval: {
         enforceText: false,
         checks: [
@@ -1047,7 +986,7 @@ Gebruik \`<ul>\` met \`<li>\`.
       }
     },
     {
-      title: "Oefening 9 — Video toevoegen (iframe)",
+      title: "Oefening 9 — Video toevoegen",
       markdown: `
 # Video Toevoegen aan Jouw Webpagina
 
@@ -1057,29 +996,8 @@ Gebruik een ingesloten video via \`<iframe>\` (bv. YouTube embed).
 - Werk verder op je pagina van de vorige oefeningen.
 - Voeg een relevante video toe met \`<iframe>\`.
       `.trim(),
-      starter: `<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <title>Het Verhaal van Kapsalon</title>
-</head>
-<body>
-  <h1>Kapsalon</h1>
-  <h2>Het Recept</h2>
-  <p></p>
-
-  <img src="" alt="Afbeelding van een schotel Kapsalon" width="50%">
-
-  <ol>
-    <li></li>
-  </ol>
-
-  <ul>
-    <li></li>
-  </ul>
-
-  <iframe width="560" height="315" src="" title="Video" frameborder="0" allowfullscreen></iframe>
-</body>
-</html>`,
+      starter: `
+      Start met de code van jouw vorige oefening.`,
       eval: {
         enforceText: false,
         checks: [
@@ -1105,30 +1023,9 @@ Zorg dat deze elementen aanwezig zijn:
 - \`ul\` (minstens 3 items)
 - \`iframe\` (met src)
       `.trim(),
-      starter: `<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <title>Mijn Favoriete Gerecht</title>
-</head>
-<body>
-  <h1></h1>
-  <h2></h2>
-
-  <p></p>
-
-  <img src="" alt="" width="50%">
-
-  <ol>
-    <li></li>
-  </ol>
-
-  <ul>
-    <li></li>
-  </ul>
-
-  <iframe width="560" height="315" src="" title="Video" frameborder="0" allowfullscreen></iframe>
-</body>
-</html>`,
+      starter: `
+      ...
+      `,
       eval: {
         enforceText: false,
         checks: [
@@ -1168,31 +1065,9 @@ Zorg dat aanwezig is:
 - \`iframe\`
 - een lijst met albums (ol of ul) met minstens 3 items
       `.trim(),
-      starter: `<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <title></title>
-</head>
-<body>
-  <h1></h1>
-
-  <h2></h2>
-  <p></p>
-
-  <h2></h2>
-  <p></p>
-
-  <p>Voorbeeld: <strong></strong> en <em></em></p>
-
-  <img src="" alt="" width="50%">
-
-  <iframe width="560" height="315" src="" title="Video" frameborder="0" allowfullscreen></iframe>
-
-  <ul>
-    <li></li>
-  </ul>
-</body>
-</html>`,
+      starter: `
+      ...
+      `,
       eval: {
         enforceText: false,
         checks: [
@@ -1232,31 +1107,9 @@ Zorg dat aanwezig is:
 - \`iframe\`
 - lijst met minstens 5 acteurs (ol of ul)
       `.trim(),
-      starter: `<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <title></title>
-</head>
-<body>
-  <h1></h1>
-
-  <h2></h2>
-  <p></p>
-
-  <h2></h2>
-  <p></p>
-
-  <p>Voorbeeld: <strong></strong> en <em></em></p>
-
-  <img src="" alt="" width="50%">
-
-  <iframe width="560" height="315" src="" title="Trailer" frameborder="0" allowfullscreen></iframe>
-
-  <ol>
-    <li></li>
-  </ol>
-</body>
-</html>`,
+      starter: `
+      ...
+      `,
       eval: {
         enforceText: false,
         checks: [
@@ -1296,31 +1149,9 @@ Zorg dat aanwezig is:
 - \`iframe\`
 - lijst met 5 naamvoorstellen (ol of ul)
       `.trim(),
-      starter: `<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <title></title>
-</head>
-<body>
-  <h1></h1>
-
-  <h2></h2>
-  <p></p>
-
-  <h2></h2>
-  <p></p>
-
-  <p>Voorbeeld: <strong></strong> en <em></em></p>
-
-  <img src="" alt="" width="50%">
-
-  <iframe width="560" height="315" src="" title="Video" frameborder="0" allowfullscreen></iframe>
-
-  <ul>
-    <li></li>
-  </ul>
-</body>
-</html>`,
+      starter: `
+      ...
+      `,
       eval: {
         enforceText: false,
         checks: [
