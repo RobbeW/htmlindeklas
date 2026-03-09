@@ -1,5 +1,5 @@
 <!--Auteur: Robbe Wulgaert / aiindeklas.be-->
-<!-- Copyright 2025 - Gebruik vrij voor educatie mits expliciete naamsvermelding -->
+<!-- Copyright 2026 - Gebruik vrij voor educatie mits expliciete naamsvermelding -->
 <!DOCTYPE html>
 <html lang="nl">
 <head>
@@ -47,6 +47,7 @@
       color:var(--ink);
       font-family:'Roboto', Arial, Helvetica, sans-serif;
       min-height:100vh;
+      overflow-x:hidden;
     }
 
     body{
@@ -71,27 +72,38 @@
       padding:0.8rem 1.2rem;
       display:flex;
       gap:1rem;
+      row-gap:0.55rem;
       align-items:center;
       justify-content:space-between;
       flex-wrap:wrap;
+      position:relative;
+      z-index:5;
     }
 
     .brand{
       display:flex;
       align-items:baseline;
       gap:0.6rem;
-      min-width:220px;
+      min-width:0;
+      flex:0 1 auto;
+      max-width:100%;
     }
     .brand .title{
       font-weight:900;
       color:var(--brand-purple);
       font-size:1.12rem;
       letter-spacing:0.2px;
+      white-space:nowrap;
+      flex-shrink:0;
     }
     .brand .subtitle{
       font-weight:700;
       color:var(--muted);
       font-size:0.95rem;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      max-width:min(42vw, 420px);
     }
 
     .exercise-progress{
@@ -100,72 +112,80 @@
       justify-content:flex-start;
       gap:0.55em;
       padding-left:2px;
-      flex:1 1 auto;
-      min-width:220px;
-      flex-wrap:wrap;
+      flex:1 1 380px;
+      min-width:0;
+      flex-wrap:nowrap;
+      overflow-x:auto;
+      overflow-y:hidden;
+      padding-bottom:2px;
+      scrollbar-width:thin;
+    }
+
+    .exercise-progress::-webkit-scrollbar{ height:6px; }
+    .exercise-progress::-webkit-scrollbar-thumb{
+      background:#d6d9e3;
+      border-radius:999px;
     }
 
     .exercise-btn{
-  width:32px;
-  height:32px;
-  border-radius:50%;
-  background:var(--brand-purple);
-  color:#fff;
-  font-size:1.05em;
-  font-weight:900;
-  border:none;
-  cursor:pointer;
-  box-shadow:0 1px 6px rgba(82,0,255,0.08);
-  opacity:0.72;
-  position:relative;
-  display:grid;
-  place-items:center;
-  padding:0;
-  line-height:1;
-  text-align:center;
-  font-variant-numeric: tabular-nums;
-}
+      width:32px;
+      height:32px;
+      border-radius:50%;
+      background:var(--brand-purple);
+      color:#fff;
+      font-size:1.05em;
+      font-weight:900;
+      border:none;
+      cursor:pointer;
+      box-shadow:0 1px 6px rgba(82,0,255,0.08);
+      opacity:0.72;
+      position:relative;
+      display:grid;
+      place-items:center;
+      padding:0;
+      line-height:1;
+      text-align:center;
+      font-variant-numeric: tabular-nums;
+      flex:0 0 auto;
+    }
 
-.exercise-btn.current{
-  background:#fff;
-  color:var(--brand-purple);
-  border:2px solid var(--brand-purple);
-  box-shadow:0 0 0 3px #ece6fa;
-  transform:translateY(-0.5px) scale(1.13);
-  opacity:1;
-  z-index:2;
-}
+    .exercise-btn.current{
+      background:#fff;
+      color:var(--brand-purple);
+      border:2px solid var(--brand-purple);
+      box-shadow:0 0 0 3px #ece6fa;
+      transform:translateY(-0.5px) scale(1.13);
+      opacity:1;
+      z-index:2;
+    }
 
-    
     /* ===== Progress status colours (top circular exercise buttons) ===== */
-:root{
-  --ok:#19a974;     /* green */
-  --bad:#d64545;    /* red */
-}
+    :root{
+      --ok:#19a974;
+      --bad:#d64545;
+    }
 
-.exercise-btn.done{
-  background:var(--ok);
-  opacity:0.92;
-}
-.exercise-btn.fail{
-  background:var(--bad);
-  opacity:0.92;
-}
+    .exercise-btn.done{
+      background:var(--ok);
+      opacity:0.92;
+    }
+    .exercise-btn.fail{
+      background:var(--bad);
+      opacity:0.92;
+    }
 
-/* Keep "current" look, but recolour border/text based on status */
-.exercise-btn.current.done{
-  background:#fff;
-  color:var(--ok);
-  border-color:var(--ok);
-  box-shadow:0 0 0 3px rgba(25,169,116,0.18);
-}
-.exercise-btn.current.fail{
-  background:#fff;
-  color:var(--bad);
-  border-color:var(--bad);
-  box-shadow:0 0 0 3px rgba(214,69,69,0.18);
-}
-
+    .exercise-btn.current.done{
+      background:#fff;
+      color:var(--ok);
+      border-color:var(--ok);
+      box-shadow:0 0 0 3px rgba(25,169,116,0.18);
+    }
+    .exercise-btn.current.fail{
+      background:#fff;
+      color:var(--bad);
+      border-color:var(--bad);
+      box-shadow:0 0 0 3px rgba(214,69,69,0.18);
+    }
 
     .toolbar{
       display:flex;
@@ -173,6 +193,8 @@
       flex-wrap:wrap;
       align-items:center;
       justify-content:flex-end;
+      flex:0 1 auto;
+      max-width:100%;
     }
 
     .brand-btn{
@@ -180,42 +202,41 @@
       color:var(--brand-white);
       border:none;
       border-radius:8px;
-      padding:0.7em 1.1em;
-      font-size:1.02em;
+      padding:0.65em 1em;
+      font-size:1rem;
       font-weight:900;
       cursor:pointer;
       box-shadow:0 2px 8px rgba(82,0,255,0.10);
+      white-space:nowrap;
     }
     .brand-btn:hover, .brand-btn:focus{
       background:var(--brand-purple-dark);
       color:var(--brand-white);
     }
 
-    /* === PATCH: echte viewport-hoogte, geen "push-out" === */
     .main-layout{
       display:flex;
       flex-direction:row;
-      width:100vw;
+      width:100%;
+      max-width:100%;
       flex:1 1 auto;
       min-height:0;
       overflow:hidden;
       background:var(--bg);
       height:calc(100dvh - var(--topbar-h, 70px));
+      height:calc(100svh - var(--topbar-h, 70px));
     }
 
-    /* === PATCH: editor-pane is géén grote scroller; onderdelen scrollen apart === */
     .editor-pane{
-      flex:0 0 520px;
-      min-width:320px;
+      flex:0 0 clamp(360px, 42vw, 540px);
+      min-width:300px;
       background:var(--panel);
       border-radius:18px 0 0 18px;
       padding:1.1rem;
       box-sizing:border-box;
-
       height:100%;
       min-height:0;
       overflow:hidden;
-
       display:flex;
       flex-direction:column;
       gap:0.9rem;
@@ -223,7 +244,7 @@
 
     .preview-pane{
       flex:1 1 0;
-      min-width:320px;
+      min-width:280px;
       background:var(--panel);
       border-radius:0 18px 18px 0;
       padding:1.1rem;
@@ -237,8 +258,8 @@
     }
 
     .splitter{
-      width:8px;
-      min-width:8px;
+      width:7px;
+      min-width:7px;
       cursor:col-resize;
       background:linear-gradient(to right, #eee 0%, #ddd 100%);
       z-index:10;
@@ -258,6 +279,7 @@
       font-size:1.08em;
       color:var(--brand-purple);
       margin:0;
+      flex:0 0 auto;
     }
 
     .md-box{
@@ -268,7 +290,6 @@
       box-shadow:var(--shadow);
     }
 
-    /* Markdown content defaults */
     .md-box h1, .md-box h2, .md-box h3{
       color:var(--brand-purple);
       margin:0.2rem 0 0.6rem;
@@ -321,17 +342,16 @@
       margin:0.7rem 0;
     }
 
-    /* === PATCH 2: Markdown mag niet de editor wegduwen === */
     #md-render.md-box{
       flex:0 1 auto;
-      max-height:clamp(140px, 32vh, 420px);
+      min-height:120px;
+      max-height:clamp(150px, 30vh, 420px);
       overflow:auto;
     }
 
-    /* === PATCH 2: CodeMirror neemt de resterende ruimte === */
     #code-editor{
       flex:1 1 auto;
-      min-height:260px;
+      min-height:clamp(170px, 26vh, 320px);
       height:auto;
       border-radius:10px;
       overflow:hidden;
@@ -345,17 +365,22 @@
       gap:0.7rem;
       align-items:center;
       flex-wrap:wrap;
+      flex:0 0 auto;
     }
-    .run-btn{ width:180px; }
+    .run-btn{
+      width:180px;
+      min-width:150px;
+    }
     .small-btn{
       background:#fff;
       color:var(--brand-purple);
       border:1.5px solid var(--brand-purple);
       border-radius:8px;
-      padding:0.7em 1.1em;
-      font-size:1.02em;
+      padding:0.65em 1em;
+      font-size:1rem;
       font-weight:900;
       cursor:pointer;
+      white-space:nowrap;
     }
     .small-btn:hover{
       background:var(--brand-aqua);
@@ -363,7 +388,6 @@
       color:var(--brand-purple);
     }
 
-    /* === PATCH: feedback blijft compact en scrollt intern === */
     #feedback{
       background:#161820;
       color:#fff;
@@ -373,14 +397,12 @@
       font-size:0.98em;
       white-space:pre-line;
       box-shadow:0 1px 4px rgba(0,0,0,0.08);
-
       flex:0 1 auto;
-      max-height:clamp(90px, 18vh, 180px);
+      max-height:clamp(90px, 17vh, 180px);
       overflow:auto;
-      min-height:56px;
+      min-height:clamp(48px, 8vh, 72px);
     }
 
-    /* Pseudo tab title under preview label */
     .preview-tabbar{
       display:flex;
       align-items:flex-end;
@@ -419,14 +441,13 @@
     .preview-frame{
       flex:1 1 auto;
       width:100%;
-      min-height:clamp(320px, 55vh, 720px);
+      min-height:clamp(260px, 50vh, 720px);
       border:2px solid var(--brand-purple);
       border-radius:12px;
       background:#fff;
       box-shadow:var(--shadow);
     }
 
-    /* Modals */
     .modal{
       display:none;
       position:fixed;
@@ -521,7 +542,6 @@
       box-shadow:0 0 0 3px rgba(82,0,255,0.10);
     }
 
-    /* Toast */
     #eval-toast{
       position:fixed;
       bottom:26px;
@@ -538,7 +558,6 @@
       white-space:pre-line;
     }
 
-    /* Dark theme */
     body.dark{
       background:#161820;
       color:#fff;
@@ -575,18 +594,87 @@
     }
     body.dark .preview-frame{ border-color:var(--brand-aqua); background:#fff; }
 
-    @media (max-width:980px){
-      .main-layout{ flex-direction:column; height:auto; }
+    @media (max-width:1360px), (max-height:900px){
+      .topbar{
+        padding:0.62rem 0.9rem;
+        gap:0.72rem;
+      }
+      .brand .subtitle{ max-width:min(36vw, 320px); }
+      .exercise-btn{
+        width:30px;
+        height:30px;
+        font-size:0.95em;
+      }
+      .brand-btn, .small-btn{
+        font-size:0.96rem;
+        padding:0.58em 0.88em;
+      }
+      .editor-pane{ flex-basis:clamp(340px, 46vw, 500px); }
+      .preview-pane{ min-width:260px; }
+      .run-btn{
+        width:auto;
+        min-width:148px;
+      }
+    }
+
+    @media (max-width:1180px), (max-height:820px){
+      .main-layout{
+        flex-direction:column;
+        height:auto;
+        min-height:calc(100svh - var(--topbar-h, 70px));
+        overflow:auto;
+        padding:0 0.35rem 0.55rem;
+      }
       .editor-pane, .preview-pane{
-        width:98vw !important;
+        width:100% !important;
         min-width:0 !important;
-        padding:0.9rem 0.6rem !important;
+        padding:0.85rem !important;
         border-radius:18px !important;
-        overflow:auto !important; /* mobiel: gewoon scrollen */
         height:auto !important;
       }
+      .editor-pane{ overflow:auto !important; }
+      .preview-pane{ overflow:auto !important; }
       .splitter{ display:none !important; }
-      .preview-frame{ min-height:520px; }
+      #md-render.md-box{
+        min-height:120px;
+        max-height:34svh;
+      }
+      #code-editor{ min-height:220px; }
+      .preview-frame{ min-height:420px; }
+    }
+
+    @media (max-width:980px){
+      .topbar{
+        align-items:stretch;
+      }
+      .brand{ width:100%; }
+      .brand .subtitle{ max-width:100%; }
+      .exercise-progress{
+        order:3;
+        flex:1 1 100%;
+        width:100%;
+      }
+      .toolbar{
+        justify-content:flex-start;
+      }
+      .editor-pane, .preview-pane{
+        padding:0.78rem 0.55rem !important;
+      }
+      .preview-frame{ min-height:360px; }
+    }
+
+    @media (max-width:640px){
+      .brand .title{ font-size:1rem; }
+      .brand-btn, .small-btn{
+        font-size:0.9rem;
+        padding:0.55em 0.8em;
+      }
+      .exercise-btn{
+        width:28px;
+        height:28px;
+      }
+      #code-editor{ min-height:180px; }
+      .preview-frame{ min-height:300px; }
     }
   </style>
 </head>
@@ -1274,56 +1362,53 @@ Zorg dat aanwezig is:
   }
 ];
 
+  const DEFAULT_LINT_RULES = {
+    "tagname-lowercase": true,
+    "attr-lowercase": true,
+    "attr-value-double-quotes": true,
+    "doctype-first": true,
+    "tag-pair": true,
+    "tag-self-close": false,
+    "spec-char-escape": false,
+    "id-unique": true,
+    "title-require": false
+  };
 
-
-const DEFAULT_LINT_RULES = {
-  "tagname-lowercase": true,
-  "attr-lowercase": true,
-  "attr-value-double-quotes": true,
-  "doctype-first": true,
-  "tag-pair": true,                 
-  "tag-self-close": false,          
-  "spec-char-escape": false,        
-  "id-unique": true,
-  "title-require": false            
-};
-
-function lintRulesForExercise(ex){
-  return Object.assign({}, DEFAULT_LINT_RULES, ex?.lintRules || {});
-}
-
-function runHtmlLint(raw, rules){
-  if (!window.HTMLHint || typeof window.HTMLHint.verify !== "function"){
-    return { ok:true, errors:[], warnings:[], info:"(HTMLHint niet geladen)" };
+  function lintRulesForExercise(ex){
+    return Object.assign({}, DEFAULT_LINT_RULES, ex?.lintRules || {});
   }
 
-  let messages = [];
-  try{
-    messages = window.HTMLHint.verify(String(raw || ""), rules || DEFAULT_LINT_RULES) || [];
-  }catch(e){
-    return { ok:true, errors:[], warnings:[], info:"(Lint crash: genegeerd)" };
+  function runHtmlLint(raw, rules){
+    if (!window.HTMLHint || typeof window.HTMLHint.verify !== "function"){
+      return { ok:true, errors:[], warnings:[], info:"(HTMLHint niet geladen)" };
+    }
+
+    let messages = [];
+    try{
+      messages = window.HTMLHint.verify(String(raw || ""), rules || DEFAULT_LINT_RULES) || [];
+    }catch(e){
+      return { ok:true, errors:[], warnings:[], info:"(Lint crash: genegeerd)" };
+    }
+
+    const errors = messages.filter(m => m && m.type === "error");
+    const warnings = messages.filter(m => m && m.type === "warning");
+    return { ok: errors.length === 0, errors, warnings, info:"" };
   }
 
-  const errors = messages.filter(m => m && m.type === "error");
-  const warnings = messages.filter(m => m && m.type === "warning");
-  return { ok: errors.length === 0, errors, warnings, info:"" };
-}
+  function formatLintMessages(lint, max=6){
+    const pick = (lint.errors || []).slice(0, max);
+    if (!pick.length) return "";
 
-function formatLintMessages(lint, max=6){
-  const pick = (lint.errors || []).slice(0, max);
-  if (!pick.length) return "";
+    return pick.map((m, i) => {
+      const line = m.line ?? "?";
+      const col  = m.col ?? "?";
+      const rule = m.rule?.id ? ` (${m.rule.id})` : "";
+      return `${i+1}. L${line}:${col} — ${m.message}${rule}`;
+    }).join("\n");
+  }
 
-  return pick.map((m, i) => {
-    const line = m.line ?? "?";
-    const col  = m.col ?? "?";
-    const rule = m.rule?.id ? ` (${m.rule.id})` : "";
-    return `${i+1}. L${line}:${col} — ${m.message}${rule}`;
-  }).join("\n");
-}    
-    
-    
   /* =========================================================
-     2) UI 
+     2) UI
      ========================================================= */
 
   const progressBar = document.getElementById("exercise-progress");
@@ -1345,8 +1430,29 @@ function formatLintMessages(lint, max=6){
   function syncTopbarHeight(){
     const topbar = document.querySelector(".topbar");
     const h = topbar ? topbar.getBoundingClientRect().height : 70;
-    document.documentElement.style.setProperty("--topbar-h", `${Math.round(h)}px`);
+    const safeH = Math.max(56, Math.round(h));
+    document.documentElement.style.setProperty("--topbar-h", `${safeH}px`);
     refreshEditorSoon();
+  }
+
+  function setupTopbarObservers(){
+    const topbar = document.querySelector(".topbar");
+    if (!topbar) return;
+
+    if ("ResizeObserver" in window){
+      const ro = new ResizeObserver(() => syncTopbarHeight());
+      ro.observe(topbar);
+    }
+
+    if (document.fonts && document.fonts.ready){
+      document.fonts.ready.then(() => syncTopbarHeight()).catch(() => {});
+    }
+
+    if (window.visualViewport){
+      window.visualViewport.addEventListener("resize", syncTopbarHeight);
+    }
+
+    window.addEventListener("orientationchange", syncTopbarHeight);
   }
 
   function clearFeedback(){ feedback.textContent = ""; }
@@ -1355,31 +1461,32 @@ function formatLintMessages(lint, max=6){
   }
 
   function renderProgress(){
-  progressBar.innerHTML = "";
-  EXERCISES.forEach((ex, idx) => {
-    const btn = document.createElement("button");
+    progressBar.innerHTML = "";
+    EXERCISES.forEach((ex, idx) => {
+      const btn = document.createElement("button");
 
-    const isCurrent = idx === currentIdx;
-    const isDone = (localStorage.getItem(doneKey(idx)) === "1");
-    const last = localStorage.getItem(resultKey(idx)) || ""; 
+      const isCurrent = idx === currentIdx;
+      const isDone = (localStorage.getItem(doneKey(idx)) === "1");
+      const last = localStorage.getItem(resultKey(idx)) || "";
 
-    let cls = "exercise-btn";
-    if (isCurrent) cls += " current";
-    if (isDone || last === "success") cls += " done";
-    else if (last === "fail") cls += " fail";
+      let cls = "exercise-btn";
+      if (isCurrent) cls += " current";
+      if (isDone || last === "success") cls += " done";
+      else if (last === "fail") cls += " fail";
 
-    btn.className = cls;
-    btn.textContent = idx + 1;
-    btn.type = "button";
+      btn.className = cls;
+      btn.textContent = idx + 1;
+      btn.type = "button";
 
-    const statusLabel = (isDone || last === "success") ? "Correct" : (last === "fail" ? "Niet correct" : "Nog niet ingediend");
-    btn.title = `${ex.title} — ${statusLabel}`;
+      const statusLabel = (isDone || last === "success") ? "Correct" : (last === "fail" ? "Niet correct" : "Nog niet ingediend");
+      btn.title = `${ex.title} — ${statusLabel}`;
 
-    btn.onclick = () => switchExercise(idx);
-    progressBar.appendChild(btn);
-  });
-}
+      btn.onclick = () => switchExercise(idx);
+      progressBar.appendChild(btn);
+    });
 
+    syncTopbarHeight();
+  }
 
   function renderMarkdown(ex){
     const md = ex?.markdown || "";
@@ -1391,7 +1498,7 @@ function formatLintMessages(lint, max=6){
   }
 
   /* =========================================================
-     3) DOM helpers 
+     3) DOM helpers
      ========================================================= */
 
   function _parseDom(raw){
@@ -1416,7 +1523,7 @@ function formatLintMessages(lint, max=6){
   }
 
   /* =========================================================
-     4) Metrics: pogingen + tijd 
+     4) Metrics: pogingen + tijd
      ========================================================= */
 
   const _workTimer = { running:false, lastStart:0 };
@@ -1479,7 +1586,7 @@ function formatLintMessages(lint, max=6){
   }
 
   /* =========================================================
-     5) Preview rendering 
+     5) Preview rendering
      ========================================================= */
 
   function stripScriptsAndInlineHandlers(doc){
@@ -1528,15 +1635,15 @@ function formatLintMessages(lint, max=6){
     const htmlEl = doc.documentElement ? doc.documentElement.outerHTML : raw;
     return "<!DOCTYPE html>\n" + htmlEl;
   }
-    
+
   function previewLintErrorPage(text){
-  const safe = String(text || "").replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
-  return `<!doctype html><html><head><meta charset="utf-8"><title>Fout</title></head>
+    const safe = String(text || "").replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+    return `<!doctype html><html><head><meta charset="utf-8"><title>Fout</title></head>
   <body style="font-family:Arial;padding:16px">
     <h2>HTML-fout</h2>
     <pre>${safe}</pre>
   </body></html>`;
-}
+  }
 
   let _renderTimer = null;
   function renderPreviewDebounced(){
@@ -1549,7 +1656,7 @@ function formatLintMessages(lint, max=6){
   }
 
   /* =========================================================
-     6) Evaluator 
+     6) Evaluator
      ========================================================= */
 
   function _hasDoctype(raw){
@@ -1583,43 +1690,42 @@ function formatLintMessages(lint, max=6){
     const c2 = ul ? ul.querySelectorAll("li").length : 0;
     return Math.max(c1, c2) >= n;
   }
-    
-  function _srcHasOpenTag(raw, tag){
-  const r = String(raw || "");
-  return new RegExp(`<\\s*${tag}(\\s[^>]*)?>`, "i").test(r);
-}
-function _srcHasCloseTag(raw, tag){
-  const r = String(raw || "");
-  return new RegExp(`<\\s*/\\s*${tag}\\s*>`, "i").test(r);
-}
-function _srcHasPlaceholderDots(raw){
-  return /<\s*\.{3}\s*>|<\s*\/\s*\.{3}\s*>/i.test(String(raw || ""));
-}
 
+  function _srcHasOpenTag(raw, tag){
+    const r = String(raw || "");
+    return new RegExp(`<\\s*${tag}(\\s[^>]*)?>`, "i").test(r);
+  }
+  function _srcHasCloseTag(raw, tag){
+    const r = String(raw || "");
+    return new RegExp(`<\\s*/\\s*${tag}\\s*>`, "i").test(r);
+  }
+  function _srcHasPlaceholderDots(raw){
+    return /<\s*\.{3}\s*>|<\s*\/\s*\.{3}\s*>/i.test(String(raw || ""));
+  }
 
   function evaluateCurrent(){
     const ex = EXERCISES[currentIdx];
-  const cfg = ex.eval;
-  if (!cfg || !Array.isArray(cfg.checks)) return { ok:true, info:"Geen evaluatie ingesteld." };
+    const cfg = ex.eval;
+    if (!cfg || !Array.isArray(cfg.checks)) return { ok:true, info:"Geen evaluatie ingesteld." };
 
-  const raw = editor.getValue();
+    const raw = editor.getValue();
 
+    const lint = runHtmlLint(raw, lintRulesForExercise(ex));
+    if (!lint.ok){
+      return {
+        ok:false,
+        kind:"lint",
+        info:"HTML-syntax / structuurfout:\n" + formatLintMessages(lint)
+      };
+    }
 
-  const lint = runHtmlLint(raw, lintRulesForExercise(ex));
-  if (!lint.ok){
-    return {
-      ok:false,
-      kind:"lint",
-      info:"HTML-syntax / structuurfout:\n" + formatLintMessages(lint)
-    };
-  }
-if (_srcHasPlaceholderDots(raw)){
-  return {
-    ok:false,
-    kind:"lint",
-    info:'Je code bevat nog "<...>" of "</...>". Vervang dit door echte tags zoals <html>, <head>, <body>.'
-  };
-}
+    if (_srcHasPlaceholderDots(raw)){
+      return {
+        ok:false,
+        kind:"lint",
+        info:'Je code bevat nog "<...>" of "</...>". Vervang dit door echte tags zoals <html>, <head>, <body>.'
+      };
+    }
 
     const doc = _parseDom(raw);
     if (!doc) return { ok:false, info:"Kan HTML niet parsen. Controleer je tags." };
@@ -1635,23 +1741,22 @@ if (_srcHasPlaceholderDots(raw)){
       }
 
       if (check.kind === "tag"){
-  const sel = String(check.selector || "").trim();
+        const sel = String(check.selector || "").trim();
 
-  const requireSource =
-    !!check.sourceRequired || ["html","head","body"].includes(sel.toLowerCase());
+        const requireSource =
+          !!check.sourceRequired || ["html","head","body"].includes(sel.toLowerCase());
 
-  if (requireSource){
-    if (!_srcHasOpenTag(raw, sel) || !_srcHasCloseTag(raw, sel)){
-      return { ok:false, info:`Tag ontbreekt in je code: <${sel}> ... </${sel}>.` };
-    }
-  } else {
-    if (!_hasTag(doc, sel)){
-      return { ok:false, info:`Tag ontbreekt: <${sel}>.` };
-    }
-  }
-  continue;
-}
-
+        if (requireSource){
+          if (!_srcHasOpenTag(raw, sel) || !_srcHasCloseTag(raw, sel)){
+            return { ok:false, info:`Tag ontbreekt in je code: <${sel}> ... </${sel}>.` };
+          }
+        } else {
+          if (!_hasTag(doc, sel)){
+            return { ok:false, info:`Tag ontbreekt: <${sel}>.` };
+          }
+        }
+        continue;
+      }
 
       if (check.kind === "nonEmpty"){
         const t = _textOf(doc, check.selector);
@@ -1709,10 +1814,10 @@ if (_srcHasPlaceholderDots(raw)){
   }
 
   /* =========================================================
-     7) Snapshots for PDF batch export 
+     7) Snapshots for PDF batch export
      ========================================================= */
 
-  function saveSnapshot(status /* "success" | "fail" */){
+  function saveSnapshot(status){
     const dateKey = _dateKeyLocal(new Date());
     const storageKey = `${_SAVE_PREFIX}-${dateKey}-${currentIdx}-${status}-latest`;
 
@@ -1891,7 +1996,7 @@ if (_srcHasPlaceholderDots(raw)){
   }
 
   /* =========================================================
-     9) PDF export 
+     9) PDF export
      ========================================================= */
 
   function _pdfBreakLongTokens(text, chunk=80){
@@ -2043,7 +2148,6 @@ if (_srcHasPlaceholderDots(raw)){
     function setLabel(){ pdf.setFont("helvetica","bold"); pdf.setFontSize(13); pdf.setTextColor(PURPLE[0],PURPLE[1],PURPLE[2]); }
     function setCode(){ pdf.setFont("courier","normal"); pdf.setFontSize(10); pdf.setTextColor(0,0,0); }
 
-    // Cover
     setH();
     pdf.text("HTML in de Klas – Gebundelde export", margin, y);
     y += 28;
@@ -2061,7 +2165,6 @@ if (_srcHasPlaceholderDots(raw)){
     const tocWrapped = pdf.splitTextToSize(tocText, contentWidth);
     pdf.text(tocWrapped, margin, y);
 
-    // Exercises
     for (let i = 0; i < records.length; i++){
       const r = records[i];
       pdf.addPage();
@@ -2215,7 +2318,6 @@ if (_srcHasPlaceholderDots(raw)){
   async function runAndCheck(){
     clearFeedback();
 
-    // Attempt + stop timer for stable snapshot
     _incAttempts(currentIdx);
     stopWorkTimer();
 
@@ -2226,10 +2328,9 @@ if (_srcHasPlaceholderDots(raw)){
     const res = evaluateCurrent();
     if (!res.ok && res.kind === "lint"){
       preview.srcdoc = previewLintErrorPage(res.info);
-}
+    }
 
     if (res.ok){
-      try{ localStorage.setItem(doneKey(currentIdx), "1"); }catch(e){}
       try{
         localStorage.setItem(doneKey(currentIdx), "1");
         localStorage.setItem(resultKey(currentIdx), "success");
@@ -2265,10 +2366,9 @@ if (_srcHasPlaceholderDots(raw)){
     }
 
     try{
-  localStorage.setItem(resultKey(currentIdx), "fail");
-}catch(e){}
-renderProgress();
-
+      localStorage.setItem(resultKey(currentIdx), "fail");
+    }catch(e){}
+    renderProgress();
 
     const saved = saveSnapshot("fail");
     if (!saved.ok && saved.reason === "quota"){
@@ -2276,14 +2376,13 @@ renderProgress();
     }
 
     const msg = res.info || "Niet correct. Controleer je HTML-structuur.";
-logFeedback("Niet correct:");
-logFeedback(msg);
+    logFeedback("Niet correct:");
+    logFeedback(msg);
 
-// If it’s lint, also show a short actionable hint line
-if (res.kind === "lint"){
-  logFeedback("");
-  logFeedback("Tip: zoek de eerste fout (Lx:y). Die veroorzaakt vaak de rest.");
-}
+    if (res.kind === "lint"){
+      logFeedback("");
+      logFeedback("Tip: zoek de eerste fout (Lx:y). Die veroorzaakt vaak de rest.");
+    }
     showToast(msg, false);
 
     startWorkTimer();
@@ -2357,8 +2456,6 @@ if (res.kind === "lint"){
 
       loadExercise();
       return;
-      
-
     }
 
     if (choice === "all"){
@@ -2372,7 +2469,6 @@ if (res.kind === "lint"){
         if (k === _SAVE_INDEX_KEY) localStorage.removeItem(k);
         if (k === _STUDENT_NAME_KEY || k === _STUDENT_CLASS_KEY) localStorage.removeItem(k);
         if (k.startsWith(`htmlk-lastResult-${COURSE_ID}-`)) localStorage.removeItem(k);
-
       }
       switchExercise(0);
       return;
@@ -2393,8 +2489,8 @@ if (res.kind === "lint"){
     const previewEl   = document.getElementById("preview");
     if (!splitter || !editorPane || !previewPane || !mainLayout) return;
 
-    const MIN_EDITOR  = 320;
-    const MIN_PREVIEW = 320;
+    const MIN_EDITOR  = 300;
+    const MIN_PREVIEW = 260;
 
     let dragging = false;
     let rafPending = false;
@@ -2406,13 +2502,12 @@ if (res.kind === "lint"){
       const rect = mainLayout.getBoundingClientRect();
       const total = rect.width;
 
-      const sw = splitter.getBoundingClientRect().width || splitter.offsetWidth || 8;
+      const sw = splitter.getBoundingClientRect().width || splitter.offsetWidth || 7;
       const maxEditor = Math.max(MIN_EDITOR, total - sw - MIN_PREVIEW);
 
       const proposed = clientX - rect.left;
       const w = clamp(proposed, MIN_EDITOR, maxEditor);
 
-      // Eén bron van waarheid: flex-basis (geen dubbele width writes)
       editorPane.style.flex = `0 0 ${w}px`;
       editorPane.style.flexBasis = `${w}px`;
       editorPane.style.width = "";
@@ -2432,14 +2527,13 @@ if (res.kind === "lint"){
     }
 
     splitter.addEventListener("pointerdown", (e) => {
-      if (window.innerWidth < 980) return;
+      if (window.matchMedia("(max-width:1180px), (max-height:820px)").matches) return;
 
       dragging = true;
       splitter.classList.add("dragging");
       document.body.style.userSelect = "none";
       document.body.classList.add("is-splitting");
 
-      // Iframe slokt events op tijdens drag
       if (previewEl) previewEl.style.pointerEvents = "none";
 
       splitter.setPointerCapture(e.pointerId);
@@ -2450,7 +2544,7 @@ if (res.kind === "lint"){
     });
 
     splitter.addEventListener("pointermove", (e) => {
-      if (!dragging || window.innerWidth < 980) return;
+      if (!dragging || window.matchMedia("(max-width:1180px), (max-height:820px)").matches) return;
 
       lastClientX = e.clientX;
       if (rafPending) return;
@@ -2467,7 +2561,7 @@ if (res.kind === "lint"){
     splitter.addEventListener("pointercancel", stopDrag);
 
     window.addEventListener("resize", () => {
-      if (window.innerWidth < 980){
+      if (window.matchMedia("(max-width:1180px), (max-height:820px)").matches){
         editorPane.style.flex = "";
         editorPane.style.flexBasis = "";
         editorPane.style.width = "";
@@ -2477,7 +2571,6 @@ if (res.kind === "lint"){
       } else {
         splitter.style.display = "block";
 
-        // Clamp bestaande basis op nieuwe constraints
         const basis = parseFloat(getComputedStyle(editorPane).flexBasis || "0");
         if (basis > 0){
           const rect = mainLayout.getBoundingClientRect();
@@ -2490,7 +2583,7 @@ if (res.kind === "lint"){
   }
 
   /* =========================================================
-     15) Boot 
+     15) Boot
      ========================================================= */
 
   document.addEventListener("DOMContentLoaded", function(){
@@ -2525,10 +2618,14 @@ if (res.kind === "lint"){
     document.getElementById("export-batch").onclick = exportBatchPdfToday;
     document.getElementById("reset-progress").onclick = handleReset;
 
+    setupTopbarObservers();
     setupSplitter();
     renderProgress();
     syncTopbarHeight();
     loadExercise();
+
+    setTimeout(syncTopbarHeight, 0);
+    setTimeout(syncTopbarHeight, 180);
   });
   </script>
 </body>
