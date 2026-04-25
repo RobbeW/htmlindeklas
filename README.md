@@ -1,7 +1,7 @@
 # HTML in de Klas
 
 Auteur: Robbe Wulgaert · aiindeklas.be / robbewulgaert.be  
-© 2025 Robbe Wulgaert
+© 2026 Robbe Wulgaert
 
 Demo: gebruik de [GitHub Pages-link](https://robbew.github.io/htmlindeklas/) van deze repository, of download de volledige code en draai lokaal.
 
