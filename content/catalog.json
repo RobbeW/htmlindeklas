@@ -1,0 +1,189 @@
+{
+  "version": 1,
+  "project": "HTML in de Klas",
+  "description": "Contentstructuur voor de leerlijn HTML in de Klas.",
+  "concepts": {
+    "document_structure": {
+      "label": "basisstructuur",
+      "description": "Je bouwt een geldige HTML-pagina met doctype, html, head en body."
+    },
+    "metadata_title": {
+      "label": "metadata en title",
+      "description": "Je gebruikt de head en title om informatie over de pagina vast te leggen."
+    },
+    "text_structure": {
+      "label": "tekststructuur",
+      "description": "Je gebruikt koppen, alinea’s en tekstopmaak om inhoud duidelijk te structureren."
+    },
+    "attributes_media": {
+      "label": "media en attributen",
+      "description": "Je gebruikt attributen zoals src, alt en width om media correct te tonen."
+    },
+    "lists": {
+      "label": "lijsten",
+      "description": "Je ordent inhoud met ol, ul en li."
+    },
+    "embed": {
+      "label": "ingesloten inhoud",
+      "description": "Je voegt inhoud van buitenaf toe met een iframe."
+    },
+    "synthesis": {
+      "label": "synthese",
+      "description": "Je combineert meerdere HTML-bouwstenen in een eigen pagina."
+    }
+  },
+  "chapters": [
+    {
+      "id": "basisstructuur",
+      "title": "Basisstructuur",
+      "order": 1,
+      "description": "De eerste bouwstenen van een geldige HTML-pagina.",
+      "exercises": [
+        {
+          "id": "ex01-basisstructuur",
+          "title": "Oefening 1 — Basisstructuur HTML",
+          "order": 1,
+          "concepts": [
+            "document_structure"
+          ]
+        },
+        {
+          "id": "ex02-hallo-html",
+          "title": "Oefening 2 — Hallo wereld, hallo HTML!",
+          "order": 2,
+          "concepts": [
+            "document_structure"
+          ]
+        },
+        {
+          "id": "ex03-title",
+          "title": "Oefening 3 — Een Goede Titel",
+          "order": 3,
+          "concepts": [
+            "document_structure",
+            "metadata_title"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tekststructuur",
+      "title": "Tekststructuur",
+      "order": 2,
+      "description": "Koppen, alinea’s en eenvoudige tekstopmaak.",
+      "exercises": [
+        {
+          "id": "ex04-koppen",
+          "title": "Oefening 4 — Koppen in HTML",
+          "order": 4,
+          "concepts": [
+            "text_structure"
+          ]
+        },
+        {
+          "id": "ex05-alineas",
+          "title": "Oefening 5 — Alinea's in HTML",
+          "order": 5,
+          "concepts": [
+            "text_structure"
+          ]
+        },
+        {
+          "id": "ex14-tekst-namaken",
+          "title": "Oefening 14 — Tekst exact namaken",
+          "order": 14,
+          "concepts": [
+            "text_structure"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "media-lijsten",
+      "title": "Media en lijsten",
+      "order": 3,
+      "description": "Afbeeldingen, attributen, lijsten en ingesloten inhoud.",
+      "exercises": [
+        {
+          "id": "ex06-afbeeldingen",
+          "title": "Oefening 6 — Afbeeldingen in HTML",
+          "order": 6,
+          "concepts": [
+            "attributes_media"
+          ]
+        },
+        {
+          "id": "ex07-geordende-lijsten",
+          "title": "Oefening 7 — Geordende lijsten (ol)",
+          "order": 7,
+          "concepts": [
+            "lists"
+          ]
+        },
+        {
+          "id": "ex08-ongeordende-lijsten",
+          "title": "Oefening 8 — Ongeordende lijsten (ul)",
+          "order": 8,
+          "concepts": [
+            "lists"
+          ]
+        },
+        {
+          "id": "ex09-video",
+          "title": "Oefening 9 — Video toevoegen",
+          "order": 9,
+          "concepts": [
+            "embed",
+            "attributes_media"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "synthese",
+      "title": "Synthese",
+      "order": 4,
+      "description": "Vrijere pagina’s waarin leerlingen de bouwstenen combineren.",
+      "exercises": [
+        {
+          "id": "ex10-synthese-gerecht",
+          "title": "Creatieve oefening 10 — Synthese: Favoriete gerecht",
+          "order": 10,
+          "concepts": [
+            "synthesis"
+          ]
+        },
+        {
+          "id": "ex11-synthese-artiest",
+          "title": "Creatieve oefening 11 — Synthese: Favoriete artiest",
+          "order": 11,
+          "concepts": [
+            "synthesis",
+            "text_structure",
+            "attributes_media"
+          ]
+        },
+        {
+          "id": "ex12-synthese-film",
+          "title": "Creatieve opdracht 12 — Synthese: Favoriete film",
+          "order": 12,
+          "concepts": [
+            "synthesis",
+            "text_structure",
+            "attributes_media"
+          ]
+        },
+        {
+          "id": "ex13-synthese-dier",
+          "title": "Creatieve opdracht 13 — Synthese: Favoriete dier",
+          "order": 13,
+          "concepts": [
+            "synthesis",
+            "text_structure",
+            "attributes_media"
+          ]
+        }
+      ]
+    }
+  ]
+}
