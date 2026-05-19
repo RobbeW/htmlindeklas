@@ -782,7 +782,7 @@
       }
     }
 
-    @media (max-width:1180px), (max-height:820px){
+    @media (max-width:840px){
       .main-layout{
         flex-direction:column;
         height:auto;
@@ -808,7 +808,7 @@
       .preview-frame{ min-height:420px; }
     }
 
-    @media (max-width:980px){
+    @media (max-width:840px){
       .topbar{
         align-items:stretch;
       }
@@ -952,7 +952,7 @@
       box-shadow:0 0 0 3px rgba(82,0,255,.12);
     }
 
-    @media (max-width:980px){
+    @media (max-width:840px){
       .topbar{
         gap:.7rem;
       }
@@ -1083,7 +1083,7 @@
       opacity:1;
     }
 
-    @media (max-width:980px){
+    @media (max-width:840px){
       .topbar{
         align-items:stretch;
       }
@@ -1313,10 +1313,121 @@ body > header .tab.active {
 .topbar .exercise-btn.current {
   box-shadow: 0 0 0 3px rgba(82, 0, 255, 0.14), var(--platform-shadow);
 }
-@media (max-width: 760px) {
-  .app-page .header-actions,
-  .topbar .toolbar,
-  header .app-actions {
+    @media (min-width: 901px) {
+      body > header.topbar {
+        padding: 8px 12px;
+        gap: 10px;
+      }
+
+      body > header.topbar .brand {
+        flex: 0 1 230px;
+        align-items: center;
+        gap: 0.45rem;
+      }
+
+      body > header.topbar .brand .title {
+        font-size: clamp(0.98rem, 1.25vw, 1.12rem);
+      }
+
+      body > header.topbar .brand .subtitle {
+        max-width: min(24vw, 280px);
+        font-size: 0.85rem;
+      }
+
+      .topbar .exercise-progress {
+        flex: 1 1 280px;
+        max-width: min(34vw, 520px);
+      }
+
+      .topbar .toolbar {
+        flex: 0 1 auto;
+        gap: 0.45rem;
+      }
+
+      .language-toggle,
+      .app-page .header-actions .primary-button,
+      .app-page .header-actions .secondary-button,
+      .app-page .header-actions .ghost-button,
+      .topbar .toolbar > button,
+      header .app-actions .btn {
+        min-height: 36px;
+        padding: 8px 12px;
+        font-size: 0.88rem;
+      }
+
+      .topbar .exercise-btn {
+        flex-basis: 28px;
+        width: 28px;
+        height: 28px;
+        font-size: 0.9rem;
+      }
+
+      .main-layout {
+        flex-direction: row !important;
+        height: calc(100dvh - var(--topbar-h, 70px)) !important;
+        height: calc(100svh - var(--topbar-h, 70px)) !important;
+        min-height: 0 !important;
+        overflow: hidden !important;
+        padding: 0 !important;
+      }
+
+      .editor-pane {
+        flex: 0 0 clamp(320px, 40vw, 480px) !important;
+        width: auto !important;
+        min-width: 300px !important;
+        height: 100% !important;
+        overflow: hidden !important;
+        border-radius: 8px 0 0 8px !important;
+      }
+
+      .preview-pane {
+        flex: 1 1 0 !important;
+        width: auto !important;
+        min-width: 300px !important;
+        height: 100% !important;
+        overflow: auto !important;
+        border-radius: 0 8px 8px 0 !important;
+      }
+
+      .splitter {
+        display: block !important;
+      }
+
+      #md-render.md-box {
+        max-height: clamp(120px, 24svh, 300px);
+      }
+
+      #code-editor {
+        min-height: clamp(150px, 24svh, 280px);
+      }
+    }
+
+    @media (max-width: 840px) {
+      .main-layout {
+        flex-direction: column !important;
+        height: auto !important;
+        min-height: calc(100svh - var(--topbar-h, 70px)) !important;
+        overflow: auto !important;
+        padding: 0 0.35rem 0.55rem !important;
+      }
+
+      .editor-pane,
+      .preview-pane {
+        width: 100% !important;
+        min-width: 0 !important;
+        height: auto !important;
+        border-radius: 18px !important;
+      }
+
+      .splitter {
+        display: none !important;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .app-page .header-actions,
+      .topbar .toolbar,
+      header .app-actions {
     justify-content: flex-start;
     width: 100%;
   }
@@ -1333,7 +1444,7 @@ body > header .tab.active {
   <header class="topbar">
     <div class="brand">
       <span class="title">HTML in de Klas</span>
-      <span class="subtitle" id="exercise-title-top">â€”</span>
+      <span class="subtitle" id="exercise-title-top">Oefening laden...</span>
     </div>
 
     <div class="exercise-progress" id="exercise-progress"></div>
@@ -1344,9 +1455,9 @@ body > header .tab.active {
         <button type="button" class="is-active" data-language-choice="nl" aria-pressed="true">NL</button>
         <button type="button" data-language-choice="en" aria-pressed="false">ENG</button>
       </div>
-<button class="brand-btn" id="toggle-theme" title="Donkere/lichte modus">ðŸŒ™/â˜€ï¸</button>
-      <button class="brand-btn" id="export-batch">Reeks exporteren naar PDF</button>
-      <button class="brand-btn" id="reset-progress">Vooruitgang wissen</button>
+<button class="brand-btn" id="toggle-theme" title="Thema wisselen">Thema</button>
+      <button class="brand-btn" id="export-batch">PDF-reeks</button>
+      <button class="brand-btn" id="reset-progress">Wis voortgang</button>
     </div>
   </header>
 
@@ -1648,7 +1759,7 @@ body > header .tab.active {
       const line = m.line ?? "?";
       const col  = m.col ?? "?";
       const rule = m.rule?.id ? ` (${m.rule.id})` : "";
-      return `${i+1}. L${line}:${col} â€” ${m.message}${rule}`;
+      return `${i+1}. L${line}:${col} - ${m.message}${rule}`;
     }).join("\n");
   }
 
@@ -1725,7 +1836,7 @@ body > header .tab.active {
       btn.type = "button";
 
       const statusLabel = (isDone || last === "success") ? "Correct" : (last === "fail" ? "Niet correct" : "Nog niet ingediend");
-      btn.title = `${ex.title} â€” ${statusLabel}`;
+      btn.title = `${ex.title} - ${statusLabel}`;
 
       btn.onclick = () => switchExercise(idx);
       progressBar.appendChild(btn);
@@ -1814,7 +1925,7 @@ body > header .tab.active {
       .replace(/\s+/g, " ")
       .trim();
     if (!text) return "Geen zichtbare tekst in de body.";
-    return text.length > max ? `${text.slice(0, max - 1)}â€¦` : text;
+    return text.length > max ? `${text.slice(0, Math.max(0, max - 3))}...` : text;
   }
 
   /* =========================================================
@@ -2096,7 +2207,7 @@ body > header .tab.active {
       }
 
       if (check.kind === "anySelector"){
-        if (!_anySelector(doc, check.selectors)) return { ok:false, info:`Minstens Ã©Ã©n van deze tags ontbreekt: ${check.selectors.join(", ")}.` };
+        if (!_anySelector(doc, check.selectors)) return { ok:false, info:`Minstens een van deze tags ontbreekt: ${check.selectors.join(", ")}.` };
         continue;
       }
 
@@ -2433,7 +2544,7 @@ body > header .tab.active {
     function setCode(){ pdf.setFont("courier","normal"); pdf.setFontSize(10); pdf.setTextColor(0,0,0); }
 
     setH();
-    pdf.text("HTML in de Klas â€“ Oefening", margin, y);
+    pdf.text("HTML in de Klas - Oefening", margin, y);
     y += 28;
 
     setBody();
@@ -2517,7 +2628,7 @@ body > header .tab.active {
     function setCode(){ pdf.setFont("courier","normal"); pdf.setFontSize(10); pdf.setTextColor(0,0,0); }
 
     setH();
-    pdf.text("HTML in de Klas â€“ Gebundelde export", margin, y);
+    pdf.text("HTML in de Klas - Gebundelde export", margin, y);
     y += 28;
 
     setBody();
@@ -2954,7 +3065,7 @@ body > header .tab.active {
     }
 
     splitter.addEventListener("pointerdown", (e) => {
-      if (window.matchMedia("(max-width:1180px), (max-height:820px)").matches) return;
+      if (window.matchMedia("(max-width:840px)").matches) return;
 
       dragging = true;
       splitter.classList.add("dragging");
@@ -2971,7 +3082,7 @@ body > header .tab.active {
     });
 
     splitter.addEventListener("pointermove", (e) => {
-      if (!dragging || window.matchMedia("(max-width:1180px), (max-height:820px)").matches) return;
+      if (!dragging || window.matchMedia("(max-width:840px)").matches) return;
 
       lastClientX = e.clientX;
       if (rafPending) return;
@@ -2988,7 +3099,7 @@ body > header .tab.active {
     splitter.addEventListener("pointercancel", stopDrag);
 
     window.addEventListener("resize", () => {
-      if (window.matchMedia("(max-width:1180px), (max-height:820px)").matches){
+      if (window.matchMedia("(max-width:840px)").matches){
         editorPane.style.flex = "";
         editorPane.style.flexBasis = "";
         editorPane.style.width = "";
@@ -3126,8 +3237,10 @@ body > header .tab.active {
   "Exporteren": "Export",
   "Exporteren naar PDF": "Export to PDF",
   "Reeks exporteren naar PDF": "Export series to PDF",
+  "PDF-reeks": "PDF series",
   "Vooruitgang wissen": "Clear progress",
   "Voortgang wissen": "Clear progress",
+  "Wis voortgang": "Clear progress",
   "Alleen huidige oefening": "Current exercise only",
   "Alle voortgang": "All progress",
   "Volledige reeks": "Full series",
@@ -3135,6 +3248,7 @@ body > header .tab.active {
   "Kies wat je wil wissen.": "Choose what you want to clear.",
   "Donker/Licht": "Dark/Light",
   "Thema": "Theme",
+  "Thema wisselen": "Switch theme",
   "Donkere/lichte modus": "Dark/light mode",
   "Donkere of lichte modus": "Dark or light mode",
   "Formularium": "Reference sheet",
@@ -3164,7 +3278,7 @@ body > header .tab.active {
   "Verstuurd": "Sent",
   "Projectstappen": "Project steps",
   "Onderzoeksstappen": "Research steps",
-  "Auteur: Robbe Wulgaert Â· AI in de Klas Â· robbewulgaert.be Â· Â© 2026 Robbe Wulgaert. Alle rechten voorbehouden.": "Author: Robbe Wulgaert Â· AI in de Klas Â· robbewulgaert.be Â· Â© 2026 Robbe Wulgaert. All rights reserved.",
+  "Auteur: Robbe Wulgaert - AI in de Klas - robbewulgaert.be - (c) 2026 Robbe Wulgaert. Alle rechten voorbehouden.": "Author: Robbe Wulgaert - AI in de Klas - robbewulgaert.be - (c) 2026 Robbe Wulgaert. All rights reserved.",
   "HTML in de Klas": "HTML in the Classroom",
   "Gegevens voor export": "Export details",
   "Render website": "Render website",
