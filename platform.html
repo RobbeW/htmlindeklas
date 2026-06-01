@@ -782,13 +782,14 @@
       }
     }
 
-    @media (max-width:840px){
+    @media (max-width:900px){
       .main-layout{
         flex-direction:column;
         height:auto;
         min-height:calc(100svh - var(--topbar-h, 70px));
         overflow:auto;
         padding:0 0.35rem 0.55rem;
+        box-sizing:border-box;
       }
       .editor-pane, .preview-pane{
         width:100% !important;
@@ -808,7 +809,7 @@
       .preview-frame{ min-height:420px; }
     }
 
-    @media (max-width:840px){
+    @media (max-width:900px){
       .topbar{
         align-items:stretch;
       }
@@ -952,7 +953,7 @@
       box-shadow:0 0 0 3px rgba(82,0,255,.12);
     }
 
-    @media (max-width:840px){
+    @media (max-width:900px){
       .topbar{
         gap:.7rem;
       }
@@ -1083,7 +1084,7 @@
       opacity:1;
     }
 
-    @media (max-width:840px){
+    @media (max-width:900px){
       .topbar{
         align-items:stretch;
       }
@@ -1402,13 +1403,14 @@ body > header .tab.active {
       }
     }
 
-    @media (max-width: 840px) {
+    @media (max-width: 900px) {
       .main-layout {
         flex-direction: column !important;
         height: auto !important;
         min-height: calc(100svh - var(--topbar-h, 70px)) !important;
         overflow: auto !important;
         padding: 0 0.35rem 0.55rem !important;
+        box-sizing: border-box !important;
       }
 
       .editor-pane,
@@ -1601,6 +1603,26 @@ html.dark .topbar.learning-header .opdracht span {
   .topbar.learning-header .app-actions > button,
   .topbar.learning-header .app-actions > .btn {
     white-space: normal;
+  }
+}
+
+@media (min-width: 901px) and (max-height: 820px) {
+  .editor-pane {
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+  }
+
+  #md-render.md-box {
+    max-height: none !important;
+  }
+
+  #code-editor {
+    min-height: 220px !important;
+  }
+
+  #feedback {
+    min-height: 44px;
+    max-height: 120px;
   }
 }
 </style>
@@ -3231,7 +3253,7 @@ html.dark .topbar.learning-header .opdracht span {
     }
 
     splitter.addEventListener("pointerdown", (e) => {
-      if (window.matchMedia("(max-width:840px)").matches) return;
+      if (window.matchMedia("(max-width:900px)").matches) return;
 
       dragging = true;
       splitter.classList.add("dragging");
@@ -3248,7 +3270,7 @@ html.dark .topbar.learning-header .opdracht span {
     });
 
     splitter.addEventListener("pointermove", (e) => {
-      if (!dragging || window.matchMedia("(max-width:840px)").matches) return;
+      if (!dragging || window.matchMedia("(max-width:900px)").matches) return;
 
       lastClientX = e.clientX;
       if (rafPending) return;
@@ -3265,7 +3287,7 @@ html.dark .topbar.learning-header .opdracht span {
     splitter.addEventListener("pointercancel", stopDrag);
 
     window.addEventListener("resize", () => {
-      if (window.matchMedia("(max-width:840px)").matches){
+      if (window.matchMedia("(max-width:900px)").matches){
         editorPane.style.flex = "";
         editorPane.style.flexBasis = "";
         editorPane.style.width = "";
