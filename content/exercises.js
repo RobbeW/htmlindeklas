@@ -247,7 +247,7 @@ window.HTMLK_CONTENT = {
     },
     {
       "title": "Oefening 5 — Alinea's in HTML",
-      "markdown": "# Alinea's in HTML: Vertel het Verhaal van je Gerecht\n\nAlinea's maak je met `<p>`.\n\n## Gevraagd\n- Maak een HTML-pagina over **Vegetarisch Kapsalon**.\n- `<title>Het Verhaal achter het Kapsalon</title>`\n- In de body:\n  - `<h1>Vegetarisch Kapsalon</h1>`\n  - `<h2>De Geschiedenis</h2>`\n  - minstens 1 alinea (`p`) met een korte uitleg.",
+      "markdown": "# Alinea's in HTML: Vertel het Verhaal van je Gerecht\n\nAlinea's maak je met `<p>`.\n\n## Gevraagd\n- Maak een HTML-pagina over **Vegetarisch Kapsalon**.\n- `<title>Het verhaal achter het kapsalon</title>`\n- In de body:\n  - `<h1>Vegetarisch Kapsalon</h1>`\n  - `<h2>De Geschiedenis</h2>`\n  - minstens 1 alinea (`p`) met een korte uitleg.",
       "starter": "<!DOCTYPE html>",
       "eval": {
         "enforceText": true,
@@ -272,7 +272,7 @@ window.HTMLK_CONTENT = {
           },
           {
             "kind": "titleEquals",
-            "value": "Het Verhaal achter het Kapsalon",
+            "value": "Het verhaal achter het kapsalon",
             "textCheck": true
           },
           {
