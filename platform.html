@@ -448,6 +448,10 @@
       outline:3px solid var(--brand-aqua);
       outline-offset:4px;
     }
+    body.tour-active:not(.tour-target-help) .fab-help{
+      opacity:0;
+      pointer-events:none;
+    }
 
     #feedback{
       background:#161820;
@@ -500,6 +504,7 @@
     }
 
     .preview-frame{
+      box-sizing:border-box;
       flex:1 1 auto;
       width:100%;
       min-height:clamp(260px, 50vh, 720px);
@@ -507,6 +512,105 @@
       border-radius:12px;
       background:#fff;
       box-shadow:var(--shadow);
+    }
+
+    .tour-launch-button.tour-start-nudge{
+      animation:tour-start-pulse 1.8s ease-in-out infinite;
+    }
+    @keyframes tour-start-pulse{
+      0%,100%{ box-shadow:0 2px 8px rgba(82,0,255,0.10); transform:translateY(0); }
+      50%{ box-shadow:0 0 0 5px rgba(61,255,208,0.28), 0 12px 28px rgba(82,0,255,0.18); transform:translateY(-1px); }
+    }
+    .tour-overlay{
+      position:fixed;
+      inset:0;
+      z-index:11000;
+      pointer-events:none;
+    }
+    .tour-highlight{
+      position:fixed;
+      z-index:1;
+      box-sizing:border-box;
+      border:3px solid var(--brand-purple);
+      border-radius:10px;
+      background:rgba(82,0,255,0.08);
+      box-shadow:0 0 0 9999px rgba(18,15,28,0.20), 0 14px 40px rgba(82,0,255,0.22);
+      transition:left 260ms ease, top 260ms ease, width 260ms ease, height 260ms ease;
+    }
+    .tour-callout{
+      position:fixed;
+      z-index:2;
+      pointer-events:auto;
+      box-sizing:border-box;
+      width:min(360px, calc(100vw - 24px));
+      border:1px solid rgba(82,0,255,0.18);
+      border-radius:8px;
+      background:#fff;
+      color:var(--ink);
+      padding:0.9rem;
+      box-shadow:0 18px 48px rgba(20,18,30,0.22);
+      line-height:1.45;
+    }
+    .tour-callout h3{
+      margin:0 0 0.45rem;
+      color:var(--brand-purple);
+      font-size:1.02rem;
+    }
+    .tour-callout p{
+      margin:0 0 0.75rem;
+      color:#2f3440;
+    }
+    .tour-status{
+      display:block;
+      margin-bottom:0.75rem;
+      color:#6b7280;
+      font-size:0.84rem;
+      font-weight:900;
+    }
+    .tour-controls{
+      display:flex;
+      align-items:center;
+      flex-wrap:wrap;
+      gap:0.45rem;
+    }
+    .tour-controls .brand-btn{
+      flex:0 1 auto;
+      width:auto;
+      min-width:0;
+      min-height:38px;
+      padding:0.55em 0.85em;
+      border-radius:999px;
+      white-space:nowrap;
+    }
+    @media (prefers-reduced-motion:reduce){
+      .tour-launch-button.tour-start-nudge,
+      .tour-highlight,
+      .tour-callout{
+        animation:none;
+        transition:none;
+      }
+    }
+    @media (max-width:420px){
+      .tour-callout{
+        padding:0.72rem;
+        line-height:1.34;
+      }
+      .tour-callout h3{
+        margin-bottom:0.34rem;
+        font-size:0.98rem;
+      }
+      .tour-callout p,
+      .tour-status{
+        margin-bottom:0.52rem;
+      }
+      .tour-controls{
+        gap:0.38rem;
+      }
+      .tour-controls .brand-btn{
+        min-height:34px;
+        padding:0.44em 0.6em;
+        font-size:0.9rem;
+      }
     }
 
     .modal{
@@ -1114,6 +1218,7 @@
   </style>
   <style id="platform-language-toggle-styles">
 .language-toggle {
+  box-sizing: border-box;
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -1403,22 +1508,36 @@ body > header .tab.active {
       }
     }
 
-    @media (max-width: 900px) {
+@media (max-width: 900px) {
+      html,
+      body {
+        height: auto !important;
+        min-height: 100% !important;
+        overflow-y: auto !important;
+      }
+
+      body {
+        display: block !important;
+      }
+
       .main-layout {
+        flex: 0 0 auto !important;
         flex-direction: column !important;
         height: auto !important;
-        min-height: calc(100svh - var(--topbar-h, 70px)) !important;
-        overflow: auto !important;
+        min-height: 0 !important;
+        overflow: visible !important;
         padding: 0 0.35rem 0.55rem !important;
         box-sizing: border-box !important;
       }
 
       .editor-pane,
       .preview-pane {
+        flex: 0 0 auto !important;
         width: 100% !important;
         min-width: 0 !important;
         height: auto !important;
         border-radius: 18px !important;
+        overflow: visible !important;
       }
 
       .splitter {
@@ -1645,6 +1764,7 @@ html.dark .topbar.learning-header .opdracht span {
       </div>
       <button class="brand-btn" id="toggle-theme" title="Donkere/lichte modus">Thema</button>
       <button class="brand-btn" id="export-batch" title="Exporteer reeks naar PDF">PDF-reeks</button>
+      <button class="brand-btn tour-launch-button" id="start-tour" type="button">Start rondleiding</button>
       <button class="brand-btn" id="reset-progress" title="Wis opgeslagen voortgang">Voortgang wissen</button>
     </div>
   </header>
@@ -1962,9 +2082,93 @@ html.dark .topbar.learning-header .opdracht span {
   const preview = document.getElementById("preview");
   const topTitle = document.getElementById("exercise-title-top");
   const previewTabTitle = document.getElementById("preview-tab-title");
+  const tourButton = document.getElementById("start-tour");
 
   let currentIdx = 0;
   let editor = null;
+  let activeTourCleanup = null;
+  let tourRestoreState = null;
+  let suppressEditorAutosave = false;
+
+  const TOUR_COMPLETE_KEY = "htmlk-tour-complete";
+  const TOUR_DEMO_EXERCISE_ID = "ex14-tekst-namaken";
+  const TOUR_DEMO_SOURCE = `<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <title>Richard Ayoade</title>
+</head>
+<body>
+  <h1>Richard Ayoade</h1>
+
+  <p>
+    <strong>Richard Ayoade</strong> (<u>born 23 May 1977</u>) is a British comedian,
+    actor, writer, director, and presenter. He played the role of socially awkward
+    IT technician <strong>Maurice Moss</strong> in Channel 4 sitcom
+    <em>The IT Crowd</em> (2006-2013), for which he won the 2014
+    <strong>BAFTA</strong> for Best Male Comedy Performance.
+  </p>
+
+  <p>
+    Ayoade has written three comedic film-focused books:
+    <strong><em>Ayoade on Ayoade: A Cinematic Odyssey</em></strong> (2014),
+    <em><u>The Grip of Film</u></em> (2017), and
+    <strong><u>Ayoade on Top</u></strong> (2019), as well as the children's book
+    <strong><em><u>The Book That No One Wanted to Read</u></em></strong> (2022),
+    illustrated by Tor Freeman.
+  </p>
+</body>
+</html>`;
+  const HTML_TOUR = {
+    title:"Wegwijs in HTML in de Klas",
+    steps:[
+      {
+        selector:"#exercise-progress",
+        title:"Oefeningen",
+        text:"Bovenaan zie je alle oefeningen van de reeks. De huidige oefening is gemarkeerd; afgeronde oefeningen krijgen een eigen statuskleur."
+      },
+      {
+        selector:"#opdracht",
+        title:"Oefeningstitel",
+        text:"Hier zie je in welke omgeving je werkt en welke oefening momenteel openstaat."
+      },
+      {
+        selector:"#md-render",
+        title:"Opdracht",
+        text:"In dit blok lees je wat je moet bouwen. Voor de rondleiding gebruiken we een ingevulde oefening over Richard Ayoade als achtergrond."
+      },
+      {
+        selector:".CodeMirror",
+        title:"Code-editor",
+        text:"Hier schrijf je HTML. De voorbeeldcode toont tags, tekststructuur en opmaak."
+      },
+      {
+        selector:"#run-code",
+        title:"Render website",
+        text:"Met deze knop render je jouw HTML en controleert het platform de structuur van je pagina."
+      },
+      {
+        selector:"#feedback",
+        title:"Feedback",
+        text:"Na het renderen verschijnt hier feedback. Bij fouten krijg je een concrete aanwijzing om verder te zoeken."
+      },
+      {
+        selector:"#preview-pane",
+        title:"Live preview",
+        text:"Rechts zie je hoe je webpagina eruitziet in de browser. De tabtitel komt uit de title-tag in je HTML."
+      },
+      {
+        selector:"#export-batch",
+        title:"PDF-reeks",
+        text:"Met PDF-reeks exporteer je de bewaarde oefeningen van vandaag naar een bundel."
+      },
+      {
+        selector:"#help-open",
+        title:"Formularium",
+        text:"Het vraagteken opent het HTML-formularium met voorbeelden van tags, attributen, lijsten, media en veelgemaakte fouten."
+      }
+    ]
+  };
 
   function refreshEditorSoon(){
     if (!editor) return;
@@ -2078,6 +2282,270 @@ html.dark .topbar.learning-header .opdracht span {
     const explicit = String(ex?.summary || "").trim();
     if (explicit) return explicit;
     return stripMarkdownForSummary(ex?.markdown || "").slice(0, 220);
+  }
+
+  function isTourCompleted(){
+    try{
+      return localStorage.getItem(TOUR_COMPLETE_KEY) === "1";
+    }catch(e){
+      return false;
+    }
+  }
+
+  function updateTourButtonState(){
+    if (!tourButton) return;
+    const completed = isTourCompleted();
+    tourButton.textContent = completed ? "Rondleiding opnieuw starten" : "Start rondleiding";
+    tourButton.classList.toggle("tour-start-nudge", !completed);
+  }
+
+  function setEditorValueForTour(value){
+    if (!editor) return;
+    suppressEditorAutosave = true;
+    editor.setValue(value);
+    suppressEditorAutosave = false;
+  }
+
+  function getTourDemoExerciseIndex(){
+    const byId = EXERCISES.findIndex(ex => ex && ex.id === TOUR_DEMO_EXERCISE_ID);
+    if (byId !== -1) return byId;
+    const byText = EXERCISES.findIndex(ex => {
+      const haystack = `${ex?.title || ""}\n${ex?.markdown || ""}`.toLowerCase();
+      return haystack.includes("richard ayoade") || haystack.includes("it crowd");
+    });
+    return byText !== -1 ? byText : Math.max(0, EXERCISES.length - 1);
+  }
+
+  function renderTourBackdrop(){
+    const demoIdx = getTourDemoExerciseIndex();
+    const demoExercise = EXERCISES[demoIdx] || EXERCISES[currentIdx];
+
+    tourRestoreState = {
+      idx:currentIdx,
+      scrollX:window.scrollX || 0,
+      scrollY:window.scrollY || 0
+    };
+
+    currentIdx = demoIdx;
+    renderProgress();
+    topTitle.textContent = demoExercise?.title || "Rondleiding";
+    renderMarkdown(demoExercise);
+    renderConceptStrip(demoExercise);
+    setEditorValueForTour(TOUR_DEMO_SOURCE);
+    updatePreviewTitle(TOUR_DEMO_SOURCE);
+    preview.srcdoc = makePreviewHtml(TOUR_DEMO_SOURCE);
+    clearFeedback();
+    logFeedback("Demo voor de rondleiding: deze code is tijdelijk en wordt niet opgeslagen als jouw oplossing.");
+    resetWorkTimerState();
+    refreshEditorSoon();
+    syncTopbarHeight();
+  }
+
+  function restoreTourBackdrop(){
+    if (!tourRestoreState) return;
+    const restore = tourRestoreState;
+    tourRestoreState = null;
+    currentIdx = restore.idx;
+    renderProgress();
+    loadExercise();
+    requestAnimationFrame(() => window.scrollTo(restore.scrollX, restore.scrollY));
+  }
+
+  function clearActiveTour(restoreBackdrop = false){
+    if (activeTourCleanup) {
+      activeTourCleanup();
+      activeTourCleanup = null;
+    }
+    document.querySelector(".tour-overlay")?.remove();
+    document.body.classList.remove("tour-active", "tour-target-help");
+    if (restoreBackdrop) restoreTourBackdrop();
+  }
+
+  function usableTourTarget(target){
+    if (!target || target === document.body) return false;
+    const rect = target.getBoundingClientRect();
+    const style = getComputedStyle(target);
+    return rect.width > 0 && rect.height > 0 && style.display !== "none" && style.visibility !== "hidden";
+  }
+
+  function startHtmlTour(){
+    if (!tourButton || !editor) return;
+    clearActiveTour(true);
+    renderTourBackdrop();
+
+    const steps = Array.isArray(HTML_TOUR.steps) ? HTML_TOUR.steps : [];
+    if (!steps.length) return;
+
+    const overlay = document.createElement("div");
+    overlay.className = "tour-overlay";
+
+    const highlight = document.createElement("div");
+    highlight.className = "tour-highlight";
+
+    const callout = document.createElement("section");
+    callout.className = "tour-callout";
+    callout.setAttribute("role", "dialog");
+    callout.setAttribute("aria-label", HTML_TOUR.title);
+
+    const title = document.createElement("h3");
+    const text = document.createElement("p");
+    const status = document.createElement("span");
+    status.className = "tour-status";
+
+    const controls = document.createElement("div");
+    controls.className = "tour-controls";
+
+    const prevButton = document.createElement("button");
+    prevButton.type = "button";
+    prevButton.className = "brand-btn";
+    prevButton.textContent = "Vorige";
+
+    const nextButton = document.createElement("button");
+    nextButton.type = "button";
+    nextButton.className = "brand-btn";
+    nextButton.textContent = "Volgende";
+
+    const skipButton = document.createElement("button");
+    skipButton.type = "button";
+    skipButton.className = "brand-btn";
+    skipButton.textContent = "Overslaan";
+
+    controls.append(prevButton, nextButton, skipButton);
+    callout.append(title, text, status, controls);
+    overlay.append(highlight, callout);
+
+    let stepIndex = 0;
+
+    function getStepTarget(step){
+      const target = step && step.selector ? document.querySelector(step.selector) : null;
+      if (usableTourTarget(target)) return target;
+      return document.querySelector("#md-render") || document.querySelector("#editor-pane") || document.body;
+    }
+
+    function positionTour(){
+      const step = steps[stepIndex] || {};
+      const target = getStepTarget(step);
+      const firstRect = target.getBoundingClientRect();
+      const offscreen =
+        firstRect.top < 0 ||
+        firstRect.left < 0 ||
+        firstRect.bottom > window.innerHeight ||
+        firstRect.right > window.innerWidth;
+
+      if (target !== document.body && offscreen && typeof target.scrollIntoView === "function") {
+        target.scrollIntoView({ block:"center", inline:"center", behavior:"auto" });
+      }
+
+      const rect = target.getBoundingClientRect();
+      const margin = 8;
+      const left = Math.max(8, rect.left - margin);
+      const top = Math.max(8, rect.top - margin);
+      const width = Math.min(window.innerWidth - left - 8, rect.width + margin * 2);
+      const height = Math.min(window.innerHeight - top - 8, rect.height + margin * 2);
+
+      highlight.style.left = `${left}px`;
+      highlight.style.top = `${top}px`;
+      highlight.style.width = `${Math.max(56, width)}px`;
+      highlight.style.height = `${Math.max(40, height)}px`;
+
+      const calloutWidth = Math.min(360, window.innerWidth - 24);
+      callout.style.width = `${calloutWidth}px`;
+      const measuredHeight = Math.min(callout.offsetHeight || 220, window.innerHeight - 24);
+      const roomRight = window.innerWidth - (left + width + 14);
+      const roomLeft = left - 14;
+      const preferredLeft = roomRight >= calloutWidth
+        ? left + width + 14
+        : roomLeft >= calloutWidth
+          ? left - calloutWidth - 14
+          : Math.max(12, Math.min(left, window.innerWidth - calloutWidth - 12));
+
+      const minTop = 12;
+      const maxTop = Math.max(minTop, window.innerHeight - measuredHeight - 12);
+      const belowTop = top + height + 12;
+      const aboveTop = top - measuredHeight - 12;
+      let preferredTop = belowTop;
+
+      if (belowTop > maxTop) {
+        preferredTop = aboveTop >= minTop ? aboveTop : maxTop;
+      }
+      if (belowTop > maxTop && aboveTop < minTop) {
+        const overlapFor = (candidateTop) => {
+          const candidateBottom = candidateTop + measuredHeight;
+          return Math.max(0, Math.min(candidateBottom, top + height) - Math.max(candidateTop, top));
+        };
+        preferredTop = overlapFor(minTop) <= overlapFor(maxTop) ? minTop : maxTop;
+      }
+      preferredTop = Math.max(minTop, Math.min(preferredTop, maxTop));
+
+      callout.style.left = `${preferredLeft}px`;
+      callout.style.top = `${preferredTop}px`;
+    }
+
+    function renderStep(){
+      const step = steps[stepIndex] || {};
+      document.body.classList.toggle("tour-target-help", step.selector === "#help-open");
+      title.textContent = step.title || `Stap ${stepIndex + 1}`;
+      text.textContent = step.text || "";
+      status.textContent = `Stap ${stepIndex + 1} van ${steps.length}`;
+      prevButton.disabled = stepIndex === 0;
+      nextButton.textContent = stepIndex === steps.length - 1 ? "Klaar" : "Volgende";
+      positionTour();
+      requestAnimationFrame(positionTour);
+    }
+
+    function finishTour(markComplete){
+      clearActiveTour(false);
+      if (markComplete) {
+        try{ localStorage.setItem(TOUR_COMPLETE_KEY, "1"); }catch(e){}
+        updateTourButtonState();
+      }
+      restoreTourBackdrop();
+      tourButton.focus();
+    }
+
+    function onKeyDown(event){
+      if (event.key === "Escape") {
+        event.preventDefault();
+        finishTour(false);
+      } else if (event.key === "ArrowRight") {
+        event.preventDefault();
+        nextButton.click();
+      } else if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        prevButton.click();
+      }
+    }
+
+    activeTourCleanup = () => {
+      window.removeEventListener("resize", positionTour);
+      window.removeEventListener("scroll", positionTour, true);
+      document.removeEventListener("keydown", onKeyDown);
+      overlay.remove();
+      document.body.classList.remove("tour-active", "tour-target-help");
+    };
+
+    document.body.appendChild(overlay);
+    document.body.classList.add("tour-active");
+    window.addEventListener("resize", positionTour);
+    window.addEventListener("scroll", positionTour, true);
+    document.addEventListener("keydown", onKeyDown);
+
+    prevButton.addEventListener("click", () => {
+      stepIndex = Math.max(0, stepIndex - 1);
+      renderStep();
+    });
+    nextButton.addEventListener("click", () => {
+      if (stepIndex >= steps.length - 1) {
+        finishTour(true);
+        return;
+      }
+      stepIndex += 1;
+      renderStep();
+    });
+    skipButton.addEventListener("click", () => finishTour(false));
+
+    renderStep();
+    nextButton.focus();
   }
 
   /* =========================================================
@@ -2939,6 +3407,7 @@ html.dark .topbar.learning-header .opdracht span {
   }
 
   function switchExercise(idx){
+    clearActiveTour(true);
     stopWorkTimer();
     currentIdx = idx;
     renderProgress();
@@ -3327,14 +3796,20 @@ html.dark .topbar.learning-header .opdracht span {
 
     editor.on("change", function(){
       startWorkTimer();
-      try{
-        localStorage.setItem(codeKey(currentIdx), editor.getValue());
-      }catch(e){}
+      if (!suppressEditorAutosave) {
+        try{
+          localStorage.setItem(codeKey(currentIdx), editor.getValue());
+        }catch(e){}
+      }
       renderPreviewDebounced();
     });
 
     document.getElementById("run-code").onclick = runAndCheck;
     document.getElementById("save-html-file").onclick = saveCurrentHtmlForStudent;
+    if (tourButton) {
+      tourButton.addEventListener("click", startHtmlTour);
+      updateTourButtonState();
+    }
 
     document.getElementById("toggle-theme").onclick = () => {
       document.body.classList.toggle("dark");
@@ -3427,6 +3902,16 @@ html.dark .topbar.learning-header .opdracht span {
   "Reeks exporteren naar PDF": "Export series to PDF",
   "PDF-reeks": "PDF series",
   "Exporteer reeks naar PDF": "Export series to PDF",
+  "Start rondleiding": "Start tour",
+  "Rondleiding opnieuw starten": "Restart tour",
+  "Vorige": "Previous",
+  "Volgende": "Next",
+  "Overslaan": "Skip",
+  "Klaar": "Done",
+  "Wegwijs in HTML in de Klas": "Finding your way in HTML in the Classroom",
+  "Oefeningstitel": "Exercise title",
+  "Live preview": "Live preview",
+  "Demo voor de rondleiding: deze code is tijdelijk en wordt niet opgeslagen als jouw oplossing.": "Tour demo: this code is temporary and is not saved as your solution.",
   "Vooruitgang wissen": "Clear progress",
   "Voortgang wissen": "Clear progress",
   "Wis voortgang": "Clear progress",
