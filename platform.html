@@ -9,9 +9,6 @@
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="shortcut icon" type="image/png" href="favicon.png">
   <title>HTML in de Klas - Leerplatform</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700,900&display=swap">
   <link rel="stylesheet" href="assets/vendor/codemirror/codemirror.min.css">
 
   <!-- Marked (Markdown renderer) -->
@@ -24,19 +21,28 @@
   <script src="assets/vendor/htmlhint/htmlhint.min.js"></script>
   <style>
     :root{
-      --brand-purple:#5200FF;
-      --brand-purple-dark:#3700B3;
-      --brand-aqua:#3dffd0;
-      --brand-white:#ffffff;
-
-      --bg:#f3f5f8;
-      --panel:#f7f8fa;
-      --ink:#23272e;
-      --muted:#9aa3b2;
-
-      --card:#ffffff;
-      --border:#ececf3;
+      --brand:#5200FF;
+      --brand-dark:#3700B3;
+      --accent:#3DFFD0;
+      --ink:#160033;
+      --text:#1D1930;
+      --muted:#625B70;
+      --bg:#F8F7F3;
+      --surface:#FFFFFF;
+      --line:#E2DDEA;
+      --brand-purple:var(--brand);
+      --brand-purple-dark:var(--brand-dark);
+      --brand-aqua:var(--accent);
+      --brand-white:var(--surface);
+      --panel:var(--surface);
+      --card:var(--surface);
+      --border:var(--line);
       --shadow:0 2px 12px rgba(82,0,255,0.08);
+      --motion-fast:150ms;
+      --motion-medium:260ms;
+      --motion-slow:520ms;
+      --ease-standard:cubic-bezier(0.2, 0, 0, 1);
+      --ease-out:cubic-bezier(0.22, 1, 0.36, 1);
 
       /* Wordt in JS gesynchroniseerd met de echte topbar-hoogte */
       --topbar-h:70px;
@@ -46,9 +52,9 @@
       height:100%;
       margin:0;
       padding:0;
-      background:#fff;
+      background:var(--bg);
       color:var(--ink);
-      font-family:'Roboto', Arial, Helvetica, sans-serif;
+      font-family:system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
       min-height:100vh;
       overflow-x:hidden;
     }
@@ -64,7 +70,7 @@
     .toolbar button, .exercise-btn,
     #feedback, #code-editor, .splitter,
     .md-box, .preview-frame, .preview-tab, .preview-tabbar {
-      transition: background 0.25s, color 0.25s, border-color 0.25s, box-shadow 0.25s;
+      transition: background var(--motion-medium) var(--ease-standard), color var(--motion-medium) var(--ease-standard), border-color var(--motion-medium) var(--ease-standard), box-shadow var(--motion-medium) var(--ease-standard);
     }
 
     .topbar{
@@ -95,7 +101,7 @@
       font-weight:900;
       color:var(--brand-purple);
       font-size:1.12rem;
-      letter-spacing:0.2px;
+      letter-spacing:0;
       white-space:nowrap;
       flex-shrink:0;
     }
@@ -514,13 +520,6 @@
       box-shadow:var(--shadow);
     }
 
-    .tour-launch-button.tour-start-nudge{
-      animation:tour-start-pulse 1.8s ease-in-out infinite;
-    }
-    @keyframes tour-start-pulse{
-      0%,100%{ box-shadow:0 2px 8px rgba(82,0,255,0.10); transform:translateY(0); }
-      50%{ box-shadow:0 0 0 5px rgba(61,255,208,0.28), 0 12px 28px rgba(82,0,255,0.18); transform:translateY(-1px); }
-    }
     .tour-overlay{
       position:fixed;
       inset:0;
@@ -535,7 +534,7 @@
       border-radius:10px;
       background:rgba(82,0,255,0.08);
       box-shadow:0 0 0 9999px rgba(18,15,28,0.20), 0 14px 40px rgba(82,0,255,0.22);
-      transition:left 260ms ease, top 260ms ease, width 260ms ease, height 260ms ease;
+      transition:left var(--motion-medium) var(--ease-standard), top var(--motion-medium) var(--ease-standard), width var(--motion-medium) var(--ease-standard), height var(--motion-medium) var(--ease-standard);
     }
     .tour-callout{
       position:fixed;
@@ -581,14 +580,6 @@
       padding:0.55em 0.85em;
       border-radius:999px;
       white-space:nowrap;
-    }
-    @media (prefers-reduced-motion:reduce){
-      .tour-launch-button.tour-start-nudge,
-      .tour-highlight,
-      .tour-callout{
-        animation:none;
-        transition:none;
-      }
     }
     @media (max-width:420px){
       .tour-callout{
@@ -749,7 +740,7 @@
       font-size:0.98rem;
       color:var(--brand-purple-dark);
       text-transform:uppercase;
-      letter-spacing:0.04em;
+      letter-spacing:0;
     }
     .help-card p,
     .help-card li{
@@ -957,25 +948,20 @@
 
     /* Platform visual consistency shared with the current landing pages. */
     :root{
-      --brand-purple:#5200FF;
-      --brand-purple-dark:#3700B3;
-      --brand-aqua:#3dffd0;
-      --bg:#f8f7f3;
-      --panel:#ffffff;
-      --ink:#181421;
-      --muted:#625b70;
-      --border:#e2ddea;
+      --brand-purple:var(--brand);
+      --brand-purple-dark:var(--brand-dark);
+      --brand-aqua:var(--accent);
+      --panel:var(--surface);
+      --border:var(--line);
       --shadow:0 12px 34px rgba(15,23,42,.08);
       --card-shadow:0 10px 30px rgba(32,20,54,.08);
     }
 
     html,
     body{
-      background:
-        radial-gradient(circle at top left, rgba(82,0,255,.08), transparent 34rem),
-        linear-gradient(180deg, #ffffff 0%, var(--bg) 100%);
+      background:var(--bg);
       color:var(--ink);
-      font-family:'Roboto', Arial, Helvetica, sans-serif;
+      font-family:system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
     }
 
     .topbar{
@@ -1004,7 +990,7 @@
       padding:13px 18px;
       font-weight:900;
       line-height:1;
-      transition:transform 160ms ease, box-shadow 160ms ease, background 160ms ease, border-color 160ms ease;
+      transition:transform var(--motion-fast) var(--ease-standard), box-shadow var(--motion-fast) var(--ease-standard), background var(--motion-fast) var(--ease-standard), border-color var(--motion-fast) var(--ease-standard);
       white-space:nowrap;
     }
 
@@ -1261,11 +1247,11 @@
 </style>
 <style id="platform-header-style">
 :root {
-  --platform-brand: #5200FF;
-  --platform-brand-dark: #3700B3;
-  --platform-aqua: #03ddef;
-  --platform-ink: #1A224C;
-  --platform-muted: #625b70;
+  --platform-brand: var(--brand);
+  --platform-brand-dark: var(--brand-dark);
+  --platform-aqua: var(--accent);
+  --platform-ink: var(--ink);
+  --platform-muted: var(--muted);
   --platform-line: rgba(82, 0, 255, 0.16);
   --platform-shadow: 0 10px 26px rgba(26, 34, 76, 0.06);
   --platform-strong-shadow: 0 16px 30px rgba(82, 0, 255, 0.22);
@@ -1295,7 +1281,7 @@ body > header:not(.site-header):not(.app-header):not(.topbar) {
   color: var(--platform-brand);
   font-size: 0.78rem;
   font-weight: 900;
-  letter-spacing: 0.11em;
+  letter-spacing: 0;
   text-transform: uppercase;
 }
 .ai-brand,
@@ -1338,7 +1324,7 @@ header .app-actions .btn {
   white-space: nowrap;
   cursor: pointer;
   box-shadow: var(--platform-shadow);
-  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease, background 160ms ease, color 160ms ease;
+  transition: transform var(--motion-fast) var(--ease-standard), box-shadow var(--motion-fast) var(--ease-standard), border-color var(--motion-fast) var(--ease-standard), background var(--motion-fast) var(--ease-standard), color var(--motion-fast) var(--ease-standard);
 }
 .app-page .header-actions .primary-button,
 .topbar .toolbar > button.is-primary,
@@ -1742,6 +1728,17 @@ html.dark .topbar.learning-header .opdracht span {
   #feedback {
     min-height: 44px;
     max-height: 120px;
+  }
+}
+</style>
+<style id="smart-plants-design-system">
+h1,h2,h3,h4,h5,h6,label,button,table,th,td,.brand .title,.eyebrow,.help-card h3{letter-spacing:0}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
   }
 }
 </style>
@@ -2296,7 +2293,6 @@ html.dark .topbar.learning-header .opdracht span {
     if (!tourButton) return;
     const completed = isTourCompleted();
     tourButton.textContent = completed ? "Rondleiding opnieuw starten" : "Start rondleiding";
-    tourButton.classList.toggle("tour-start-nudge", !completed);
   }
 
   function setEditorValueForTour(value){
@@ -2701,7 +2697,7 @@ html.dark .topbar.learning-header .opdracht span {
   function previewLintErrorPage(text){
     const safe = String(text || "").replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
     return `<!doctype html><html><head><meta charset="utf-8"><title>Fout</title></head>
-  <body style="font-family:Arial;padding:16px">
+  <body style="font-family:system-ui, -apple-system, 'Segoe UI', Arial, sans-serif;padding:16px">
     <h2>HTML-fout</h2>
     <pre>${safe}</pre>
   
