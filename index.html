@@ -126,6 +126,11 @@
       font-weight:700;
       font-size:.94rem;
     }
+    .nav-panel{
+      display:flex;
+      align-items:center;
+      gap:24px;
+    }
     .nav-links a{
       padding:10px 12px;
       border-radius:999px;
@@ -145,15 +150,27 @@
     }
     .menu-button{
       display:none;
-      min-height:46px;
-      padding:.84rem 1rem;
+      width:46px;
+      height:46px;
+      padding:0;
       border:1.5px solid rgba(82,0,255,.22);
-      border-radius:999px;
+      border-radius:50%;
       background:#fff;
       color:var(--brand-purple);
-      font:inherit;
-      font-weight:900;
       cursor:pointer;
+      align-items:center;
+      justify-content:center;
+    }
+    .menu-icon{
+      display:grid;
+      gap:4px;
+      width:18px;
+    }
+    .menu-icon span{
+      display:block;
+      height:2px;
+      border-radius:999px;
+      background:currentColor;
     }
     .menu-button:hover,
     .menu-button:focus-visible{
@@ -413,12 +430,17 @@
       .tree-branches::before,.tree-branch::before{display:none}
     }
     @media (max-width:760px){
-      .nav{flex-wrap:wrap; padding:12px 16px}
-      .nav-links{display:none; order:3; width:100%; padding-top:4px}
-      .nav-links.is-open{display:grid; grid-template-columns:1fr; gap:2px}
+      .nav{display:grid; grid-template-columns:auto minmax(0,1fr); justify-content:initial; gap:12px; padding:12px 16px}
+      .menu-button{display:inline-flex; grid-column:1; grid-row:1}
+      .brand-link{grid-column:2; grid-row:1}
+      .brand-mark,.brand-subtitle{display:none}
+      .nav-panel{display:none; grid-column:1 / -1; grid-row:2; padding:12px; border:1px solid rgba(82,0,255,.16); border-radius:8px; background:#fff; box-shadow:0 12px 28px rgba(40,32,55,.12)}
+      .nav-panel.is-open{display:grid; gap:12px}
+      .nav-links{display:grid; grid-template-columns:1fr; gap:2px}
       .nav-links a{padding:12px}
-      .nav-actions > .btn{display:none}
-      .menu-button{display:inline-flex}
+      .nav-actions{display:grid; grid-template-columns:1fr; justify-items:stretch; gap:12px}
+      .nav-actions .language-toggle{justify-self:start}
+      .nav-actions .btn{width:100%}
     }
     @media (max-width:620px){
       .nav{align-items:center}
@@ -470,9 +492,6 @@
   outline: 3px solid rgba(61, 255, 208, 0.75);
   outline-offset: 2px;
 }
-@media (max-width: 760px) {
-  .language-toggle { order: 2; }
-}
 </style>
 </head>
 <body>
@@ -480,6 +499,9 @@
 
   <header class="site-header">
     <nav class="nav" aria-label="Hoofdnavigatie">
+      <button class="menu-button" id="menuButton" type="button" aria-expanded="false" aria-controls="navPanel" aria-label="Open navigatiemenu">
+        <span class="menu-icon" aria-hidden="true"><span></span><span></span><span></span></span>
+      </button>
       <a class="brand-link" href="#top" aria-label="HTML in de Klas">
         <span class="brand-mark">HT</span>
         <span>
@@ -487,20 +509,19 @@
           <span class="brand-subtitle">AI in de Klas · Robbe Wulgaert</span>
         </span>
       </a>
-      <div class="nav-links" id="navLinks" aria-label="Paginaonderdelen">
-        <a href="#wat">Opdracht</a>
-        <a href="#leerlijn">Leerlijn</a>
-        <a href="#leerkrachten">Leerkrachten</a>
-      </div>
-      <div class="nav-actions">
-        <div class="language-toggle" role="group" aria-label="Taalkeuze">
-          <button type="button" class="is-active" data-language-choice="nl" aria-pressed="true">NL</button>
-          <button type="button" data-language-choice="en" aria-pressed="false">ENG</button>
+      <div class="nav-panel" id="navPanel">
+        <div class="nav-links" id="navLinks" aria-label="Paginaonderdelen">
+          <a href="#wat">Opdracht</a>
+          <a href="#leerlijn">Leerlijn</a>
+          <a href="#leerkrachten">Leerkrachten</a>
         </div>
-        <a class="btn btn-primary" href="platform.html">Start leerplatform</a>
-        <button class="menu-button" id="menuButton" type="button" aria-expanded="false" aria-controls="navLinks">
-          Menu
-        </button>
+        <div class="nav-actions">
+          <div class="language-toggle" role="group" aria-label="Taalkeuze">
+            <button type="button" class="is-active" data-language-choice="nl" aria-pressed="true">NL</button>
+            <button type="button" data-language-choice="en" aria-pressed="false">ENG</button>
+          </div>
+          <a class="btn btn-primary" href="platform.html">Start leerplatform</a>
+        </div>
       </div>
     </nav>
   </header>
@@ -639,32 +660,37 @@
 <script id="mobile-menu-script">
 (() => {
   const menuButton = document.getElementById("menuButton");
-  const navLinks = document.getElementById("navLinks");
-  if (!menuButton || !navLinks) return;
+  const navPanel = document.getElementById("navPanel");
+  if (!menuButton || !navPanel) return;
 
-  const closeMenu = () => {
-    navLinks.classList.remove("is-open");
-    menuButton.setAttribute("aria-expanded", "false");
+  const setMenuState = (isOpen, { returnFocus = false } = {}) => {
+    navPanel.classList.toggle("is-open", isOpen);
+    menuButton.setAttribute("aria-expanded", String(isOpen));
+    if (returnFocus) menuButton.focus();
   };
 
   menuButton.addEventListener("click", () => {
-    const isOpen = navLinks.classList.toggle("is-open");
-    menuButton.setAttribute("aria-expanded", String(isOpen));
+    setMenuState(menuButton.getAttribute("aria-expanded") !== "true");
   });
 
-  navLinks.addEventListener("click", (event) => {
-    if (event.target instanceof HTMLAnchorElement) closeMenu();
+  navPanel.addEventListener("click", (event) => {
+    if (event.target instanceof Element && event.target.closest("a")) setMenuState(false);
   });
 
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && navLinks.classList.contains("is-open")) {
-      closeMenu();
-      menuButton.focus();
+    if (event.key === "Escape" && menuButton.getAttribute("aria-expanded") === "true") {
+      setMenuState(false, { returnFocus: true });
+    }
+  });
+
+  document.addEventListener("click", (event) => {
+    if (menuButton.getAttribute("aria-expanded") === "true" && event.target instanceof Node && !menuButton.contains(event.target) && !navPanel.contains(event.target)) {
+      setMenuState(false);
     }
   });
 
   window.addEventListener("resize", () => {
-    if (window.innerWidth > 760) closeMenu();
+    if (window.innerWidth > 760) setMenuState(false);
   });
 })();
 </script>
@@ -677,6 +703,7 @@
   "Hoofdnavigatie": "Main navigation",
   "Paginaonderdelen": "Page sections",
   "Taalkeuze": "Language selection",
+  "Open navigatiemenu": "Open navigation menu",
   "Opdracht": "Assignment",
   "Werking": "How it works",
   "Wat leer je?": "What will you learn?",
