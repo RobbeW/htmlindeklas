@@ -12,6 +12,17 @@
   <meta name="description" content="HTML in de Klas is een lichte browseromgeving om leerlingen stap voor stap webpagina's te laten bouwen, zonder installatie of accounts.">
   <meta name="author" content="Robbe Wulgaert, AI in de Klas, robbewulgaert.be">
   <meta name="copyright" content="Copyright (c) 2026 Robbe Wulgaert">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://robbew.github.io/htmlindeklas/">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="nl_BE">
+  <meta property="og:site_name" content="AI in de Klas">
+  <meta property="og:title" content="HTML in de Klas">
+  <meta property="og:description" content="Bouw stap voor stap webpagina's met HTML in de browser, zonder installatie of accounts.">
+  <meta property="og:url" content="https://robbew.github.io/htmlindeklas/">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="HTML in de Klas">
+  <meta name="twitter:description" content="Bouw stap voor stap webpagina's met HTML in de browser, zonder installatie of accounts.">
 
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="shortcut icon" type="image/png" href="favicon.png">
@@ -278,6 +289,14 @@
     }
     .section-lead{max-width:760px; margin:0 0 1.25rem; color:var(--muted); font-size:1.08rem}
     .grid{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:1rem}
+    .privacy-license-list{display:grid; gap:14px; margin-top:1.5rem}
+    .privacy-license-details{margin:0}
+    .privacy-license-details summary{display:flex; align-items:center; justify-content:space-between; gap:1rem; color:var(--brand-purple); cursor:pointer; font-size:1.12rem; font-weight:900; list-style:none}
+    .privacy-license-details summary::-webkit-details-marker{display:none}
+    .privacy-license-details summary::after{content:"+"; display:grid; place-items:center; flex:0 0 32px; width:32px; height:32px; border-radius:999px; background:var(--brand-purple-soft); color:var(--brand-purple); font-size:1.35rem; line-height:1}
+    .privacy-license-details[open] summary::after{content:"−"}
+    .privacy-license-content{margin-top:1rem; padding-top:1rem; border-top:1px solid var(--line)}
+    .privacy-license-content p + p{margin-top:.75rem}
     .card{
       background:rgba(255,255,255,.88);
       border:1.5px solid var(--line);
@@ -614,7 +633,7 @@
                   </a>
                   <a class="tree-node" href="https://robbew.github.io/delphi/" target="_blank" rel="noopener">
                     <strong>Delphi</strong>
-                    <span>licht oefenen in de browser.</span>
+                    <span>Python oefenen in de browser.</span>
                   </a>
                 </div>
               </div>
@@ -650,10 +669,30 @@
           </div>
         </div>
       </section>
+
+      <section id="privacy-license" aria-labelledby="privacy-license-title">
+        <h2 class="section-title" id="privacy-license-title">Privacy en licentie</h2>
+        <div class="privacy-license-list">
+          <details class="card privacy-license-details">
+            <summary>Privacy</summary>
+            <div class="privacy-license-content">
+              <p>Dit project gebruikt geen eigen analytics of advertentiecookies. Invoer, voortgang en resultaten worden in de browser verwerkt en kunnen lokaal op het toestel worden bewaard. Een download of export gebeurt alleen wanneer de gebruiker die zelf start. GitHub Pages registreert het IP-adres van bezoekers voor beveiligingsdoeleinden; externe diensten vallen onder het privacybeleid van hun aanbieder.</p>
+              <p><a href="https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages#data-collection">Lees hoe GitHub Pages technische bezoekgegevens verwerkt.</a></p>
+            </div>
+          </details>
+          <details class="card privacy-license-details">
+            <summary>Licentie</summary>
+            <div class="privacy-license-content">
+              <p>Het oorspronkelijke projectmateriaal van Robbe Wulgaert mag gratis worden gebruikt, gekopieerd en aangepast voor onderwijs, op voorwaarde dat “Robbe Wulgaert – AI in de Klas” duidelijk zichtbaar wordt vermeld, bij voorkeur met een link naar het oorspronkelijke project. Commerciële verkoop, betaalde verspreiding, sublicentiëring of herverpakking als commercieel product is niet toegestaan zonder voorafgaande schriftelijke toestemming. Componenten van derden blijven onder hun eigen licenties vallen.</p>
+              <p><a href="LICENSE.md">Lees de volledige licentievoorwaarden.</a></p>
+            </div>
+          </details>
+        </div>
+      </section>
     </main>
 
     <footer>
-      <p>© 2026 Robbe Wulgaert · aiindeklas.be / robbewulgaert.be. Gebruik in eigen klas is vrij mits duidelijke en expliciete naamsvermelding van de auteur en Sint-Lievenscollege. Niet herdistribueren zonder schriftelijke toestemming.</p>
+      <p>© 2026 Robbe Wulgaert · AI in de Klas · robbewulgaert.be. Educatief gebruik met duidelijke naamsvermelding; geen commerciële verspreiding zonder schriftelijke toestemming. <a href="#privacy-license">Privacy en licentie</a>.</p>
     </footer>
   </div>
 <script id="mobile-menu-script">
@@ -697,6 +736,13 @@
 (() => {
   const LANGUAGE_KEY = "aiindeklas:index-language";
   const TRANSLATIONS = {
+  "Privacy en licentie": "Privacy and licence",
+  "Dit project gebruikt geen eigen analytics of advertentiecookies. Invoer, voortgang en resultaten worden in de browser verwerkt en kunnen lokaal op het toestel worden bewaard. Een download of export gebeurt alleen wanneer de gebruiker die zelf start. GitHub Pages registreert het IP-adres van bezoekers voor beveiligingsdoeleinden; externe diensten vallen onder het privacybeleid van hun aanbieder.": "This project does not use its own analytics or advertising cookies. Input, progress and results are processed in the browser and may be stored locally on the device. A download or export occurs only when the user initiates it. GitHub Pages logs visitors’ IP addresses for security purposes; external services are governed by their provider’s privacy policy.",
+  "Lees hoe GitHub Pages technische bezoekgegevens verwerkt.": "Read how GitHub Pages processes technical visitor data.",
+  "Educatief gebruik met naamsvermelding": "Educational use with attribution",
+  "Het oorspronkelijke projectmateriaal van Robbe Wulgaert mag gratis worden gebruikt, gekopieerd en aangepast voor onderwijs, op voorwaarde dat “Robbe Wulgaert – AI in de Klas” duidelijk zichtbaar wordt vermeld, bij voorkeur met een link naar het oorspronkelijke project. Commerciële verkoop, betaalde verspreiding, sublicentiëring of herverpakking als commercieel product is niet toegestaan zonder voorafgaande schriftelijke toestemming. Componenten van derden blijven onder hun eigen licenties vallen.": "Original project material by Robbe Wulgaert may be used, copied and adapted free of charge for education, provided that ‘Robbe Wulgaert – AI in de Klas’ is clearly displayed, preferably with a link to the original project. Commercial sale, paid distribution, sublicensing or repackaging as a commercial product is not permitted without prior written permission. Third-party components remain subject to their own licences.",
+  "Lees de volledige licentievoorwaarden.": "Read the full licence terms.",
+  "© 2026 Robbe Wulgaert · AI in de Klas · robbewulgaert.be. Educatief gebruik met duidelijke naamsvermelding; geen commerciële verspreiding zonder schriftelijke toestemming.": "© 2026 Robbe Wulgaert · AI in de Klas · robbewulgaert.be. Educational use with clear attribution; no commercial distribution without written permission.",
   "Spring naar inhoud": "Skip to content",
   "Spring naar hoofdinhoud": "Skip to main content",
   "Hoofdnavigatie": "Main navigation",
@@ -749,22 +795,19 @@
   "logica in echte code.": "logic in real code.",
   "webpagina's structureren.": "structuring webpages.",
   "Python in de Klas met opvolging.": "Python in the Classroom with tracking.",
-  "licht oefenen in de browser.": "lightweight practice in the browser.",
+  "Python oefenen in de browser.": "Practice Python in the browser.",
   "Arduino, bodemvochtigheid, kalibratie en data.": "Arduino, soil moisture, calibration and data.",
   "Arduino, sensoren, servo's en beweging.": "Arduino, sensors, servos and movement.",
   "Micro:bit, energie, spanning en stroom.": "Micro:bit, energy, voltage and current.",
   "AI, beeldherkenning, data en microcontrollers.": "AI, image recognition, data and microcontrollers.",
   "Arduino, luchtkwaliteit, data en postersessie.": "Arduino, air quality, data and poster session.",
   "De platformen trainen computationeel denken. De projecten laten leerlingen dat denken inzetten in een vakoverschrijdende opdracht.": "The platforms train computational thinking. The projects let students apply that thinking in a cross-curricular assignment.",
-  "Geen accounts, geen serveropslag.": "No accounts, no server storage.",
-  "Privacyvriendelijk": "Privacy-friendly",
   "Geen installatie of leerlingenaccount.": "No installation or student account.",
   "Lokale bibliotheken voor grafieken en PDF-export.": "Local libraries for charts and PDF export.",
   "Geschikt voor GitHub Pages.": "Suitable for GitHub Pages.",
   "robbewulgaert.be": "robbewulgaert.be",
   "AI in de Klas": "AI in de Klas",
   "Auteur: Robbe Wulgaert · AI in de Klas · robbewulgaert.be": "Author: Robbe Wulgaert · AI in de Klas · robbewulgaert.be",
-  "© 2026 Robbe Wulgaert. Alle rechten voorbehouden.": "© 2026 Robbe Wulgaert. All rights reserved.",
   "Auteur: Robbe Wulgaert · AI in de Klas · robbewulgaert.be · © 2026 Robbe Wulgaert.": "Author: Robbe Wulgaert · AI in de Klas · robbewulgaert.be · © 2026 Robbe Wulgaert.",
   "Robbe Wulgaert, AI in de Klas, robbewulgaert.be": "Robbe Wulgaert, AI in de Klas, robbewulgaert.be",
   "Licentie": "License",
@@ -801,7 +844,6 @@
   "Afbeeldingen, attributen, ol, ul, li en iframe.": "Images, attributes, ol, ul, li and iframe.",
   "Synthese": "Synthesis",
   "Een eigen pagina waarin meerdere bouwstenen samenkomen.": "A personal page in which several building blocks come together.",
-  "© 2026 Robbe Wulgaert · aiindeklas.be / robbewulgaert.be. Gebruik in eigen klas is vrij mits duidelijke en expliciete naamsvermelding van de auteur en Sint-Lievenscollege. Niet herdistribueren zonder schriftelijke toestemming.": "© 2026 Robbe Wulgaert · aiindeklas.be / robbewulgaert.be. Classroom use is allowed with clear and explicit attribution to the author and Sint-Lievenscollege. Do not redistribute without written permission."
 };
   const META = {
   "title": "HTML in the Classroom",
