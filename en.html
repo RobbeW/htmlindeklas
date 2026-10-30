@@ -1,0 +1,955 @@
+<!--
+  HTML in de Klas - landing page
+  Copyright (c) 2026 Robbe Wulgaert
+  Citeer/vermeld als: Robbe Wulgaert, AI in de Klas, robbewulgaert.be
+-->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="author" content="Robbe Wulgaert, AI in de Klas, robbewulgaert.be">
+  <meta name="copyright" content="Copyright (c) 2026 Robbe Wulgaert">
+  <!-- generated:favicon -->
+  <link rel="icon" type="image/png" sizes="64x64" href="./favicon.png?v=ff7968036640">
+  <link rel="shortcut icon" type="image/png" sizes="64x64" href="./favicon.png?v=ff7968036640">
+  <!-- /generated:favicon -->
+  <style>
+    .section-kicker { margin: 0 0 8px; font-size: .8rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+    :root{
+      --brand:#5200FF;
+      --brand-dark:#3700B3;
+      --accent:#3DFFD0;
+      --ink:#160033;
+      --text:#1D1930;
+      --muted:#625B70;
+      --bg:#F8F7F3;
+      --surface:#FFFFFF;
+      --line:#E2DDEA;
+      --brand-purple:var(--brand);
+      --brand-purple-dark:var(--brand-dark);
+      --brand-aqua:var(--accent);
+      --brand-aqua-soft:#dffff7;
+      --brand-white:var(--surface);
+      --panel:var(--surface);
+      --panel-soft:#F7F3FF;
+      --shadow:0 18px 55px rgba(32,20,54,.10);
+      --radius:24px;
+      --motion-fast:150ms;
+      --motion-medium:260ms;
+      --motion-slow:520ms;
+      --ease-standard:cubic-bezier(0.2, 0, 0, 1);
+      --ease-out:cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      min-height:100vh;
+      color:var(--ink);
+      background:var(--bg);
+      font-family:system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+      line-height:1.55;
+    }
+    a{color:inherit}
+    .page{width:min(1180px, calc(100% - 36px)); margin:0 auto}
+    .skip-link{
+      position:absolute;
+      left:-999px;
+      top:10px;
+      z-index:100;
+      background:var(--brand-purple);
+      color:#fff;
+      border-radius:999px;
+      padding:.65rem 1rem;
+      font-weight:900;
+      text-decoration:none;
+    }
+    .skip-link:focus{left:12px}
+    .site-header{
+      position:sticky;
+      top:0;
+      z-index:50;
+      border-bottom:1px solid rgba(230,226,245,.78);
+      background:rgba(255,255,255,.88);
+      backdrop-filter:blur(16px);
+    }
+    .nav{
+      max-width:1180px;
+      margin:0 auto;
+      padding:16px 22px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:24px;
+    }
+    .brand-link{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:0;
+      text-decoration:none;
+    }
+    .brand-mark{
+      width:44px;
+      height:44px;
+      border-radius:14px;
+      display:grid;
+      place-items:center;
+      color:#fff;
+      font-weight:900;
+      letter-spacing:0;
+      background:linear-gradient(135deg, var(--brand-purple), var(--brand-purple-dark));
+      box-shadow:0 12px 24px rgba(82,0,255,.24);
+      flex:0 0 auto;
+    }
+    .brand-title{
+      display:block;
+      font-weight:900;
+      letter-spacing:0;
+      line-height:1.05;
+      white-space:nowrap;
+    }
+    .brand-subtitle{
+      display:block;
+      color:var(--muted);
+      font-size:.88rem;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .nav-links{
+      display:flex;
+      align-items:center;
+      gap:6px;
+      color:var(--muted);
+      font-weight:700;
+      font-size:.94rem;
+    }
+    .nav-panel{
+      display:flex;
+      align-items:center;
+      gap:24px;
+    }
+    .nav-links a{
+      padding:10px 12px;
+      border-radius:999px;
+      text-decoration:none;
+    }
+    .nav-links a:hover,
+    .nav-links a:focus-visible{
+      color:var(--brand-purple);
+      background:var(--panel-soft);
+      outline:none;
+    }
+    .nav-actions{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex:0 0 auto;
+    }
+    .menu-button{
+      display:none;
+      width:46px;
+      height:46px;
+      padding:0;
+      border:1.5px solid rgba(82,0,255,.22);
+      border-radius:50%;
+      background:#fff;
+      color:var(--brand-purple);
+      cursor:pointer;
+      align-items:center;
+      justify-content:center;
+    }
+    .menu-icon{
+      display:grid;
+      gap:4px;
+      width:18px;
+    }
+    .menu-icon span{
+      display:block;
+      height:2px;
+      border-radius:999px;
+      background:currentColor;
+    }
+    .menu-button:hover,
+    .menu-button:focus-visible{
+      background:var(--panel-soft);
+      border-color:rgba(82,0,255,.40);
+      outline:3px solid rgba(61,255,208,.75);
+      outline-offset:2px;
+    }
+    .hero{
+      display:grid;
+      grid-template-columns:minmax(0, 1.05fr) minmax(320px, .95fr);
+      gap:2rem;
+      align-items:center;
+      padding:4.4rem 0 3.2rem;
+    }
+    h1{
+      margin:0 0 1rem;
+      font-size:clamp(2.65rem, 7vw, 5.9rem);
+      line-height:.94;
+      letter-spacing:0;
+      max-width:850px;
+      color:var(--brand-purple);
+    }
+    .lead{
+      font-size:clamp(1.08rem, 2vw, 1.34rem);
+      max-width:700px;
+      color:var(--muted);
+      margin:0 0 1.15rem;
+      font-weight:400;
+    }
+    .actions{display:flex; gap:.8rem; flex-wrap:wrap; margin-top:1.5rem}
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:46px;
+      padding:.84rem 1.15rem;
+      border-radius:999px;
+      text-decoration:none;
+      font-weight:900;
+      border:1.5px solid transparent;
+      transition:transform var(--motion-fast) var(--ease-standard), box-shadow var(--motion-fast) var(--ease-standard), background var(--motion-fast) var(--ease-standard);
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn-small{min-height:46px; padding:.84rem 1.15rem; font-size:1rem}
+    .btn.primary,
+    .btn-primary{background:var(--brand-purple); color:white; box-shadow:0 16px 30px rgba(82,0,255,.23)}
+    .btn.primary:hover,
+    .btn-primary:hover,
+    .btn-primary:focus-visible{background:var(--brand-purple-dark); outline:none}
+    .btn.secondary,
+    .btn-secondary{background:white; color:var(--brand-purple); border-color:rgba(82,0,255,.22)}
+    .btn.secondary:hover,
+    .btn-secondary:hover,
+    .btn-secondary:focus-visible{background:var(--panel-soft); border-color:rgba(82,0,255,.40); outline:none}
+    .hero-card{
+      background:rgba(255,255,255,.88);
+      border:1.5px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:1.15rem;
+      position:relative;
+      overflow:hidden;
+    }
+    .hero-card::before{
+      content:"";
+      position:absolute;
+      inset:-30% auto auto -20%;
+      width:260px;
+      height:260px;
+      border-radius:50%;
+      background:rgba(61,255,208,.35);
+      pointer-events:none;
+    }
+    .browser{
+      position:relative;
+      background:#151824;
+      color:#f7f9fc;
+      border-radius:18px;
+      overflow:hidden;
+      font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      box-shadow:0 18px 45px rgba(35,39,46,.25);
+    }
+    .browser-bar{display:flex; gap:.45rem; padding:.82rem; background:#23272e}
+    .dot{width:11px; height:11px; border-radius:50%; background:#ff5f57}
+    .dot:nth-child(2){background:#febc2e}.dot:nth-child(3){background:#28c840}
+    pre{margin:0; padding:1.15rem; white-space:pre-wrap; overflow-wrap:anywhere; font-size:.88rem}
+    .preview-note{
+      position:relative;
+      margin-top:1rem;
+      background:var(--brand-aqua-soft);
+      border:1.5px solid rgba(61,255,208,.62);
+      border-radius:16px;
+      padding:.95rem 1rem;
+      color:#0b5148;
+      font-weight:900;
+    }
+    section{padding:2.7rem 0}
+    .section-title{
+      font-size:clamp(1.9rem, 4vw, 3.2rem);
+      line-height:1;
+      letter-spacing:0;
+      margin:0 0 .8rem;
+      color:var(--brand-purple-dark);
+    }
+    .section-lead{max-width:760px; margin:0 0 1.25rem; color:var(--muted); font-size:1.08rem}
+    .grid{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:1rem}
+    .privacy-license-list{display:grid; gap:14px; margin-top:1.5rem}
+    .privacy-license-details{margin:0}
+    .privacy-license-details summary{display:flex; align-items:center; justify-content:space-between; gap:1rem; color:var(--brand-purple); cursor:pointer; font-size:1.12rem; font-weight:900; list-style:none}
+    .privacy-license-details summary::-webkit-details-marker{display:none}
+    .privacy-license-details summary::after{content:"+"; display:grid; place-items:center; flex:0 0 32px; width:32px; height:32px; border-radius:999px; background:var(--brand-purple-soft); color:var(--brand-purple); font-size:1.35rem; line-height:1}
+    .privacy-license-details[open] summary::after{content:"−"}
+    .privacy-license-content{margin-top:1rem; padding-top:1rem; border-top:1px solid var(--line)}
+    .privacy-license-content p + p{margin-top:.75rem}
+    .card{
+      background:rgba(255,255,255,.88);
+      border:1.5px solid var(--line);
+      border-radius:22px;
+      padding:1.15rem;
+      box-shadow:0 12px 34px rgba(82,0,255,.07);
+    }
+    .card h3{margin:.1rem 0 .45rem; font-size:1.02rem; color:var(--brand-purple-dark); font-weight:900}
+    .card p{margin:0; color:var(--muted)}
+    .path{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:.8rem; counter-reset:path}
+    .step{position:relative; padding-top:3.1rem}
+    .step::before{
+      counter-increment:path;
+      content:counter(path);
+      position:absolute;
+      top:1rem;
+      left:1rem;
+      width:34px;
+      height:34px;
+      border-radius:50%;
+      display:grid;
+      place-items:center;
+      background:var(--brand-purple);
+      color:white;
+      font-weight:900;
+      box-shadow:0 10px 22px rgba(82,0,255,.2);
+    }
+    .family-tree{
+      background:rgba(255,255,255,.84);
+      border:1.5px solid var(--line);
+      border-radius:28px;
+      padding:1.25rem;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .tree-root{display:flex; justify-content:center; margin-bottom:1.4rem}
+    .tree-node{
+      display:block;
+      color:inherit;
+      text-decoration:none;
+      transition:transform var(--motion-fast) var(--ease-standard), box-shadow var(--motion-fast) var(--ease-standard), border-color var(--motion-fast) var(--ease-standard);
+      border:1.5px solid var(--line);
+      background:#fff;
+      border-radius:18px;
+      padding:1rem;
+      box-shadow:0 10px 28px rgba(82,0,255,.08);
+    }
+    .tree-node strong{display:block; color:var(--brand-purple-dark); font-size:1.03rem; font-weight:900; margin-bottom:.28rem}
+    .tree-node span{display:block; color:var(--muted); font-size:.95rem}
+    .tree-node.root{
+      width:min(520px, 100%);
+      text-align:center;
+      background:var(--brand-purple);
+      border-color:var(--brand-purple);
+      color:white;
+    }
+    .tree-node.root strong,.tree-node.root span{color:white}
+
+    .tree-node:hover,
+    .tree-node:focus-visible {
+      transform: translateY(-2px);
+      border-color: var(--brand-purple);
+      box-shadow: 0 18px 38px rgba(82,0,255,.14);
+      outline: none;
+    }
+    .tree-branches{
+      position:relative;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:1rem;
+    }
+    .tree-branches::before{
+      content:"";
+      position:absolute;
+      top:-1.4rem;
+      left:50%;
+      width:2px;
+      height:1.4rem;
+      background:var(--brand-purple);
+      opacity:.35;
+    }
+    .tree-branch{
+      position:relative;
+      border:1.5px dashed rgba(82,0,255,.28);
+      border-radius:24px;
+      padding:1rem;
+      background:linear-gradient(180deg, rgba(247,245,255,.92), rgba(255,255,255,.92));
+    }
+    .tree-branch::before{
+      content:"";
+      position:absolute;
+      top:-1rem;
+      width:50%;
+      height:1rem;
+      border-top:2px solid rgba(82,0,255,.32);
+    }
+    .tree-branch:first-child::before{right:0; border-left:2px solid rgba(82,0,255,.32); border-radius:14px 0 0 0}
+    .tree-branch:last-child::before{left:0; border-right:2px solid rgba(82,0,255,.32); border-radius:0 14px 0 0}
+    .branch-title{
+      display:inline-flex;
+      background:var(--brand-aqua);
+      color:var(--brand-purple-dark);
+      border-radius:999px;
+      padding:.45rem .72rem;
+      font-weight:900;
+      margin-bottom:.8rem;
+    }
+    .tree-stack{display:grid; gap:.75rem}
+    .tree-node.current{
+      border-color:var(--brand-purple);
+      box-shadow:0 0 0 4px rgba(82,0,255,.08), 0 16px 32px rgba(82,0,255,.14);
+    }
+    .tree-node.bridge{
+      background:linear-gradient(135deg, #ffffff, var(--brand-aqua-soft));
+      border-color:rgba(61,255,208,.9);
+    }
+    .delphi-dodona-pair{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:.75rem;
+      align-items:stretch;
+    }
+    .tree-node.dodona{
+      background:linear-gradient(135deg, #ffffff, var(--brand-aqua-soft));
+      border-color:rgba(61,255,208,.95);
+      box-shadow:0 18px 42px rgba(61,255,208,.18);
+    }
+    .tree-node.dodona strong{color:#0b5148}
+    .logic-note{
+      margin-top:1rem;
+      border-left:6px solid var(--brand-purple);
+      background:#fff;
+      border-radius:16px;
+      padding:1rem;
+      color:#344054;
+      font-weight:700;
+    }
+    footer{
+      margin-top:2rem;
+      padding:2rem 0 2.5rem;
+      border-top:1.5px solid var(--line);
+      color:var(--muted);
+      font-size:.94rem;
+    }
+    @media (max-width:900px){
+      .hero{grid-template-columns:minmax(0,1fr); padding-top:2.4rem}
+      .grid,.path{grid-template-columns:1fr 1fr}
+      .tree-branches{grid-template-columns:1fr}
+      .delphi-dodona-pair{grid-template-columns:1fr}
+      .tree-branches::before,.tree-branch::before{display:none}
+    }
+    @media (max-width:760px){
+      .nav{display:grid; grid-template-columns:auto minmax(0,1fr); justify-content:initial; gap:12px; padding:12px 16px}
+      .menu-button{display:inline-flex; grid-column:1; grid-row:1}
+      .brand-link{grid-column:2; grid-row:1}
+      .brand-mark,.brand-subtitle{display:none}
+      .nav-panel{display:none; grid-column:1 / -1; grid-row:2; padding:12px; border:1px solid rgba(82,0,255,.16); border-radius:8px; background:#fff; box-shadow:0 12px 28px rgba(40,32,55,.12)}
+      .nav-panel.is-open{display:grid; gap:12px}
+      .nav-links{display:grid; grid-template-columns:1fr; gap:2px}
+      .nav-links a{padding:12px}
+      .nav-actions{display:grid; grid-template-columns:1fr; justify-items:stretch; gap:12px}
+      .nav-actions .language-toggle{justify-self:start}
+      .nav-actions .btn{width:100%}
+    }
+    @media (max-width:620px){
+      .nav{align-items:center}
+      .nav-actions{gap:6px}
+      .grid,.path{grid-template-columns:1fr}
+      .page{width:min(100% - 24px, 1180px)}
+      h1{letter-spacing:0; overflow-wrap:anywhere}
+    }
+    h1,h2,h3,h4,h5,h6,label,button,table,th,td,.btn,.brand-title,.section-title,.branch-title{letter-spacing:0}
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+  <style id="language-toggle-styles">
+.language-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid rgba(82, 0, 255, 0.22);
+  border-radius: 999px;
+  background: #fff;
+  padding: 4px;
+  box-shadow: 0 10px 24px rgba(82, 0, 255, 0.08);
+}
+.language-toggle a {
+  min-width: 44px;
+  min-height: 36px;
+  border: 0;
+  border-radius: 999px;
+  padding: 8px 10px;
+  background: transparent;
+  color: var(--muted, var(--delphi-muted, #625b70));
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+.language-toggle a.is-active {
+  background: var(--brand, var(--brand-purple, var(--delphi-blue, #5200FF)));
+  color: #fff;
+  box-shadow: 0 10px 22px rgba(82, 0, 255, 0.20);
+}
+.language-toggle a:focus-visible {
+  outline: 3px solid rgba(61, 255, 208, 0.75);
+  outline-offset: 2px;
+}
+</style>
+<!-- generated:seo-head -->
+<title>HTML in the Classroom</title>
+<meta name="description" content="HTML in the Classroom is a browser practice environment where students write HTML and immediately preview their webpage.">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<link rel="canonical" href="https://robbew.github.io/htmlindeklas/en.html">
+<link rel="alternate" hreflang="nl-BE" href="https://robbew.github.io/htmlindeklas/">
+<link rel="alternate" hreflang="en" href="https://robbew.github.io/htmlindeklas/en.html">
+<link rel="alternate" hreflang="x-default" href="https://robbew.github.io/htmlindeklas/">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en_GB">
+<meta property="og:title" content="HTML in the Classroom">
+<meta property="og:description" content="HTML in the Classroom is a browser practice environment where students write HTML and immediately preview their webpage.">
+<meta property="og:url" content="https://robbew.github.io/htmlindeklas/en.html">
+<meta property="og:image" content="https://robbew.github.io/htmlindeklas/media/landing-social.png">
+<meta property="og:image:alt" content="HTML in the Classroom — learning project">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="HTML in the Classroom">
+<meta name="twitter:description" content="HTML in the Classroom is a browser practice environment where students write HTML and immediately preview their webpage.">
+<meta name="twitter:image" content="https://robbew.github.io/htmlindeklas/media/landing-social.png">
+<meta name="twitter:image:alt" content="HTML in the Classroom — learning project">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://robbew.github.io/htmlindeklas/en.html#webpage","url":"https://robbew.github.io/htmlindeklas/en.html","name":"HTML in the Classroom","description":"HTML in the Classroom is a browser practice environment where students write HTML and immediately preview their webpage.","inLanguage":"en","about":{"@id":"https://robbew.github.io/htmlindeklas/#resource"},"mainEntity":{"@id":"https://robbew.github.io/htmlindeklas/#resource"}},{"@type":"Person","@id":"https://robbew.github.io/aiindeklas/#robbe-wulgaert","name":"Robbe Wulgaert","url":"https://robbew.github.io/aiindeklas/"},{"@type":["WebApplication","LearningResource"],"@id":"https://robbew.github.io/htmlindeklas/#resource","name":"HTML in the Classroom","description":"HTML in the Classroom is a browser practice environment where students write HTML and immediately preview their webpage.","url":"https://robbew.github.io/htmlindeklas/","creator":{"@id":"https://robbew.github.io/aiindeklas/#robbe-wulgaert"},"license":"https://robbew.github.io/htmlindeklas/LICENSE.md","inLanguage":"en","teaches":["Structuring webpages with HTML","Adding text, lists and media"],"abstract":"Feedback: Live preview and automatic checks; Export: HTML file or PDF; Progress: Saved locally in the browser"}]}</script>
+<!-- /generated:seo-head -->
+<style id="seo-facts-styles">.seo-facts dl { display: flex; flex-wrap: wrap; gap: 0.75rem 1.5rem; } .seo-facts dl > div { min-width: 10rem; } .seo-facts dt { font-weight: 700; } .seo-facts dd { margin: 0; } .language-toggle a { text-decoration: none; }</style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header">
+    <nav class="nav" aria-label="Main navigation">
+      <button class="menu-button" id="menuButton" type="button" aria-expanded="false" aria-controls="navPanel" aria-label="Open navigation menu">
+        <span class="menu-icon" aria-hidden="true"><span></span><span></span><span></span></span>
+      </button>
+      <a class="brand-link" href="#top" aria-label="HTML in the Classroom">
+        <span>
+          <span class="brand-title">HTML in the Classroom</span>
+          <span class="brand-subtitle">AI in de Klas · Robbe Wulgaert</span>
+        </span>
+      </a>
+      <div class="nav-panel" id="navPanel">
+        <div class="nav-links" id="navLinks" aria-label="Page sections">
+          <a href="#wat">Assignment</a>
+          <a href="#leerlijn">Learning path</a>
+          <a href="#leerkrachten">Teachers</a>
+        </div>
+        <div class="nav-actions">
+          <div class="language-toggle" role="group" aria-label="Language selection">
+            <a href="./" data-language-choice="nl">NL</a>
+            <a href="en.html" data-language-choice="en" class="is-active" aria-current="page">ENG</a>
+          </div>
+          <a class="btn btn-primary" href="platform.html">Start learning platform</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <div class="page">
+    <main id="main">
+      <section class="hero" id="top">
+        <div>
+          <h1>HTML in the Classroom</h1>
+          <p class="lead">HTML in the Classroom is a browser practice environment where students write HTML and immediately preview their webpage.</p>
+          <p class="lead">Useful when you want quick classroom practice, study work or a short assignment alongside a larger learning path. No accounts, no installation, no dashboard to tame first.</p>
+          <div class="actions">
+            <a class="btn btn-primary" href="platform.html">Start learning platform</a>
+          </div>
+        </div>
+        <aside class="hero-card" aria-label="Example of the tool">
+          <div class="browser">
+            <div class="browser-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+            <pre>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+  &lt;title&gt;My first page&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Hello HTML&lt;/h1&gt;
+  &lt;p&gt;My page is ready.&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre>
+          </div>
+          <div class="preview-note">Assignment, editor, feedback and live preview are in the same screen.</div>
+        </aside>
+      </section>
+
+      <section id="wat">
+        <h2 class="section-title">What is included?</h2>
+        <p class="section-lead">Everything is aimed at quick practice: students type HTML, look at the preview and adjust where needed.</p>
+        <div class="grid">
+          <article class="card"><h3>Live preview</h3><p>Students immediately see their page appear. The title from the head is also shown as the tab title.</p></article>
+          <article class="card"><h3>Automatic checks</h3><p>The tool checks basic structure, tags, attributes, text content and counts where useful.</p></article>
+          <article class="card"><h3>Export as evidence</h3><p>HTML file or PDF with code, status, attempts, time and verification data.</p></article>
+          <article class="card"><h3>Stored locally</h3><p>Work and progress stay in the browser. No login, server or student dashboard is needed.</p></article>
+          <article class="card"><h3>Reference sheet</h3><p>A short cheat sheet helps with basic structure, tags, attributes, lists, media and common mistakes.</p></article>
+          <article class="card" id="leerkrachten"><h3>For teachers</h3><p>The series is quick to use and deliberately kept simple. You can adapt the content in the content folder.</p></article>
+        </div>
+      </section>
+
+      <section id="leerlijn">
+        <h2 class="section-title">The growth path</h2>
+        <p class="section-lead">HTML in the Classroom builds web literacy: first the structure of a page, then content, media and a personal synthesis.</p>
+        <div class="path">
+          <article class="card step"><h3>Basic structure</h3><p>Doctype, html, head, title and body.</p></article>
+          <article class="card step"><h3>Text structure</h3><p>Headings, paragraphs and simple text formatting.</p></article>
+          <article class="card step"><h3>Media and lists</h3><p>Images, attributes, ol, ul, li and iframe.</p></article>
+          <article class="card step"><h3>Synthesis</h3><p>A personal page in which several building blocks come together.</p></article>
+        </div>
+      </section>
+
+      <section id="familie">
+        <!-- generated:seo-facts -->
+<section class="seo-facts" aria-label="Project facts"><dl><div><dt>Feedback</dt><dd>Live preview and automatic checks</dd></div><div><dt>Export</dt><dd>HTML file or PDF</dd></div><div><dt>Progress</dt><dd>Saved locally in the browser</dd></div></dl></section>
+<!-- /generated:seo-facts -->
+      <!-- generated:heading -->
+      <p class="section-kicker">Place in the learning path</p>
+      <h2 class="section-title">From platforms to projects.</h2>
+      <p class="section-lead">The platforms build computational thinking. The projects use that thinking in a cross-curricular assignment in which students build, measure, test and conclude.</p>
+        <!-- /generated:heading -->
+        <!-- generated:tree -->
+        <div class="family-tree" aria-label="Learning path of platforms and projects">
+          <div class="tree-root">
+            <a class="tree-node root" href="https://www.aiindeklas.be" target="_blank" rel="noopener">
+              <strong>Learning computational thinking</strong>
+              <span>from blocks to code, from code to research</span>
+            </a>
+          </div>
+          <div class="tree-branches">
+            <div class="tree-branch">
+              <div class="branch-title">Platforms</div>
+              <div class="tree-stack">
+                <a class="tree-node" href="https://robbew.github.io/Blockly/" target="_blank" rel="noopener">
+                  <strong>Blockly</strong>
+                  <span>visual step-by-step thinking.</span>
+                </a>
+                <a class="tree-node" href="https://robbew.github.io/jsindeklas/" target="_blank" rel="noopener">
+                  <strong>JavaScript</strong>
+                  <span>logic in real code.</span>
+                </a>
+                <a class="tree-node current" href="https://robbew.github.io/htmlindeklas/" target="_blank" rel="noopener" aria-current="page">
+                  <strong>HTML</strong>
+                  <span>structuring webpages.</span>
+                </a>
+                <div class="delphi-dodona-pair" aria-label="Dodona and Delphi">
+                  <a class="tree-node dodona" href="https://dodona.be/nl/courses/2641/" target="_blank" rel="noopener">
+                    <strong>Dodona</strong>
+                    <span>Python in the Classroom with tracking.</span>
+                  </a>
+                  <a class="tree-node" href="https://robbew.github.io/delphi/" target="_blank" rel="noopener">
+                    <strong>Delphi</strong>
+                    <span>Practice Python in the browser.</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="tree-branch">
+              <div class="branch-title">STEaM projects</div>
+              <div class="tree-stack">
+                <a class="tree-node" href="https://robbew.github.io/smartplants/" target="_blank" rel="noopener">
+                  <strong>Smart Plants</strong>
+                  <span>Arduino, soil moisture, calibration and data.</span>
+                </a>
+                <a class="tree-node" href="https://robbew.github.io/robothand/" target="_blank" rel="noopener">
+                  <strong>Robotic hand</strong>
+                  <span>Arduino, sensors, servos and movement.</span>
+                </a>
+                <a class="tree-node" href="https://robbew.github.io/projectwind/" target="_blank" rel="noopener">
+                  <strong>Wind</strong>
+                  <span>Micro:bit, energy, voltage and current.</span>
+                </a>
+                <a class="tree-node" href="https://robbew.github.io/slimme_vuilnisbak/" target="_blank" rel="noopener">
+                  <strong>Smart bin</strong>
+                  <span>AI, image recognition, data and microcontrollers.</span>
+                </a>
+                <a class="tree-node" href="https://robbew.github.io/aiindeklas/zelflerende-games/" target="_blank" rel="noopener">
+                  <strong>Self-learning games</strong>
+                  <span>Getting started with machine learning</span>
+                </a>
+                <a class="tree-node" href="https://robbew.github.io/projectfijnstof/" target="_blank" rel="noopener">
+                  <strong>Particulate matter</strong>
+                  <span>Arduino, air quality, data and poster session.</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- /generated:tree -->
+      </section>
+
+      <section id="privacy-license" aria-labelledby="privacy-license-title">
+        <h2 class="section-title" id="privacy-license-title">Privacy and licence</h2>
+        <div class="privacy-license-list">
+          <details class="card privacy-license-details">
+            <summary>Privacy</summary>
+            <div class="privacy-license-content">
+              <p>This project does not use its own analytics or advertising cookies. Input, progress and results are processed in the browser and may be stored locally on the device. A download or export occurs only when the user initiates it. GitHub Pages logs visitors’ IP addresses for security purposes; external services are governed by their provider’s privacy policy.</p>
+              <p><a href="https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages#data-collection">Read how GitHub Pages processes technical visitor data.</a></p>
+            </div>
+          </details>
+          <details class="card privacy-license-details">
+            <summary>License</summary>
+            <div class="privacy-license-content">
+              <p>Original project material by Robbe Wulgaert may be used, copied and adapted free of charge for education, provided that ‘Robbe Wulgaert – AI in de Klas’ is clearly displayed, where reasonably practical with a link to the original project. Commercial sale, paid distribution, sublicensing or repackaging as a commercial product is not permitted without prior written permission. Other uses outside education also require prior written permission. Third-party components remain subject to their own licences.</p>
+              <p><a href="LICENSE.md">Read the full licence terms.</a> <a href="THIRD_PARTY_NOTICES.md">Third-party notices</a></p>
+            </div>
+          </details>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>© 2026 Robbe Wulgaert · AI in de Klas · robbewulgaert.be. Educational use with clear attribution; no commercial distribution without written permission. <a href="#privacy-license">Privacy and licence</a>.</p>
+    </footer>
+  </div>
+<script id="mobile-menu-script">
+(() => {
+  const menuButton = document.getElementById("menuButton");
+  const navPanel = document.getElementById("navPanel");
+  if (!menuButton || !navPanel) return;
+
+  const setMenuState = (isOpen, { returnFocus = false } = {}) => {
+    navPanel.classList.toggle("is-open", isOpen);
+    menuButton.setAttribute("aria-expanded", String(isOpen));
+    if (returnFocus) menuButton.focus();
+  };
+
+  menuButton.addEventListener("click", () => {
+    setMenuState(menuButton.getAttribute("aria-expanded") !== "true");
+  });
+
+  navPanel.addEventListener("click", (event) => {
+    if (event.target instanceof Element && event.target.closest("a")) setMenuState(false);
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && menuButton.getAttribute("aria-expanded") === "true") {
+      setMenuState(false, { returnFocus: true });
+    }
+  });
+
+  document.addEventListener("click", (event) => {
+    if (menuButton.getAttribute("aria-expanded") === "true" && event.target instanceof Node && !menuButton.contains(event.target) && !navPanel.contains(event.target)) {
+      setMenuState(false);
+    }
+  });
+
+  window.addEventListener("resize", () => {
+    if (window.innerWidth > 760) setMenuState(false);
+  });
+})();
+</script>
+<script id="language-toggle-script">
+(() => {
+  const LANGUAGE_KEY = "aiindeklas:index-language";
+  const TRANSLATIONS = {
+  "<!DOCTYPE html> <html lang=\"nl\"> <head> <title>Mijn eerste pagina</title> </head> <body> <h1>Hallo HTML</h1> <p>Mijn pagina staat er.</p> </body> </html>": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <title>My first page</title>\n</head>\n<body>\n  <h1>Hello HTML</h1>\n  <p>My page is ready.</p>\n</body>\n</html>",
+  "Belangrijke acties": "Key actions",
+  "Hoe werkt het?": "How does it work?",
+  "Start": "Get started",
+  "Footerlinks": "Footer links",
+  "Navigatie openen": "Open navigation",
+  "Projectopstelling": "Project setup",
+  "PDF-export": "PDF export",
+  "Voorbeeld van de tool": "Example of the tool",
+  // generated:translations
+  "Plaats in de leerlijn": "Place in the learning path",
+  "Van platformen naar projecten.": "From platforms to projects.",
+  "De platformen bouwen het computationeel denken op. De projecten gebruiken dat denken in een vakoverschrijdende opdracht waarin leerlingen bouwen, meten, testen en besluiten.": "The platforms build computational thinking. The projects use that thinking in a cross-curricular assignment in which students build, measure, test and conclude.",
+  "Leerlijn van platformen en projecten": "Learning path of platforms and projects",
+  "Leren computationeel denken": "Learning computational thinking",
+  "van blokken naar code, van code naar onderzoek": "from blocks to code, from code to research",
+  "Blockly": "Blockly",
+  "visueel denken in stappen.": "visual step-by-step thinking.",
+  "JavaScript": "JavaScript",
+  "logica in echte code.": "logic in real code.",
+  "HTML": "HTML",
+  "webpagina's structureren.": "structuring webpages.",
+  "Dodona": "Dodona",
+  "Python in de Klas met opvolging.": "Python in the Classroom with tracking.",
+  "Delphi": "Delphi",
+  "Python oefenen in de browser.": "Practice Python in the browser.",
+  "Smart Plants": "Smart Plants",
+  "Arduino, bodemvochtigheid, kalibratie en data.": "Arduino, soil moisture, calibration and data.",
+  "Robothand": "Robotic hand",
+  "Arduino, sensoren, servo's en beweging.": "Arduino, sensors, servos and movement.",
+  "Wind": "Wind",
+  "Micro:bit, energie, spanning en stroom.": "Micro:bit, energy, voltage and current.",
+  "Slimme vuilnisbak": "Smart bin",
+  "AI, beeldherkenning, data en microcontrollers.": "AI, image recognition, data and microcontrollers.",
+  "Zelflerende games": "Self-learning games",
+  "Aan de slag met machine learning": "Getting started with machine learning",
+  "Fijnstof": "Particulate matter",
+  "Arduino, luchtkwaliteit, data en postersessie.": "Arduino, air quality, data and poster session.",
+  "Platformen": "Platforms",
+  "STEaM-projecten": "STEaM projects",
+  "Dodona en Delphi": "Dodona and Delphi",
+  // /generated:translations
+  "Privacy en licentie": "Privacy and licence",
+  "Dit project gebruikt geen eigen analytics of advertentiecookies. Invoer, voortgang en resultaten worden in de browser verwerkt en kunnen lokaal op het toestel worden bewaard. Een download of export gebeurt alleen wanneer de gebruiker die zelf start. GitHub Pages registreert het IP-adres van bezoekers voor beveiligingsdoeleinden; externe diensten vallen onder het privacybeleid van hun aanbieder.": "This project does not use its own analytics or advertising cookies. Input, progress and results are processed in the browser and may be stored locally on the device. A download or export occurs only when the user initiates it. GitHub Pages logs visitors’ IP addresses for security purposes; external services are governed by their provider’s privacy policy.",
+  "Lees hoe GitHub Pages technische bezoekgegevens verwerkt.": "Read how GitHub Pages processes technical visitor data.",
+  "Educatief gebruik met naamsvermelding": "Educational use with attribution",
+  "Het oorspronkelijke projectmateriaal van Robbe Wulgaert mag gratis worden gebruikt, gekopieerd en aangepast voor onderwijs, op voorwaarde dat “Robbe Wulgaert – AI in de Klas” duidelijk zichtbaar wordt vermeld, waar redelijkerwijs mogelijk met een link naar het oorspronkelijke project. Commerciële verkoop, betaalde verspreiding, sublicentiëring of herverpakking als commercieel product is niet toegestaan zonder voorafgaande schriftelijke toestemming. Voor ander gebruik buiten onderwijs is ook voorafgaande schriftelijke toestemming nodig. Componenten van derden blijven onder hun eigen licenties vallen.": "Original project material by Robbe Wulgaert may be used, copied and adapted free of charge for education, provided that ‘Robbe Wulgaert – AI in de Klas’ is clearly displayed, where reasonably practical with a link to the original project. Commercial sale, paid distribution, sublicensing or repackaging as a commercial product is not permitted without prior written permission. Other uses outside education also require prior written permission. Third-party components remain subject to their own licences.",
+  "Lees de volledige licentievoorwaarden.": "Read the full licence terms.",
+  "© 2026 Robbe Wulgaert · AI in de Klas · robbewulgaert.be. Educatief gebruik met duidelijke naamsvermelding; geen commerciële verspreiding zonder schriftelijke toestemming.": "© 2026 Robbe Wulgaert · AI in de Klas · robbewulgaert.be. Educational use with clear attribution; no commercial distribution without written permission.",
+  "Spring naar inhoud": "Skip to content",
+  "Spring naar hoofdinhoud": "Skip to main content",
+  "Hoofdnavigatie": "Main navigation",
+  "Paginaonderdelen": "Page sections",
+  "Taalkeuze": "Language selection",
+  "Open navigatiemenu": "Open navigation menu",
+  "Opdracht": "Assignment",
+  "Werking": "How it works",
+  "Wat leer je?": "What will you learn?",
+  "Onderdelen": "Components",
+  "Familie": "Family",
+  "Voor leerkrachten": "For teachers",
+  "Leerkrachten": "Teachers",
+  "Leerlijn": "Learning path",
+  "Benodigdheden": "Materials",
+  "Privacy": "Privacy",
+  "Opstelling": "Setup",
+  "Gebruik": "Use",
+  "README": "README",
+  "Platform": "Platform",
+  "Pythia": "Pythia",
+  "Start leerplatform": "Start learning platform",
+  "Start platform": "Start platform",
+  "Menu": "Menu",
+  "Bekijk de opdracht": "View the assignment",
+  "Lees README": "Read README",
+  "Leerplatform": "Learning platform",
+  "Onderzoeksplatform": "Research platform",
+  "Oefeningmaker": "Exercise builder",
+  "Open oefeningmaker": "Open exercise builder",
+  "Slimme Vuilnisbak": "Smart Bin",
+  "Geen installatie of leerlingenaccount.": "No installation or student account.",
+  "Lokale bibliotheken voor grafieken en PDF-export.": "Local libraries for charts and PDF export.",
+  "Geschikt voor GitHub Pages.": "Suitable for GitHub Pages.",
+  "robbewulgaert.be": "robbewulgaert.be",
+  "AI in de Klas": "AI in de Klas",
+  "Auteur: Robbe Wulgaert · AI in de Klas · robbewulgaert.be": "Author: Robbe Wulgaert · AI in de Klas · robbewulgaert.be",
+  "Auteur: Robbe Wulgaert · AI in de Klas · robbewulgaert.be · © 2026 Robbe Wulgaert.": "Author: Robbe Wulgaert · AI in de Klas · robbewulgaert.be · © 2026 Robbe Wulgaert.",
+  "Robbe Wulgaert, AI in de Klas, robbewulgaert.be": "Robbe Wulgaert, AI in de Klas, robbewulgaert.be",
+  "Licentie": "License",
+  "Third-party notices": "Third-party notices",
+  "Contact": "Contact",
+  "HTML in de Klas": "HTML in the Classroom",
+  "Wat is het?": "What is it?",
+  "Een kleine, lichte oefenomgeving voor leerlingen die hun eerste webpagina's bouwen. Ze schrijven HTML, zien meteen wat er gebeurt en kunnen hun werk indienen als HTML-bestand of PDF.": "A small, lightweight practice environment for students building their first webpages. They write HTML, immediately see what happens, and can submit their work as an HTML file or PDF.",
+  "Handig wanneer je snel wil oefenen in de klas, tijdens studie of als korte opdracht naast een groter traject. Geen accounts, geen installatie, geen dashboard dat eerst nog temmen moet.": "Useful when you want quick classroom practice, study work or a short assignment alongside a larger learning path. No accounts, no installation, no dashboard to tame first.",
+  "Mijn eerste pagina": "My first page",
+  "Hallo HTML": "Hello HTML",
+  "Mijn pagina staat er.": "My page is there.",
+  "Opgave, editor, feedback en live preview zitten in hetzelfde scherm.": "Assignment, editor, feedback and live preview are in the same screen.",
+  "Wat zit erin?": "What is included?",
+  "Alles is gericht op snel inzetbaar oefenen: leerlingen typen HTML, kijken naar de preview en sturen bij waar nodig.": "Everything is aimed at quick practice: students type HTML, look at the preview and adjust where needed.",
+  "Live preview": "Live preview",
+  "Leerlingen zien hun pagina meteen verschijnen. De titel uit de head wordt ook als tabtitel getoond.": "Students immediately see their page appear. The title from the head is also shown as the tab title.",
+  "Automatische checks": "Automatic checks",
+  "De tool controleert basisstructuur, tags, attributen, tekstinhoud en aantallen waar dat zinvol is.": "The tool checks basic structure, tags, attributes, text content and counts where useful.",
+  "Export als bewijs": "Export as evidence",
+  "HTML-bestand of PDF met code, status, pogingen, tijd en verificatiegegevens.": "HTML file or PDF with code, status, attempts, time and verification data.",
+  "Lokaal bewaard": "Stored locally",
+  "Werk en voortgang blijven in de browser. Er is geen login, server of leerlingendashboard nodig.": "Work and progress stay in the browser. No login, server or student dashboard is needed.",
+  "Formularium": "Reference sheet",
+  "Een korte spiekkaart helpt bij basisstructuur, tags, attributen, lijsten, media en veelgemaakte fouten.": "A short cheat sheet helps with basic structure, tags, attributes, lists, media and common mistakes.",
+  "De reeks is snel inzetbaar en bewust eenvoudig gehouden. Je kan de inhoud aanpassen in de contentmap.": "The series is quick to use and deliberately kept simple. You can adapt the content in the content folder.",
+  "De groeilijn": "The growth path",
+  "HTML in de Klas bouwt webgeletterdheid op: eerst de structuur van een pagina, daarna inhoud, media en een eigen synthese.": "HTML in the Classroom builds web literacy: first the structure of a page, then content, media and a personal synthesis.",
+  "Basisstructuur": "Basic structure",
+  "Doctype, html, head, title en body.": "Doctype, html, head, title and body.",
+  "Tekststructuur": "Text structure",
+  "Koppen, alinea's en eenvoudige tekstopmaak.": "Headings, paragraphs and simple text formatting.",
+  "Media en lijsten": "Media and lists",
+  "Afbeeldingen, attributen, ol, ul, li en iframe.": "Images, attributes, ol, ul, li and iframe.",
+  "Synthese": "Synthesis",
+  "Een eigen pagina waarin meerdere bouwstenen samenkomen.": "A personal page in which several building blocks come together.",
+};
+  const META = {
+  "title": "HTML in the Classroom",
+  "description": "HTML in the Classroom is a lightweight browser environment where students build webpages step by step, without installation or accounts."
+};
+  const SKIP_TAGS = new Set(["SCRIPT", "STYLE", "NOSCRIPT", "TEXTAREA", "INPUT", "SELECT", "OPTION"]);
+  const TEXT_NODES = [];
+  const ATTR_NODES = [];
+  let originalTitle = document.title;
+  let originalDescription = null;
+  const normalize = (value) => String(value || "").replace(/\s+/g, " ").trim();
+  function preserveOuterWhitespace(original, translated) {
+    const start = original.match(/^\s*/)?.[0] || "";
+    const end = original.match(/\s*$/)?.[0] || "";
+    return start + translated + end;
+  }
+  function collectTextNodes() {
+    if (TEXT_NODES.length) return;
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+      acceptNode(node) {
+        const parent = node.parentElement;
+        if (!parent || SKIP_TAGS.has(parent.tagName)) return NodeFilter.FILTER_REJECT;
+        return normalize(node.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+      }
+    });
+    while (walker.nextNode()) {
+      const node = walker.currentNode;
+      TEXT_NODES.push({ node, original: node.nodeValue, key: normalize(node.nodeValue) });
+    }
+  }
+  function collectAttributes() {
+    if (ATTR_NODES.length) return;
+    document.querySelectorAll("[aria-label], [alt], [title], [placeholder]").forEach((element) => {
+      ["aria-label", "alt", "title", "placeholder"].forEach((attr) => {
+        if (element.hasAttribute(attr)) {
+          const original = element.getAttribute(attr);
+          ATTR_NODES.push({ element, attr, original, key: normalize(original) });
+        }
+      });
+    });
+  }
+  function setLanguage(language) {
+    const useEnglish = language === "en";
+    collectTextNodes();
+    collectAttributes();
+    TEXT_NODES.forEach((entry) => {
+      const translated = TRANSLATIONS[entry.key];
+      entry.node.nodeValue = useEnglish && translated ? preserveOuterWhitespace(entry.original, translated) : entry.original;
+    });
+    ATTR_NODES.forEach((entry) => {
+      const translated = TRANSLATIONS[entry.key];
+      entry.element.setAttribute(entry.attr, useEnglish && translated ? translated : entry.original);
+    });
+    document.documentElement.lang = useEnglish ? "en" : "nl-BE";
+    document.title = useEnglish && META.title ? META.title : originalTitle;
+    const description = document.querySelector('meta[name="description"]');
+    if (description) {
+      if (originalDescription === null) originalDescription = description.getAttribute("content") || "";
+      description.setAttribute("content", useEnglish && META.description ? META.description : originalDescription);
+    }
+    document.querySelectorAll("[data-language-choice]").forEach((button) => {
+      const isActive = button.dataset.languageChoice === (useEnglish ? "en" : "nl");
+      button.classList.toggle("is-active", isActive);
+      if (isActive) button.setAttribute("aria-current", "page"); else button.removeAttribute("aria-current");
+    });
+    try { localStorage.setItem(LANGUAGE_KEY, useEnglish ? "en" : "nl"); } catch (error) {}
+  }
+  function initLanguageToggle() {
+    try { localStorage.setItem(LANGUAGE_KEY, "en"); } catch (error) {}
+    document.dispatchEvent(new CustomEvent("landing:language-ready"));
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initLanguageToggle);
+  else initLanguageToggle();
+})();
+</script>
+</body>
+</html>
